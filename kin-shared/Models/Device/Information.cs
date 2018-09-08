@@ -11,7 +11,7 @@ namespace Kin.Shared.Models.Device
         public string XSdkVersion { get; }
 
 
-        public Information(string xDeviceId = "KINTIPBOT", string xDeviceModel = "Samsung9+",
+        public Information(string xDeviceId = "KinCsharpClient", string xDeviceModel = "Samsung9+",
             string xDeviceManufacturer = "Samsung", string xOs = "Android")
         {
             Assembly assembly = Assembly.GetEntryAssembly();
