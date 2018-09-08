@@ -17,6 +17,8 @@ namespace Kin.Client
 
             var market = new Marketplace.MarketPlaceClient("", new Information(), AuthorizationHeaderValueGetter );
   
+
+
         }
 
 
