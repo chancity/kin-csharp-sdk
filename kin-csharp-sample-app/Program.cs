@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kin.BlockChain;
 using Kin.Jwt;
 using Kin.Jwt.Models;
 using Kin.Marketplace;
@@ -32,6 +33,8 @@ namespace kin_csharp_sample_app
         private static readonly JwtProvider JwtProvider;
         private static readonly JwtProviderBuilder JwtProviderBuilder;
         private static readonly MarketPlaceClient MarketPlaceClient;
+        private static readonly BlockChainHandler BlockChainHandler;
+        private static readonly Config Config;
         private static readonly string UserId;
         private static readonly KeyPair KeyPair;
 
@@ -43,6 +46,11 @@ namespace kin_csharp_sample_app
 
             MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo,
                 AuthorizationHeaderValueGetter);
+
+            Config = MarketPlaceClient.Config().Result;
+
+            BlockChainHandler = new BlockChainHandler(Config);
+
             UserId = Guid.NewGuid().ToString();
             KeyPair = KeyPair.Random();
         }
@@ -72,17 +80,26 @@ namespace kin_csharp_sample_app
 
         private static async Task Test()
         {
+            Console.WriteLine("Creating a market place user");
             _authToken = await MarketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await MarketPlaceClient.UsersMeActivate().ConfigureAwait(false);
-            //The Kin Asset should be trusted after this step but the blockchain library isn't completed yet...
+            Console.WriteLine("Trusting the KIN asset");
+            await BlockChainHandler.TryUntilActivated(KeyPair).ConfigureAwait(false);
+            Console.WriteLine("Finally the wallet is trusted....");
 
-            Config config = await MarketPlaceClient.Config().ConfigureAwait(false);
 
-            //None of offers will do anything on the blockchain because the kin asset isn't trusted on the wallet
+            Console.WriteLine("Completing the tutorial!");
             await DoFirstOffer().ConfigureAwait(false);
+            Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+            Console.WriteLine("Sending that p2p good stuff");
             await DoP2pOffer().ConfigureAwait(false);
+            Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+            Console.WriteLine("External speeeeeend offer");
             await DoExternalSpendOffer().ConfigureAwait(false);
+            Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+            Console.WriteLine("External earn offerrrr");
             await DoExternalEarnOffer().ConfigureAwait(false);
+            Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
 
 
             OrderList orders = await MarketPlaceClient.GetOrderHistory().ConfigureAwait(false);
@@ -125,6 +142,8 @@ namespace kin_csharp_sample_app
                 await MarketPlaceClient.CreateExternalOffer(p2POffer).ConfigureAwait(false);
 
             Order submitP2POffer = await MarketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
+
+            await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
         }
 
         private static async Task DoExternalSpendOffer()
@@ -139,6 +158,8 @@ namespace kin_csharp_sample_app
 
             Order submitSpendOffer =
                 await MarketPlaceClient.SubmitOrder(createExternalSpendOffer.Id).ConfigureAwait(false);
+
+            await WaitForOrderCompletion(UserId, submitSpendOffer.Id).ConfigureAwait(false);
         }
 
         private static async Task DoExternalEarnOffer()
@@ -153,6 +174,8 @@ namespace kin_csharp_sample_app
 
             Order submitEarnOffer =
                 await MarketPlaceClient.SubmitOrder(createExternalEarnOffer.Id).ConfigureAwait(false);
+
+            await WaitForOrderCompletion(UserId, submitEarnOffer.Id).ConfigureAwait(false);
         }
 
         private static async Task<string> AuthorizationHeaderValueGetter()

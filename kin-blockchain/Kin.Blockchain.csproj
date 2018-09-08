@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
     <ProjectReference Include="..\stellar-dotnet-sdk\stellar-dotnet-sdk.csproj" />
   </ItemGroup>
 

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Shared", "kin-shared\Ki
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kin-csharp-sample-app", "kin-csharp-sample-app\kin-csharp-sample-app.csproj", "{1ADB30C8-3565-47BE-B514-CF369F90E3D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Blockchain", "kin-blockchain\Kin.Blockchain.csproj", "{9A2A3211-1209-48B4-A61A-A7631FC477E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.BlockChain", "kin-blockchain\Kin.BlockChain.csproj", "{9A2A3211-1209-48B4-A61A-A7631FC477E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stellar-dotnet-sdk", "stellar-dotnet-sdk\stellar-dotnet-sdk.csproj", "{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}"
 EndProject
