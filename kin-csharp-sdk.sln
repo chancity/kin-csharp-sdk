@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stellar-dotnet-sdk", "stellar-dotnet-sdk\stellar-dotnet-sdk.csproj", "{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Blockchain", "..\kin-blockchain\Kin.Blockchain.csproj", "{61A3B447-EB4D-4E84-9BFE-152092882E74}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Marketplace", "kin-marketplace\Kin.Marketplace.csproj", "{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Client", "kin-client\Kin.Client.csproj", "{2C9EF6DD-F7ED-4328-A539-74AA0A481204}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Jwt", "kin-jwt\Kin.Jwt.csproj", "{6DF79016-9E72-454F-8282-06FC60DD4DCC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Shared", "kin-shared\Kin.Shared.csproj", "{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C9EF6DD-F7ED-4328-A539-74AA0A481204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C9EF6DD-F7ED-4328-A539-74AA0A481204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C9EF6DD-F7ED-4328-A539-74AA0A481204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C9EF6DD-F7ED-4328-A539-74AA0A481204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DF79016-9E72-454F-8282-06FC60DD4DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF79016-9E72-454F-8282-06FC60DD4DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF79016-9E72-454F-8282-06FC60DD4DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF79016-9E72-454F-8282-06FC60DD4DCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44BD5F8E-2306-42D8-BA38-2E5692BA78F1}
+	EndGlobalSection
+EndGlobal

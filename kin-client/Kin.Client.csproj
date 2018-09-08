@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\kin-blockchain\Kin.Blockchain.csproj" />
+    <ProjectReference Include="..\kin-jwt\Kin.Jwt.csproj" />
+    <ProjectReference Include="..\kin-marketplace\Kin.Marketplace.csproj" />
+    <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
