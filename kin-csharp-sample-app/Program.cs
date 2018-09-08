@@ -41,8 +41,7 @@ namespace kin_csharp_sample_app
             JwtProvider = new JwtProvider("test", SecurityKeys);
             JwtProviderBuilder = new JwtProviderBuilder(JwtProvider);
 
-            MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo,
-                AuthorizationHeaderValueGetter);
+            MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo, AuthorizationHeaderValueGetter);
             UserId = Guid.NewGuid().ToString();
             KeyPair = KeyPair.Random();
         }
@@ -69,13 +68,33 @@ namespace kin_csharp_sample_app
 
             Console.ReadLine();
         }
-
         private static async Task Test()
         {
+            _authToken = await MarketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await MarketPlaceClient.UsersMeActivate().ConfigureAwait(false);
             //The Kin Asset should be trusted after this step but the blockchain library isn't completed yet...
 
             Config config = await MarketPlaceClient.Config().ConfigureAwait(false);
+
+            //None of offers will do anything on the blockchain because the kin asset isn't trusted on the wallet
+            await DoFirstOffer().ConfigureAwait(false);
+            await DoP2pOffer().ConfigureAwait(false);
+            await DoExternalSpendOffer().ConfigureAwait(false);
+            await DoExternalEarnOffer().ConfigureAwait(false);
+
+
+            OrderList orders = await MarketPlaceClient.GetOrderHistory().ConfigureAwait(false);
+            Console.WriteLine(JsonConvert.SerializeObject(orders, Formatting.Indented));
+        }
+
+        private static JwtSignInData GetSignInData()
+        {
+            string registerJwt = JwtProviderBuilder.Register.AddUserId(UserId).Jwt;
+            return new JwtSignInData(DeviceInfo.XDeviceId, KeyPair.Address, registerJwt);
+        }
+
+        private static async Task DoFirstOffer()
+        {
             OfferList offers = await MarketPlaceClient.GetOffers().ConfigureAwait(false);
 
             //lets do the first offer in the list!
@@ -90,7 +109,10 @@ namespace kin_csharp_sample_app
                 ;
                 await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
             }
+        }
 
+        private static async Task DoP2pOffer()
+        {
             string p2POffer = JwtProviderBuilder.P2P
                 .AddOffer("p2p", "1")
                 .AddSender(UserId, "p2p", "to myself")
@@ -99,31 +121,36 @@ namespace kin_csharp_sample_app
 
             OpenOrder createExternalP2POffer =
                 await MarketPlaceClient.CreateExternalOffer(p2POffer).ConfigureAwait(false);
-            Order submitP2POffer = await MarketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
 
+            Order submitP2POffer = await MarketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
+        }
+
+        private static async Task DoExternalSpendOffer()
+        {
             string externalSpendOffer = JwtProviderBuilder.Spend
-                .AddOffer("spendit", "1")
+                .AddOffer("spendit", "111")
                 .AddSender(UserId, "speeend it", "block chain sutff isn't coded yet lawl, i'm neva goonna pay")
                 .Jwt;
 
             OpenOrder createExternalSpendOffer =
                 await MarketPlaceClient.CreateExternalOffer(externalSpendOffer).ConfigureAwait(false);
-            ;
 
             Order submitSpendOffer =
                 await MarketPlaceClient.SubmitOrder(createExternalSpendOffer.Id).ConfigureAwait(false);
-            ;
-
-
-            OrderList orders = await MarketPlaceClient.GetOrderHistory().ConfigureAwait(false);
-
-            Console.WriteLine(JsonConvert.SerializeObject(orders, Formatting.Indented));
         }
 
-        private static JwtSignInData GetSignInData()
+        private static async Task DoExternalEarnOffer()
         {
-            string registerJwt = JwtProviderBuilder.Register.AddUserId(UserId).Jwt;
-            return new JwtSignInData(DeviceInfo.XDeviceId, KeyPair.Address, registerJwt);
+            string externalEarnOffer = JwtProviderBuilder.Earn
+                .AddOffer("earrrnit", "111")
+                .AddRecipient(UserId, "earrrnit it", "block chain sutff isn't coded yet lawl, i'm neva goonna pay")
+                .Jwt;
+
+            OpenOrder createExternalEarnOffer =
+                await MarketPlaceClient.CreateExternalOffer(externalEarnOffer).ConfigureAwait(false);
+
+            Order submitEarnOffer =
+                await MarketPlaceClient.SubmitOrder(createExternalEarnOffer.Id).ConfigureAwait(false);
         }
 
         private static async Task<string> AuthorizationHeaderValueGetter()
@@ -141,7 +168,6 @@ namespace kin_csharp_sample_app
 
             return _authToken.Token;
         }
-
         public static async Task WaitForOrderCompletion(string userId, string orderId)
         {
             if (string.IsNullOrEmpty(orderId))
@@ -172,7 +198,6 @@ namespace kin_csharp_sample_app
                 }
             } while (orderResponse?.Status == OrderStatusEnum.Pending && tries > 0);
         }
-
         private static string Base64Decode(string base64)
         {
             if (string.IsNullOrEmpty(base64))
