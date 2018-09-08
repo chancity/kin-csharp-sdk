@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Kin.Jwt
 {
-    public partial class JwtProvider
+    public class JwtProvider
     {
         private static readonly Random Random;
         private readonly Dictionary<string, JwtSecurityKey> _keys;

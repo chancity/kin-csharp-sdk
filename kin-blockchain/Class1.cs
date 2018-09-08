@@ -1,8 +1,4 @@
-﻿using System;
-
-namespace kin_blockchain
+﻿namespace kin_blockchain
 {
-    public class Class1
-    {
-    }
+    public class Class1 { }
 }

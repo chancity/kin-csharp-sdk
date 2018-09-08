@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
-using Refit;
 
 namespace Kin.Marketplace
 {
@@ -16,11 +15,12 @@ namespace Kin.Marketplace
     {
         private readonly MarketPlaceHttpHeaders _marketPlaceHttpHeaders;
         private readonly JSchema _schema;
+
         public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders)
         {
             JSchemaGenerator generator = new JSchemaGenerator();
             _schema = generator.Generate(typeof(MarketPlaceError));
-            
+
             _marketPlaceHttpHeaders = marketPlaceHttpHeaders;
             InnerHandler = new HttpClientHandler();
         }
@@ -43,12 +43,13 @@ namespace Kin.Marketplace
             }
 
 
-            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
-                var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (TryParseMarketPlaceError(jsonResponse, out var error))
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (TryParseMarketPlaceError(jsonResponse, out MarketPlaceError error))
                 {
                     throw new MarketPlaceException(error);
                 }
@@ -69,6 +70,7 @@ namespace Kin.Marketplace
             }
 
             JObject jsonObject = JObject.Parse(jsonResponse);
+
             if (!jsonObject.IsValid(_schema))
             {
                 error = null;

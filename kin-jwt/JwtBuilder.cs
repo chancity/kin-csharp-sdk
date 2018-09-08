@@ -1,17 +1,10 @@
-﻿using System.Collections.Generic;
-using Kin.Jwt.JwtPayloadBuilders;
-using Kin.Jwt.Models;
+﻿using Kin.Jwt.JwtPayloadBuilders;
 
 namespace Kin.Jwt
 {
     public class JwtProviderBuilder
     {
         private readonly JwtProvider _provider;
-
-        public JwtProviderBuilder(JwtProvider provider)
-        {
-            _provider = provider;
-        }
 
         public RegisterBuilder Register => new RegisterBuilder(_provider);
 
@@ -22,12 +15,16 @@ namespace Kin.Jwt
         public SpendBuilder Spend => new SpendBuilder(_provider);
 
 
-        public  EarnBuilder Earn => new EarnBuilder(_provider);
+        public EarnBuilder Earn => new EarnBuilder(_provider);
+
+        public JwtProviderBuilder(JwtProvider provider)
+        {
+            _provider = provider;
+        }
 
         public CustomBuilder Custom(string subject)
         {
             return new CustomBuilder(_provider, subject);
         }
-
     }
 }

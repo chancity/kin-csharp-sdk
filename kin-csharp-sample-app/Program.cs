@@ -41,7 +41,8 @@ namespace kin_csharp_sample_app
             JwtProvider = new JwtProvider("test", SecurityKeys);
             JwtProviderBuilder = new JwtProviderBuilder(JwtProvider);
 
-            MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo, AuthorizationHeaderValueGetter);
+            MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo,
+                AuthorizationHeaderValueGetter);
             UserId = Guid.NewGuid().ToString();
             KeyPair = KeyPair.Random();
         }
@@ -68,6 +69,7 @@ namespace kin_csharp_sample_app
 
             Console.ReadLine();
         }
+
         private static async Task Test()
         {
             _authToken = await MarketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
@@ -104,9 +106,9 @@ namespace kin_csharp_sample_app
             if (offer != null)
             {
                 OpenOrder orderResponse = await MarketPlaceClient.CreateOrderForOffer(offer.Id).ConfigureAwait(false);
-                
+
                 Order submitOrder = await MarketPlaceClient.SubmitOrder(orderResponse.Id).ConfigureAwait(false);
-                
+
                 await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
             }
         }
@@ -168,6 +170,7 @@ namespace kin_csharp_sample_app
 
             return _authToken.Token;
         }
+
         public static async Task WaitForOrderCompletion(string userId, string orderId)
         {
             if (string.IsNullOrEmpty(orderId))
@@ -198,6 +201,7 @@ namespace kin_csharp_sample_app
                 }
             } while (orderResponse?.Status == OrderStatusEnum.Pending && tries > 0);
         }
+
         private static string Base64Decode(string base64)
         {
             if (string.IsNullOrEmpty(base64))
