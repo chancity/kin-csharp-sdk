@@ -97,16 +97,16 @@ namespace kin_csharp_sample_app
         {
             OfferList offers = await MarketPlaceClient.GetOffers().ConfigureAwait(false);
 
-            //lets do the first offer in the list!
-            Offer offer = offers.Offers.FirstOrDefault(x => x.ContentType != "poll" && x.OfferType == "earn");
+            //lets do the tutorial!
+            Offer offer = offers.Offers.SingleOrDefault(o => o.ContentType.Equals("tutorial"));
 
             //This won't go through because the Kin asset isn't trusted yet
             if (offer != null)
             {
                 OpenOrder orderResponse = await MarketPlaceClient.CreateOrderForOffer(offer.Id).ConfigureAwait(false);
-                ;
+                
                 Order submitOrder = await MarketPlaceClient.SubmitOrder(orderResponse.Id).ConfigureAwait(false);
-                ;
+                
                 await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
             }
         }
@@ -129,7 +129,7 @@ namespace kin_csharp_sample_app
         {
             string externalSpendOffer = JwtProviderBuilder.Spend
                 .AddOffer("spendit", "111")
-                .AddSender(UserId, "speeend it", "block chain sutff isn't coded yet lawl, i'm neva goonna pay")
+                .AddSender(UserId, "speeend it", "block chain sutff isn't coded yet lawl, i'm neva goonna spend")
                 .Jwt;
 
             OpenOrder createExternalSpendOffer =
@@ -143,7 +143,7 @@ namespace kin_csharp_sample_app
         {
             string externalEarnOffer = JwtProviderBuilder.Earn
                 .AddOffer("earrrnit", "111")
-                .AddRecipient(UserId, "earrrnit it", "block chain sutff isn't coded yet lawl, i'm neva goonna pay")
+                .AddRecipient(UserId, "earrrnit it", "block chain sutff isn't coded yet lawl, i'm neva goonna earn")
                 .Jwt;
 
             OpenOrder createExternalEarnOffer =
