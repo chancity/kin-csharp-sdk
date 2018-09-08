@@ -83,6 +83,7 @@ namespace kin_csharp_sample_app
             Console.WriteLine("Creating a market place user");
             _authToken = await MarketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await MarketPlaceClient.UsersMeActivate().ConfigureAwait(false);
+
             Console.WriteLine("Trusting the KIN asset");
             await BlockChainHandler.TryUntilActivated(KeyPair).ConfigureAwait(false);
             Console.WriteLine("Finally the wallet is trusted....");
@@ -91,12 +92,15 @@ namespace kin_csharp_sample_app
             Console.WriteLine("Completing the tutorial!");
             await DoFirstOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+
             Console.WriteLine("Sending that p2p good stuff");
             await DoP2pOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+
             Console.WriteLine("External speeeeeend offer");
             await DoExternalSpendOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
+
             Console.WriteLine("External earn offerrrr");
             await DoExternalEarnOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
