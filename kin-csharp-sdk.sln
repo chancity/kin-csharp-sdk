@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stellar-dotnet-sdk", "stellar-dotnet-sdk\stellar-dotnet-sdk.csproj", "{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Blockchain", "..\kin-blockchain\Kin.Blockchain.csproj", "{61A3B447-EB4D-4E84-9BFE-152092882E74}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Marketplace", "kin-marketplace\Kin.Marketplace.csproj", "{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Client", "kin-client\Kin.Client.csproj", "{2C9EF6DD-F7ED-4328-A539-74AA0A481204}"
@@ -15,20 +11,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Jwt", "kin-jwt\Kin.Jwt.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Shared", "kin-shared\Kin.Shared.csproj", "{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kin-csharp-sample-app", "kin-csharp-sample-app\kin-csharp-sample-app.csproj", "{1ADB30C8-3565-47BE-B514-CF369F90E3D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Blockchain", "kin-blockchain\Kin.Blockchain.csproj", "{9A2A3211-1209-48B4-A61A-A7631FC477E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stellar-dotnet-sdk", "stellar-dotnet-sdk\stellar-dotnet-sdk.csproj", "{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F06418A6-7B0B-41E4-9FA3-76EA0B696FF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61A3B447-EB4D-4E84-9BFE-152092882E74}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68FF6781-BBA5-4FEC-92F2-628D74B56A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +39,18 @@ Global
 		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A550A5BB-1602-4CCB-9DFA-F2A04ECCB34E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADB30C8-3565-47BE-B514-CF369F90E3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADB30C8-3565-47BE-B514-CF369F90E3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADB30C8-3565-47BE-B514-CF369F90E3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADB30C8-3565-47BE-B514-CF369F90E3D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A2A3211-1209-48B4-A61A-A7631FC477E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A2A3211-1209-48B4-A61A-A7631FC477E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A2A3211-1209-48B4-A61A-A7631FC477E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A2A3211-1209-48B4-A61A-A7631FC477E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
