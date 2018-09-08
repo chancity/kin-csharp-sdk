@@ -56,7 +56,7 @@ namespace Kin.Marketplace
             return await _apiClient.GetOrder(orderId).ConfigureAwait(false);
         }
 
-        public async Task<Order> SubmitOrder(string orderId, string content)
+        public async Task<Order> SubmitOrder(string orderId, string content = null)
         {
             return await _apiClient.SubmitOrder(orderId, new {content}).ConfigureAwait(false);
         }

@@ -5,6 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kin.Marketplace.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using Refit;
 
 namespace Kin.Marketplace
@@ -12,10 +15,14 @@ namespace Kin.Marketplace
     internal class MarketPlaceHeadersHandler : DelegatingHandler
     {
         private readonly MarketPlaceHttpHeaders _marketPlaceHttpHeaders;
-
+        private readonly JSchema _schema;
         public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders)
         {
+            JSchemaGenerator generator = new JSchemaGenerator();
+            _schema = generator.Generate(typeof(MarketPlaceError));
+            
             _marketPlaceHttpHeaders = marketPlaceHttpHeaders;
+            InnerHandler = new HttpClientHandler();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
@@ -35,18 +42,49 @@ namespace Kin.Marketplace
                 }
             }
 
+
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (TryParseMarketPlaceError(jsonResponse, out var error))
+                {
+                    throw new MarketPlaceException(error);
+                }
+            }
+
+            return response;
+        }
+
+        private bool TryParseMarketPlaceError(string jsonResponse, out MarketPlaceError error)
+        {
+            // Check expected error keywords presence :
+            if (!jsonResponse.Contains("error") ||
+                !jsonResponse.Contains("message") ||
+                !jsonResponse.Contains("code"))
+            {
+                error = null;
+                return false;
+            }
+
+            JObject jsonObject = JObject.Parse(jsonResponse);
+            if (!jsonObject.IsValid(_schema))
+            {
+                error = null;
+                return false;
+            }
+
+            // Try to deserialize :
             try
             {
-                return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                error = JsonConvert.DeserializeObject<MarketPlaceError>(jsonResponse);
+                return true;
             }
-            catch (ApiException e)
+            catch
             {
-                if (!string.IsNullOrEmpty(e.Content))
-                {
-                    throw new MarketPlaceException(JsonConvert.DeserializeObject<MarketPlaceError>(e.Content));
-                }
-
-                throw;
+                error = null;
+                return false;
             }
         }
     }

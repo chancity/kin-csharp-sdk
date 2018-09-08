@@ -13,5 +13,10 @@ namespace Kin.Marketplace.Models
 
         [JsonProperty("code")]
         public int Code { get; private set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Error)}: {Error}, {nameof(Message)}: {Message}, {nameof(Code)}: {Code}";
+        }
     }
 }
