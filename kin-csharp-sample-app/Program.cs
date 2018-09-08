@@ -147,6 +147,9 @@ namespace kin_csharp_sample_app
 
             Order submitP2POffer = await MarketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
 
+            var submitTransactionResponse = await BlockChainHandler.SendPayment(KeyPair, submitP2POffer.BlockChainData.RecipientAddress,
+                submitP2POffer.Amount, submitP2POffer.Id).ConfigureAwait(false);
+
             await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
         }
 
@@ -162,6 +165,9 @@ namespace kin_csharp_sample_app
 
             Order submitSpendOffer =
                 await MarketPlaceClient.SubmitOrder(createExternalSpendOffer.Id).ConfigureAwait(false);
+
+          var submitTransactionResponse = await BlockChainHandler.SendPayment(KeyPair, submitSpendOffer.BlockChainData.RecipientAddress,
+                submitSpendOffer.Amount, submitSpendOffer.Id).ConfigureAwait(false);
 
             await WaitForOrderCompletion(UserId, submitSpendOffer.Id).ConfigureAwait(false);
         }
