@@ -41,7 +41,7 @@ namespace Kin.Jwt
                 ValidIssuer = _kinApplicationId,
                 ValidateIssuerSigningKey = true,
                 ValidateAudience = false,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 ValidateIssuer = true,
                 ValidateTokenReplay = true,
                 ValidateActor = true,
@@ -129,7 +129,7 @@ namespace Kin.Jwt
         public SecurityToken ValidateJwtToken(string jwt)
         {
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-
+            
             // ClaimsPrincipal claimsPrincipal =
             handler.ValidateToken(jwt, _validationParameters, out SecurityToken validatedToken);
 

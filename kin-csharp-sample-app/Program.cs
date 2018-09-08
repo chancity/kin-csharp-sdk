@@ -30,7 +30,8 @@ namespace kin_csharp_sample_app
 
         private static AuthToken _authToken;
         private static readonly Information DeviceInfo;
-        private static readonly JwtProvider JwtProvider;
+        private static readonly JwtProvider MyAppJwtProvider;
+        private static readonly JwtProvider MarketPlaceJwtProvider;
         private static readonly JwtProviderBuilder JwtProviderBuilder;
         private static readonly MarketPlaceClient MarketPlaceClient;
         private static readonly BlockChainHandler BlockChainHandler;
@@ -41,14 +42,20 @@ namespace kin_csharp_sample_app
         static Program()
         {
             DeviceInfo = new Information();
-            JwtProvider = new JwtProvider("test", SecurityKeys);
-            JwtProviderBuilder = new JwtProviderBuilder(JwtProvider);
+            MyAppJwtProvider = new JwtProvider("test", SecurityKeys);
+            JwtProviderBuilder = new JwtProviderBuilder(MyAppJwtProvider);
 
             MarketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", DeviceInfo,
                 AuthorizationHeaderValueGetter);
 
             Config = MarketPlaceClient.Config().Result;
 
+            Dictionary<string, JwtSecurityKey> kinsKeys = new Dictionary<string, JwtSecurityKey>();
+            foreach (KeyValuePair<string, JwtKey> configJwtKey in Config.JwtKeys)
+            {
+                kinsKeys.Add(configJwtKey.Key, new JwtSecurityKey(configJwtKey.Value.Algorithm, configJwtKey.Value.Key));
+            }
+            MarketPlaceJwtProvider = new JwtProvider("kin", kinsKeys);
             BlockChainHandler = new BlockChainHandler(Config);
 
             UserId = Guid.NewGuid().ToString();
@@ -88,20 +95,20 @@ namespace kin_csharp_sample_app
             await BlockChainHandler.TryUntilActivated(KeyPair).ConfigureAwait(false);
             Console.WriteLine("Finally the wallet is trusted....");
 
-
-            Console.WriteLine("Completing the tutorial!");
+         
+            Console.WriteLine("\nCompleting the tutorial!");
             await DoFirstOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
 
-            Console.WriteLine("Sending that p2p good stuff");
+            Console.WriteLine("\nSending that p2p good stuff");
             await DoP2pOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
 
-            Console.WriteLine("External speeeeeend offer");
+            Console.WriteLine("\nExternal speeeeeend offer");
             await DoExternalSpendOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
 
-            Console.WriteLine("External earn offerrrr");
+            Console.WriteLine("\nExternal earn offerrrr");
             await DoExternalEarnOffer().ConfigureAwait(false);
             Console.WriteLine($"Kin Balance: {await BlockChainHandler.GetKinBalance(KeyPair).ConfigureAwait(false)}");
 
@@ -130,7 +137,16 @@ namespace kin_csharp_sample_app
 
                 Order submitOrder = await MarketPlaceClient.SubmitOrder(orderResponse.Id).ConfigureAwait(false);
 
-                await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
+                var finishedOrder = await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+                {
+                    Console.WriteLine("Do I trust this guy?");
+                    var token = MarketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+
+                    Console.WriteLine(token.ToString());
+                }
+
             }
         }
 
@@ -150,7 +166,15 @@ namespace kin_csharp_sample_app
             var submitTransactionResponse = await BlockChainHandler.SendPayment(KeyPair, submitP2POffer.BlockChainData.RecipientAddress,
                 submitP2POffer.Amount, submitP2POffer.Id).ConfigureAwait(false);
 
-            await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
+            var finishedOrder = await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
+
+            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            {
+                Console.WriteLine("Do I trust this guy?");
+                var token = MarketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+
+                Console.WriteLine(token.ToString());
+            }
         }
 
         private static async Task DoExternalSpendOffer()
@@ -169,7 +193,16 @@ namespace kin_csharp_sample_app
           var submitTransactionResponse = await BlockChainHandler.SendPayment(KeyPair, submitSpendOffer.BlockChainData.RecipientAddress,
                 submitSpendOffer.Amount, submitSpendOffer.Id).ConfigureAwait(false);
 
-            await WaitForOrderCompletion(UserId, submitSpendOffer.Id).ConfigureAwait(false);
+          
+            var finishedOrder = await WaitForOrderCompletion(UserId, submitSpendOffer.Id).ConfigureAwait(false);
+
+            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            {
+                Console.WriteLine("Do I trust this guy?");
+                var token = MarketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+
+                Console.WriteLine(token.ToString());
+            }
         }
 
         private static async Task DoExternalEarnOffer()
@@ -185,7 +218,17 @@ namespace kin_csharp_sample_app
             Order submitEarnOffer =
                 await MarketPlaceClient.SubmitOrder(createExternalEarnOffer.Id).ConfigureAwait(false);
 
-            await WaitForOrderCompletion(UserId, submitEarnOffer.Id).ConfigureAwait(false);
+           
+
+            var finishedOrder = await WaitForOrderCompletion(UserId, submitEarnOffer.Id).ConfigureAwait(false);
+
+            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            {
+                Console.WriteLine("Do I trust this guy?");
+                var token = MarketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+
+                Console.WriteLine(token.ToString());
+            }
         }
 
         private static async Task<string> AuthorizationHeaderValueGetter()
@@ -204,12 +247,12 @@ namespace kin_csharp_sample_app
             return _authToken.Token;
         }
 
-        public static async Task WaitForOrderCompletion(string userId, string orderId)
+        public static async Task<Order> WaitForOrderCompletion(string userId, string orderId)
         {
             if (string.IsNullOrEmpty(orderId))
             {
                 Console.WriteLine($"WaitForOrderCompletion order id is null for tx {orderId}");
-                return;
+                return null;
             }
 
             int tries = 15;
@@ -233,6 +276,8 @@ namespace kin_csharp_sample_app
                     Console.WriteLine(e);
                 }
             } while (orderResponse?.Status == OrderStatusEnum.Pending && tries > 0);
+
+            return orderResponse;
         }
 
         private static string Base64Decode(string base64)
