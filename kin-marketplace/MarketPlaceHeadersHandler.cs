@@ -45,33 +45,28 @@ namespace Kin.Marketplace
 
             string reqId = request.Headers.GetValues(MarketPlaceHttpHeaders.XRequestId).FirstOrDefault();
 
-            if (!(request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+
+            Console.WriteLine($"\nRequest {reqId}  url: " + request.RequestUri);
+
+            if (request.Content != null)
             {
-                Console.WriteLine($"\nRequest {reqId}  url: " + request.RequestUri);
+                string reqContent = await request.Content.ReadAsStringAsync();
 
-                if (request.Content != null)
+                if (!string.IsNullOrEmpty(reqContent))
                 {
-                    string reqContent = await request.Content.ReadAsStringAsync();
-
-                    if (!string.IsNullOrEmpty(reqContent))
-                    {
-                        Console.WriteLine($"Request {reqId}  data: \n\t" + reqContent);
-                    }
+                    Console.WriteLine($"Request {reqId}  data: \n\t" + reqContent);
                 }
             }
-
+            
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
+            string respContent = await response.Content.ReadAsStringAsync();
 
-            if (!(request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+            if (!string.IsNullOrEmpty(respContent))
             {
-                string respContent = await response.Content.ReadAsStringAsync();
-
-                if (!string.IsNullOrEmpty(respContent))
-                {
-                    Console.WriteLine($"\nResponse for request {reqId}  data: \n\t" + respContent);
-                }
+                Console.WriteLine($"\nResponse for request {reqId}  data: \n\t" + respContent);
             }
+            
 
 
             if (!response.IsSuccessStatusCode)
