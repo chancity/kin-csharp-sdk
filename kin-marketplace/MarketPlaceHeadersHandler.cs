@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,8 +43,36 @@ namespace Kin.Marketplace
                 }
             }
 
+            string reqId = request.Headers.GetValues(MarketPlaceHttpHeaders.XRequestId).FirstOrDefault();
+
+            if (!(request.RequestUri.ToString().Contains("/orders/") || request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+            {
+                Console.WriteLine($"\nRequest {reqId}  url: " + request.RequestUri);
+
+                if (request.Content != null)
+                {
+                    string reqContent = await request.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(reqContent))
+                    {
+                        Console.WriteLine($"Request {reqId}  data: \n\t" + reqContent);
+                    }
+                }
+            }
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
+
+            if (!(request.RequestUri.ToString().Contains("/orders/") || request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+            {
+                string respContent = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(respContent))
+                {
+                    Console.WriteLine($"\nResponse for request {reqId}  data: \n\t" + respContent);
+                }
+            }
+
 
             if (!response.IsSuccessStatusCode)
             {
