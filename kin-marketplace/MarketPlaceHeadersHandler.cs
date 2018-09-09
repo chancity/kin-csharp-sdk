@@ -45,7 +45,7 @@ namespace Kin.Marketplace
 
             string reqId = request.Headers.GetValues(MarketPlaceHttpHeaders.XRequestId).FirstOrDefault();
 
-            if (!(request.RequestUri.ToString().Contains("/orders/") || request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+            if (!(request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
             {
                 Console.WriteLine($"\nRequest {reqId}  url: " + request.RequestUri);
 
@@ -63,7 +63,7 @@ namespace Kin.Marketplace
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
 
-            if (!(request.RequestUri.ToString().Contains("/orders/") || request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
+            if (!(request.RequestUri.ToString().Contains("/offers") || request.RequestUri.ToString().Contains("/config")))
             {
                 string respContent = await response.Content.ReadAsStringAsync();
 
