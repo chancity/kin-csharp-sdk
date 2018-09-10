@@ -129,7 +129,7 @@ namespace Kin.Jwt
         public SecurityToken ValidateJwtToken(string jwt)
         {
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            
+
             // ClaimsPrincipal claimsPrincipal =
             handler.ValidateToken(jwt, _validationParameters, out SecurityToken validatedToken);
 

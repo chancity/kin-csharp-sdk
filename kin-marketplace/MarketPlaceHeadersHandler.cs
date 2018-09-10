@@ -57,7 +57,7 @@ namespace Kin.Marketplace
                     Console.WriteLine($"Request {reqId}  data: \n\t" + reqContent);
                 }
             }
-            
+
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             string respContent = await response.Content.ReadAsStringAsync();
@@ -66,7 +66,6 @@ namespace Kin.Marketplace
             {
                 Console.WriteLine($"\nResponse for request {reqId}  data: \n\t" + respContent);
             }
-            
 
 
             if (!response.IsSuccessStatusCode)
