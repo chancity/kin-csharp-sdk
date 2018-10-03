@@ -2,11 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>chancity</Authors>
+    <Company>chancity</Company>
+    <PackageProjectUrl>https://github.com/chancity/kin-csharp-sdk</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
-    <ProjectReference Include="..\stellar-dotnet-sdk\stellar-dotnet-sdk.csproj" />
+    <ProjectReference Include="..\kin-stellar-sdk\Kin.Stellar.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

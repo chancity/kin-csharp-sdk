@@ -10,9 +10,9 @@ using Kin.Marketplace;
 using Kin.Marketplace.Models;
 using Kin.Shared.Models.Device;
 using Kin.Shared.Models.MarketPlace;
+using Kin.Stellar.Sdk;
+using Kin.Stellar.Sdk.responses;
 using Microsoft.IdentityModel.Tokens;
-using stellar_dotnet_sdk;
-using stellar_dotnet_sdk.responses;
 
 namespace kin_csharp_sample_app
 {
@@ -47,13 +47,13 @@ namespace kin_csharp_sample_app
             JwtProviderBuilder = new JwtProviderBuilder(MyAppJwtProvider);
         }
 
-
         public SimpleKinClient()
         {
-            _deviceInfo = new Information();
+            _deviceInfo = new Information("KinCsharpClient", "Samsung9+","Samsung","Android");
 
             _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo,
                 AuthorizationHeaderValueGetter);
+
             Config config = _marketPlaceClient.Config().Result;
 
             UserId = Guid.NewGuid().ToString();

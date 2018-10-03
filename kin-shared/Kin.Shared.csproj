@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>chancity</Authors>
+    <PackageProjectUrl>https://github.com/chancity/kin-csharp-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/chancity/kin-csharp-sdk</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
 
   <ItemGroup>

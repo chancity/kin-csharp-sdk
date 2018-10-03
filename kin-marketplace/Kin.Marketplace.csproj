@@ -4,6 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Kin.Marketplace</RootNamespace>
     <AssemblyName>Kin.Marketplace</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>chancity</Authors>
+    <Company>chancity</Company>
+    <PackageProjectUrl>https://github.com/chancity/kin-csharp-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/chancity/kin-csharp-sdk</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

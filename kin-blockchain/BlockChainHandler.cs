@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Kin.BlockChain.Exceptions;
 using Kin.Shared.Models.MarketPlace;
-using stellar_dotnet_sdk;
-using stellar_dotnet_sdk.responses;
+using Kin.Stellar.Sdk;
+using Kin.Stellar.Sdk.responses;
 
 namespace Kin.BlockChain
 {

@@ -12,7 +12,7 @@
     <ProjectReference Include="..\kin-jwt\Kin.Jwt.csproj" />
     <ProjectReference Include="..\kin-marketplace\Kin.Marketplace.csproj" />
     <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
-    <ProjectReference Include="..\stellar-dotnet-sdk\stellar-dotnet-sdk.csproj" />
+    <ProjectReference Include="..\kin-stellar-sdk\Kin.Stellar.Sdk.csproj" />
   </ItemGroup>
 
 </Project>
