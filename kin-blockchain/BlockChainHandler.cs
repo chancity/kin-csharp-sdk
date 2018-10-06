@@ -12,10 +12,11 @@ namespace Kin.BlockChain
         private readonly Asset _kinAsset;
 
         private readonly Server _server;
+        private readonly string _appId;
         private readonly string TRUST_NO_LIMIT_VALUE;
         private string MAIN_NETWORK_ISSUER;
 
-        public BlockChainHandler(Config config)
+        public BlockChainHandler(Config config, string appId)
         {
             _kinAsset = Asset.CreateNonNativeAsset(config.BlockChain.AssetCode,
                 KeyPair.FromAccountId(config.BlockChain.AssetIssuer));
@@ -24,6 +25,7 @@ namespace Kin.BlockChain
             _server = new Server(config.BlockChain.HorizonUrl + "/");
             Network.UsePublicNetwork();
             Network.Use(new Network(config.BlockChain.NetworkPassphrase));
+            _appId = appId;
         }
 
         public async Task<bool> TryUntilActivated(KeyPair account)
@@ -84,8 +86,6 @@ namespace Kin.BlockChain
                     changeTrustOperation);
 
 
-            allowKinTrustTransaction.AddMemo(new MemoText("1-kin-csharp-sdk"));
-
             Transaction transaction = allowKinTrustTransaction.Build();
             transaction.Sign(account);
             return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace Kin.BlockChain
 
             string toAppend = string.IsNullOrEmpty(marketPlaceOrderId) ? "p2p" : marketPlaceOrderId;
 
-            paymentTransaction.AddMemo(new MemoText($"1-test-{toAppend}"));
+            paymentTransaction.AddMemo(new MemoText($"1-{_appId}-{toAppend}"));
 
             Transaction transaction = paymentTransaction.Build();
             transaction.Sign(sourceKeyPair);

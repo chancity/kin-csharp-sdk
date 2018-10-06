@@ -43,30 +43,7 @@ namespace Kin.Marketplace
                 }
             }
 
-            string reqId = request.Headers.GetValues(MarketPlaceHttpHeaders.XRequestId).FirstOrDefault();
-
-
-            Console.WriteLine($"\nRequest {reqId}  url: " + request.RequestUri);
-
-            if (request.Content != null)
-            {
-                string reqContent = await request.Content.ReadAsStringAsync();
-
-                if (!string.IsNullOrEmpty(reqContent))
-                {
-                    Console.WriteLine($"Request {reqId}  data: \n\t" + reqContent);
-                }
-            }
-
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-            string respContent = await response.Content.ReadAsStringAsync();
-
-            if (!string.IsNullOrEmpty(respContent))
-            {
-                Console.WriteLine($"\nResponse for request {reqId}  data: \n\t" + respContent);
-            }
-
 
             if (!response.IsSuccessStatusCode)
             {
