@@ -8,19 +8,18 @@ using Kin.Marketplace.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Schema.Generation;
+using NJsonSchema;
 
 namespace Kin.Marketplace
 {
     internal class MarketPlaceHeadersHandler : DelegatingHandler
     {
         private readonly MarketPlaceHttpHeaders _marketPlaceHttpHeaders;
-        private readonly JSchema _schema;
+        private readonly JsonSchema4 _schema;
 
         public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders)
         {
-            JSchemaGenerator generator = new JSchemaGenerator();
-            _schema = generator.Generate(typeof(MarketPlaceError));
+            _schema = JsonSchema4.FromTypeAsync<MarketPlaceError>().Result;
 
             _marketPlaceHttpHeaders = marketPlaceHttpHeaders;
             InnerHandler = new HttpClientHandler();
@@ -69,9 +68,9 @@ namespace Kin.Marketplace
                 return false;
             }
 
-            JObject jsonObject = JObject.Parse(jsonResponse);
+            var errors = _schema.Validate(jsonResponse);
 
-            if (!jsonObject.IsValid(_schema))
+            if (errors.Count > 0)
             {
                 error = null;
                 return false;
