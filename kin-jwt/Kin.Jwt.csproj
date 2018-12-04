@@ -7,6 +7,9 @@
     <RepositoryUrl>https://github.com/chancity/kin-csharp-sdk</RepositoryUrl>
     <Authors>chancity</Authors>
     <Company>chancity</Company>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.1.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
