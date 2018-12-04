@@ -18,8 +18,8 @@ namespace Kin.Stellar.Sdk.responses
             Limit = limit;
             AssetCode = assetCode;
             _assetIssuer = assetIssuer;
-            BuyingLiabilities = buyingLiabilities ?? throw new ArgumentNullException(nameof(buyingLiabilities), "buyingLiabilities cannot be null");
-            SellingLiabilities = sellingLiabilities ?? throw new ArgumentNullException(nameof(sellingLiabilities), "sellingLiabilities cannot be null");
+            BuyingLiabilities = buyingLiabilities;
+            SellingLiabilities = sellingLiabilities;
         }
 
         [JsonProperty(PropertyName = "asset_type")]
