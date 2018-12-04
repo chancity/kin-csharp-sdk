@@ -11,7 +11,7 @@ namespace Kin.Stellar.Sdk.responses
     /// </summary>
     public class TradeResponse : Response, IPagingToken
     {
-        public TradeResponse(String id, String pagingToken, String ledgerCloseTime, String offerId, bool baseIsSeller, KeyPair baseAccount, String baseAmount, String baseAssetType, String baseAssetCode, String baseAssetIssuer, KeyPair counterAccount, String counterAmount, String counterAssetType, String counterAssetCode, String counterAssetIssuer)
+        public TradeResponse(String id, String pagingToken, String ledgerCloseTime, String offerId, bool baseIsSeller, KeyPair baseAccount, String baseAmount, String baseAssetType, String baseAssetCode, String baseAssetIssuer, KeyPair counterAccount, String counterAmount, String counterAssetType, String counterAssetCode, String counterAssetIssuer, Price price)
         {
             Id = id;
             PagingToken = pagingToken;
@@ -28,10 +28,10 @@ namespace Kin.Stellar.Sdk.responses
             CounterAssetType = counterAssetType;
             CounterAssetCode = counterAssetCode;
             CounterAssetIssuer = counterAssetIssuer;
+            Price = price;
         }
 
-        [JsonProperty(PropertyName = "id")]
-        public String Id { get; }
+        [JsonProperty(PropertyName = "id")] public String Id { get; }
 
         [JsonProperty(PropertyName = "paging_token")]
         public String PagingToken { get; }
@@ -75,44 +75,20 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "counter_asset_issuer")]
         public String CounterAssetIssuer { get; }
 
+        [JsonProperty(PropertyName = "price")]
+        public Price Price { get; }
+
         [JsonProperty(PropertyName = "_links")]
         public TradeResponseLinks Links { get; }
-
 
         /// <summary>
         /// Creates and returns a base asset.
         /// </summary>
-        public Asset BaseAsset
-        {
-            get { return Asset.Create(BaseAssetType, BaseAssetCode, BaseAssetIssuer); }
-        }
+        public Asset BaseAsset => Asset.Create(BaseAssetType, BaseAssetCode, BaseAssetIssuer);
 
         /// <summary>
         /// Creates and returns a counter asset.
         /// </summary>
-        public Asset CountAsset
-        {
-            get { return Asset.Create(CounterAssetType, CounterAssetCode, CounterAssetIssuer); }
-        }
-
-    }
-
-    public class TradeResponseLinks
-    {
-        public TradeResponseLinks(Link baseLink, Link counterLink, Link operationLink)
-        {
-            Base = baseLink;
-            Counter = counterLink;
-            Operation = operationLink;
-        }
-
-        [JsonProperty(PropertyName = "base")]
-        public Link Base;
-
-        [JsonProperty(PropertyName = "counter")]
-        public Link Counter;
-
-        [JsonProperty(PropertyName = "operation")]
-        public Link Operation;
+        public Asset CountAsset => Asset.Create(CounterAssetType, CounterAssetCode, CounterAssetIssuer);
     }
 }

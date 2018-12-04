@@ -16,7 +16,6 @@ namespace Kin.Stellar.Sdk.requests
         public OperationsRequestBuilder(Uri serverUri, HttpClient httpClient)
             : base(serverUri, "operations", httpClient)
         {
-
         }
 
         /// <summary>

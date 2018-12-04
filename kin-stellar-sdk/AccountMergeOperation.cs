@@ -18,6 +18,11 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         public KeyPair Destination { get; }
 
+        public override OperationThreshold Threshold
+        {
+            get => OperationThreshold.High;
+        }
+
         /// <summary>
         /// Returns the Account Merge XDR Operation Body
         /// </summary>

@@ -31,9 +31,7 @@ namespace Kin.Stellar.Sdk.responses.operations
 
         // Price is not implemented yet in horizon
 
-        [JsonProperty(PropertyName = "price")]
-        public string Price { get; }
-
+        [JsonProperty(PropertyName = "price")] public string Price { get; }
 
         [JsonProperty(PropertyName = "buying_asset_type")]
         public string BuyingAssetType { get; }

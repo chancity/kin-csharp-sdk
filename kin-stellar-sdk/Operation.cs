@@ -15,11 +15,18 @@ namespace Kin.Stellar.Sdk
             set => _sourceAccount = value ?? throw new ArgumentNullException(nameof(value), "keypair cannot be null");
         }
 
+        /// <summary>
+        /// Threshold level for the operation.
+        /// </summary>
+        public virtual OperationThreshold Threshold
+        {
+            get => OperationThreshold.Medium;
+        }
+
         public static long ToXdrAmount(string value)
         {
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentNullException(nameof(value), "value cannot be null");
-
 
             //This bascially takes a decimal value and turns it into a large integer.
             var amount = decimal.Parse(value) * ONE;
@@ -29,7 +36,7 @@ namespace Kin.Stellar.Sdk
             if (amount % 1 > 0)
                 throw new ArithmeticException("Unable to cast decimal with fractional places into long.");
 
-            return (long)amount;
+            return (long) amount;
         }
 
         public static string FromXdrAmount(long value)
@@ -50,6 +57,7 @@ namespace Kin.Stellar.Sdk
                 sourceAccount.InnerValue = SourceAccount.XdrPublicKey;
                 thisXdr.SourceAccount = sourceAccount;
             }
+
             thisXdr.Body = ToOperationBody();
             return thisXdr;
         }
@@ -67,8 +75,8 @@ namespace Kin.Stellar.Sdk
 
         ///<summary>
         ///</summary>
-        /// <returns>new Operation object from Operation XDR object.</returns> 
-        /// <param name="thisXdr">XDR object</param> 
+        /// <returns>new Operation object from Operation XDR object.</returns>
+        /// <param name="thisXdr">XDR object</param>
         public static Operation FromXdr(xdr.Operation thisXdr)
         {
             var body = thisXdr.Body;
@@ -105,14 +113,20 @@ namespace Kin.Stellar.Sdk
                 case OperationType.OperationTypeEnum.MANAGE_DATA:
                     operation = new ManageDataOperation.Builder(body.ManageDataOp).Build();
                     break;
+                case OperationType.OperationTypeEnum.BUMP_SEQUENCE:
+                    operation = new BumpSequenceOperation.Builder(body.BumpSequenceOp).Build();
+                    break;
+                case OperationType.OperationTypeEnum.INFLATION:
+                    operation = new InflationOperation.Builder().Build();
+                    break;
                 default:
                     throw new Exception("Unknown operation body " + body.Discriminant.InnerValue);
             }
+
             if (thisXdr.SourceAccount != null)
                 operation.SourceAccount = KeyPair.FromXdrPublicKey(thisXdr.SourceAccount.InnerValue);
             return operation;
         }
-
 
         ///<summary>
         /// Generates OperationBody XDR object

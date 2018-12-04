@@ -5,18 +5,14 @@ namespace Kin.Stellar.Sdk.responses
 {
     public class OrderBookResponse
     {
-        [JsonProperty(PropertyName = "base")]
-        public Asset OrderBookBase { get; private set; }
+        [JsonProperty(PropertyName = "base")] public Asset OrderBookBase { get; private set; }
 
         [JsonProperty(PropertyName = "counter")]
         public Asset Counter { get; private set; }
 
-        [JsonProperty(PropertyName = "asks")]
-        public Row[] Asks { get; private set; }
+        [JsonProperty(PropertyName = "asks")] public Row[] Asks { get; private set; }
 
-        [JsonProperty(PropertyName = "bids")]
-        public Row[] Bids { get; private set; }
-
+        [JsonProperty(PropertyName = "bids")] public Row[] Bids { get; private set; }
 
         public OrderBookResponse(Asset orderBookBase, Asset counter, Row[] asks, Row[] bids)
         {
@@ -26,7 +22,6 @@ namespace Kin.Stellar.Sdk.responses
             Bids = bids;
         }
 
-
         ///
         /// Represents order book row.
         ///
@@ -35,12 +30,10 @@ namespace Kin.Stellar.Sdk.responses
             [JsonProperty(PropertyName = "amount")]
             public string Amount { get; private set; }
 
-            [JsonProperty(PropertyName = "price")]
-            public string Price { get; private set; }
+            [JsonProperty(PropertyName = "price")] public string Price { get; private set; }
 
             [JsonProperty(PropertyName = "price_r")]
             public Price PriceR { get; private set; }
-
 
             public Row(string amount, string price, Price priceR)
             {

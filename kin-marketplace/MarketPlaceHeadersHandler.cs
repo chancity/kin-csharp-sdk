@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,19 +43,28 @@ namespace Kin.Marketplace
                 }
             }
 
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                if (TryParseMarketPlaceError(jsonResponse, out MarketPlaceError error))
+                using (HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 {
-                    throw new MarketPlaceException(error);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                        if (TryParseMarketPlaceError(jsonResponse, out MarketPlaceError error))
+                        {
+                            throw new MarketPlaceException(error, response);
+                        }
+                    }
+
+                    return response;
                 }
             }
-
-            return response;
+            catch (WebException wex)
+            {
+                wex?.Response?.Dispose();
+                throw;
+            }
         }
 
         private bool TryParseMarketPlaceError(string jsonResponse, out MarketPlaceError error)

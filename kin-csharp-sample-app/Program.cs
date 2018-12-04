@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Kin.Marketplace;
+using Kin.Marketplace.Models;
+using Newtonsoft.Json;
 
 namespace kin_csharp_sample_app
 {
@@ -31,10 +33,13 @@ namespace kin_csharp_sample_app
 
         public static async Task Test()
         {
-            SimpleKinClient firstKinClient = new SimpleKinClient();
-            SimpleKinClient secondKinClient = new SimpleKinClient();
+            for (;;)
+            {
+                SimpleKinClient firstKinClient = new SimpleKinClient();
+                //SimpleKinClient secondKinClient = new SimpleKinClient();
 
-            await Task.WhenAll(firstKinClient.FirstTest(), secondKinClient.FirstTest()).ConfigureAwait(false);
+                await firstKinClient.FirstTest();
+            }
         }
     }
 }

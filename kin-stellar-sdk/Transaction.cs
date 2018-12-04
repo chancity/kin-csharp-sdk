@@ -45,10 +45,20 @@ namespace Kin.Stellar.Sdk
         /// <param name="signer"> signer <see cref="KeyPair"/> object representing a signer</param>
         public void Sign(KeyPair signer)
         {
+            Sign(signer, Network.Current);
+        }
+
+        /// <summary>
+        /// Adds a new signature ed25519PublicKey to this transaction.
+        /// </summary>
+        /// <param name="signer"> signer <see cref="KeyPair"/> object representing a signer</param>
+        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        public void Sign(KeyPair signer, Network network)
+        {
             if (signer == null)
                 throw new ArgumentNullException(nameof(signer), "signer cannot be null");
 
-            var txHash = Hash();
+            var txHash = Hash(network);
             Signatures.Add(signer.SignDecorated(txHash));
         }
 
@@ -68,7 +78,7 @@ namespace Kin.Stellar.Sdk
             var length = hash.Length;
             var signatureHintBytes = hash.Skip(length - 4).Take(4).ToArray();
 
-            var signatureHint = new SignatureHint { InnerValue = signatureHintBytes };
+            var signatureHint = new SignatureHint {InnerValue = signatureHintBytes};
 
             var decoratedSignature = new DecoratedSignature
             {
@@ -85,7 +95,17 @@ namespace Kin.Stellar.Sdk
         /// <returns></returns>
         public byte[] Hash()
         {
-            return Util.Hash(SignatureBase());
+            return Hash(Network.Current);
+        }
+
+        /// <summary>
+        ///     Returns transaction hash for the given network.
+        /// </summary>
+        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        /// <returns></returns>
+        public byte[] Hash(Network network)
+        {
+            return Util.Hash(SignatureBase(network));
         }
 
         /// <summary>
@@ -94,13 +114,23 @@ namespace Kin.Stellar.Sdk
         /// <returns></returns>
         public byte[] SignatureBase()
         {
-            if (Network.Current == null)
+            return SignatureBase(Network.Current);
+        }
+
+        /// <summary>
+        ///     Returns signature base for the given network.
+        /// </summary>
+        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        /// <returns></returns>
+        public byte[] SignatureBase(Network network)
+        {
+            if (network == null)
                 throw new NoNetworkSelectedException();
 
             var writer = new XdrDataOutputStream();
 
             // Hashed NetworkID
-            writer.Write(Network.Current.NetworkId);
+            writer.Write(network.NetworkId);
 
             // Envelope Type - 4 bytes
             EnvelopeType.Encode(writer, EnvelopeType.Create(EnvelopeType.EnvelopeTypeEnum.ENVELOPE_TYPE_TX));
@@ -121,14 +151,14 @@ namespace Kin.Stellar.Sdk
         public xdr.Transaction ToXdr()
         {
             // fee
-            var fee = new Uint32 { InnerValue = Fee };
+            var fee = new Uint32 {InnerValue = Fee};
 
             // sequenceNumber
-            var sequenceNumberUint = new Uint64 { InnerValue = SequenceNumber };
-            var sequenceNumber = new SequenceNumber { InnerValue = sequenceNumberUint };
+            var sequenceNumberUint = new xdr.Int64(SequenceNumber);
+            var sequenceNumber = new SequenceNumber {InnerValue = sequenceNumberUint};
 
             // sourceAccount
-            var sourceAccount = new AccountID { InnerValue = SourceAccount.XdrPublicKey };
+            var sourceAccount = new AccountID {InnerValue = SourceAccount.XdrPublicKey};
 
             // operations
             var operations = new xdr.Operation[Operations.Length];
@@ -137,7 +167,7 @@ namespace Kin.Stellar.Sdk
                 operations[i] = Operations[i].ToXdr();
 
             // ext
-            var ext = new xdr.Transaction.TransactionExt { Discriminant = 0 };
+            var ext = new xdr.Transaction.TransactionExt {Discriminant = 0};
 
             var transaction = new xdr.Transaction
             {
@@ -200,7 +230,6 @@ namespace Kin.Stellar.Sdk
             return Convert.ToBase64String(writer.ToArray());
         }
 
-
         /// <summary>
         ///     Returns base64-encoded TransactionEnvelope XDR object. Transaction need to have at least one signature.
         /// </summary>
@@ -246,7 +275,6 @@ namespace Kin.Stellar.Sdk
 
             return transaction;
         }
-    
 
         /// <summary>
         ///     Builds a new Transaction object.
@@ -328,7 +356,7 @@ namespace Kin.Stellar.Sdk
             {
                 var operations = _operations.ToArray();
 
-                var transaction = new Transaction(_sourceAccount.KeyPair, operations.Length * BaseFee, _sourceAccount.GetIncrementedSequenceNumber(), operations, _memo, _timeBounds);
+                var transaction = new Transaction(_sourceAccount.KeyPair, operations.Length * BaseFee, _sourceAccount.IncrementedSequenceNumber, operations, _memo, _timeBounds);
                 // Increment sequence number when there were no exceptions when creating a transaction
                 _sourceAccount.IncrementSequenceNumber();
                 return transaction;

@@ -1,8 +1,9 @@
 ﻿using System;
-using Chaos.NaCl.Internal;
-using Chaos.NaCl.Internal.Salsa;
+using Kin.Stellar.Sdk.chaos.nacl;
+using Kin.Stellar.Sdk.chaos.nacl.Internal;
+using Kin.Stellar.Sdk.chaos.nacl.Internal.Salsa;
 
-namespace Chaos.NaCl
+namespace Kin.Stellar.Sdk.Chaos.Nacl
 {
     public static class XSalsa20Poly1305
     {
@@ -139,7 +140,7 @@ namespace Chaos.NaCl
 
             // first iteration
             {
-                SalsaCore.Salsa(out temp, ref internalKey, 20);
+                SalsaCore.HSalsa(out temp, ref internalKey, 20);
 
                 //first half is for Poly1305
                 Array8<UInt32> poly1305Key;
@@ -179,7 +180,7 @@ namespace Chaos.NaCl
             while (blockOffset < plaintextLength)
             {
                 internalKey.x8++;
-                SalsaCore.Salsa(out temp, ref internalKey, 20);
+                SalsaCore.HSalsa(out temp, ref internalKey, 20);
                 ByteIntegerConverter.Array16StoreLittleEndian32(tempBytes, 0, ref temp);
                 int count = Math.Min(64, plaintextLength - blockOffset);
                 for (int i = 0; i < count; i++)
@@ -200,7 +201,7 @@ namespace Chaos.NaCl
 
             // first iteration
             {
-                SalsaCore.Salsa(out temp, ref internalKey, 20);
+                SalsaCore.HSalsa(out temp, ref internalKey, 20);
 
                 //first half is for Poly1305
                 poly1305Key.x0 = temp.x0;
@@ -231,7 +232,7 @@ namespace Chaos.NaCl
             while (blockOffset < messageLength)
             {
                 internalKey.x8++;
-                SalsaCore.Salsa(out temp, ref internalKey, 20);
+                SalsaCore.HSalsa(out temp, ref internalKey, 20);
                 ByteIntegerConverter.Array16StoreLittleEndian32(tempBytes, 0, ref temp);
                 int count = Math.Min(64, messageLength - blockOffset);
                 for (int i = 0; i < count; i++)

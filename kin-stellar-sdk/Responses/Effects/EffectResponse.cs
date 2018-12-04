@@ -5,14 +5,12 @@ namespace Kin.Stellar.Sdk.responses.effects
 {
     public abstract class EffectResponse : Response, IPagingToken
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; protected set; }
+        [JsonProperty(PropertyName = "id")] public string Id { get; protected set; }
 
         [JsonProperty(PropertyName = "account")]
         public KeyPair Account { get; protected set; }
 
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; protected set; }
+        [JsonProperty(PropertyName = "type")] public string Type { get; protected set; }
 
         [JsonProperty(PropertyName = "paging_token")]
         public string PagingToken { get; protected set; }
@@ -30,7 +28,6 @@ namespace Kin.Stellar.Sdk.responses.effects
         {
             [JsonProperty(PropertyName = "operation")]
             public Link Operation { get; }
-
 
             [JsonProperty(PropertyName = "precedes")]
             public Link Precedes { get; }

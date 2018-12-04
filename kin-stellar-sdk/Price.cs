@@ -25,7 +25,6 @@ namespace Kin.Stellar.Sdk
 
         public int Denominator { get; }
 
-
         /// <summary>
         ///     Approximates<code> price</code> to a fraction.
         /// </summary>
@@ -60,6 +59,7 @@ namespace Kin.Stellar.Sdk
                 number = decimal.Divide(1m, f);
                 i = i + 1;
             }
+
             var n = fractions[fractions.Count - 1][0];
             var d = fractions[fractions.Count - 1][1];
             return new Price(Convert.ToInt32(n), Convert.ToInt32(d));
@@ -79,7 +79,6 @@ namespace Kin.Stellar.Sdk
             xdr.D = d;
             return xdr;
         }
-
 
         public new bool Equals(object obj)
         {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chaos.NaCl.Internal
+namespace Kin.Stellar.Sdk.chaos.nacl.Internal
 {
     internal static class InternalAssert
     {

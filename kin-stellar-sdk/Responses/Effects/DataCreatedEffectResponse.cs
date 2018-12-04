@@ -10,6 +10,5 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// </summary>
     public class DataCreatedEffectResponse : EffectResponse
     {
-
     }
 }

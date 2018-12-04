@@ -13,11 +13,9 @@ namespace Kin.Stellar.Sdk
             var length = Encoding.UTF8.GetBytes(text).Length;
             if (length > 28)
                 throw new MemoTooLongException("text must be <= 28 bytes. length=" + length);
-            
         }
 
         public string MemoTextValue { get; }
-
 
         public override xdr.Memo ToXdr()
         {
@@ -31,14 +29,14 @@ namespace Kin.Stellar.Sdk
         {
             if (this == o) return true;
             if (o == null || GetType() != o.GetType()) return false;
-            MemoText memoText = (MemoText)o;
+            MemoText memoText = (MemoText) o;
             return Equals(MemoTextValue, memoText.MemoTextValue);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Start
-                           .Hash(MemoTextValue);
+                .Hash(MemoTextValue);
         }
     }
 }

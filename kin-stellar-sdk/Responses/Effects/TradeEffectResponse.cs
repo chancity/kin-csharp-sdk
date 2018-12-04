@@ -32,7 +32,6 @@ namespace Kin.Stellar.Sdk.responses.effects
         [JsonProperty(PropertyName = "offer_id")]
         public long OfferId { get; }
 
-
         [JsonProperty(PropertyName = "sold_amount")]
         public string SoldAmount { get; }
 

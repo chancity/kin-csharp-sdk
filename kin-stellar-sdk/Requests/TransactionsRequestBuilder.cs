@@ -11,7 +11,6 @@ namespace Kin.Stellar.Sdk.requests
         public TransactionsRequestBuilder(Uri serverURI, HttpClient httpClient)
             : base(serverURI, "transactions", httpClient)
         {
-
         }
 
         /// <summary>

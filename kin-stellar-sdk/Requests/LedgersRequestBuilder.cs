@@ -11,7 +11,6 @@ namespace Kin.Stellar.Sdk.requests
         public LedgersRequestBuilder(Uri serverUri, HttpClient httpClient)
             : base(serverUri, "ledgers", httpClient)
         {
-
         }
 
         /// <summary>

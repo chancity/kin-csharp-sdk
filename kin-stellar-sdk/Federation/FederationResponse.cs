@@ -25,7 +25,6 @@ namespace Kin.Stellar.Sdk.federation
         [JsonProperty(PropertyName = "memo_type")]
         public string MemoType { get; private set; }
 
-        [JsonProperty(PropertyName = "memo")]
-        public string Memo { get; private set; }
+        [JsonProperty(PropertyName = "memo")] public string Memo { get; private set; }
     }
 }

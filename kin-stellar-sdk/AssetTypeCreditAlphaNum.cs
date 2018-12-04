@@ -53,7 +53,6 @@ namespace Kin.Stellar.Sdk
             }
         }
 
-
         /// <inheritdoc />
         public override bool Equals(object obj)
         {

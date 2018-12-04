@@ -1,4 +1,4 @@
-﻿namespace Chaos.NaCl.Internal
+﻿namespace Kin.Stellar.Sdk.chaos.nacl.Internal
 {
     // Array16<UInt32> Salsa20 state
     // Array16<UInt64> SHA-512 block

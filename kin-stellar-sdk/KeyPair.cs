@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-using Chaos.NaCl;
+using Kin.Stellar.Sdk.chaos.nacl;
 using Kin.Stellar.Sdk.xdr;
 
 namespace Kin.Stellar.Sdk
@@ -30,7 +30,6 @@ namespace Kin.Stellar.Sdk
         public KeyPair(byte[] publicKey, byte[] privateKey, byte[] seed)
         {
             PublicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey), "publicKey cannot be null");
-            ;
             PrivateKey = privateKey;
             SeedBytes = seed;
         }
@@ -39,13 +38,12 @@ namespace Kin.Stellar.Sdk
         /// The public key.
         /// </summary>
         public byte[] PublicKey { get; }
-        
+
         /// <summary>
         /// The private key.
         /// </summary>
         public byte[] PrivateKey { get; }
-        
-        
+
         /// <summary>
         /// The bytes of the Secret Seed
         /// </summary>
@@ -56,7 +54,6 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         public string AccountId => StrKey.EncodeStellarAccountId(PublicKey);
 
-        
         /// <summary>
         /// Address
         /// </summary>
@@ -180,7 +177,6 @@ namespace Kin.Stellar.Sdk
             return new KeyPair(publicKey, privateKey, seed);
         }
 
-
         /// <summary>
         ///     Creates a new Stellar KeyPair from a strkey encoded Stellar account ID.
         /// </summary>
@@ -217,6 +213,7 @@ namespace Kin.Stellar.Sdk
             {
                 rngCrypto.GetBytes(b);
             }
+
             return FromSecretSeed(b);
         }
 

@@ -12,7 +12,6 @@ namespace Kin.Stellar.Sdk.requests
         public PaymentsRequestBuilder(Uri serverURI, HttpClient httpClient)
             : base(serverURI, "payments", httpClient)
         {
-
         }
 
         ///<Summary>

@@ -15,7 +15,6 @@ namespace Kin.Stellar.Sdk
 
         public byte[] Value { get; }
 
-
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
             var op = new sdkxdr.ManageDataOp();

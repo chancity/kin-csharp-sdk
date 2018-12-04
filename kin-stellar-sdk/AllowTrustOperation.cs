@@ -31,6 +31,11 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         public bool Authorize { get; }
 
+        public override OperationThreshold Threshold
+        {
+            get => OperationThreshold.Low;
+        }
+
         /// <summary>
         /// Returns the Allow Trust XDR Operation Body
         /// </summary>
@@ -55,6 +60,7 @@ namespace Kin.Stellar.Sdk
                 asset.Discriminant = sdkxdr.AssetType.Create(sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM12);
                 asset.AssetCode12 = Util.PaddedByteArray(AssetCode, 12);
             }
+
             op.Asset = asset;
             // authorize
             op.Authorize = Authorize;
@@ -98,6 +104,7 @@ namespace Kin.Stellar.Sdk
                     default:
                         throw new Exception("Unknown asset code");
                 }
+
                 _authorize = op.Authorize;
             }
 

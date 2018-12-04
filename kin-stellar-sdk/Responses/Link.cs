@@ -11,8 +11,7 @@ namespace Kin.Stellar.Sdk.responses
             Templated = templated;
         }
 
-        [JsonProperty(PropertyName = "href")]
-        public string Href { get; set; }
+        [JsonProperty(PropertyName = "href")] public string Href { get; set; }
 
         [JsonProperty(PropertyName = "templated")]
         public bool Templated { get; set; }

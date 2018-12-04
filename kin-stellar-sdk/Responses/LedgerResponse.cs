@@ -8,8 +8,7 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "sequence")]
         public long Sequence { get; private set; }
 
-        [JsonProperty(PropertyName = "hash")]
-        public string Hash { get; private set; }
+        [JsonProperty(PropertyName = "hash")] public string Hash { get; private set; }
 
         [JsonProperty(PropertyName = "paging_token")]
         public string PagingToken { get; private set; }
@@ -50,7 +49,6 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "_links")]
         public LedgerResponseLinks Links { get; private set; }
 
-
         public LedgerResponse(long sequence, String hash, String pagingToken, String prevHash, int transactionCount, int operationCount, String closedAt, String totalCoins, String feePool, long baseFee, String baseReserve, String baseFeeInStroops, String baseReserveInStroops, int maxTxSetSize, LedgerResponseLinks links)
         {
             Sequence = sequence;
@@ -81,8 +79,7 @@ namespace Kin.Stellar.Sdk.responses
             [JsonProperty(PropertyName = "operations")]
             public Link Operations { get; private set; }
 
-            [JsonProperty(PropertyName = "self")]
-            public Link Self { get; private set; }
+            [JsonProperty(PropertyName = "self")] public Link Self { get; private set; }
 
             [JsonProperty(PropertyName = "transactions")]
             public Link Transactions { get; private set; }
@@ -94,7 +91,6 @@ namespace Kin.Stellar.Sdk.responses
                 Self = self;
                 Transactions = transactions;
             }
-
         }
     }
 }

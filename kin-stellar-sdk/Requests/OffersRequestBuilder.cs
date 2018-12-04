@@ -12,7 +12,6 @@ namespace Kin.Stellar.Sdk.requests
         public OffersRequestBuilder(Uri serverURI, HttpClient httpClient) :
             base(serverURI, "offers", httpClient)
         {
-
         }
 
         /// <summary>
@@ -29,4 +28,3 @@ namespace Kin.Stellar.Sdk.requests
         }
     }
 }
-

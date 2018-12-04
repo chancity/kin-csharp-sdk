@@ -22,6 +22,15 @@ namespace Kin.Stellar.Sdk
         {
         }
 
+        public RootResponse Root()
+        {
+            ResponseHandler<RootResponse> responseHandler = new ResponseHandler<RootResponse>();
+
+            var response = HttpClient.GetAsync(_serverUri).Result;
+
+            return responseHandler.HandleResponse(response).Result;
+        }
+
         public static HttpClient HttpClient { get; set; }
 
         public AccountsRequestBuilder Accounts => new AccountsRequestBuilder(_serverUri, HttpClient);
@@ -37,7 +46,7 @@ namespace Kin.Stellar.Sdk
         public OperationsRequestBuilder Operations => new OperationsRequestBuilder(_serverUri, HttpClient);
 
         public OrderBookRequestBuilder OrderBook => new OrderBookRequestBuilder(_serverUri, HttpClient);
-        
+
         public TradesRequestBuilder Trades => new TradesRequestBuilder(_serverUri, HttpClient);
 
         public PathsRequestBuilder Paths => new PathsRequestBuilder(_serverUri, HttpClient);
@@ -60,9 +69,9 @@ namespace Kin.Stellar.Sdk
             var transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
 
             var paramsPairs = new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("tx", transaction.ToEnvelopeXdrBase64())
-                };
+            {
+                new KeyValuePair<string, string>("tx", transaction.ToEnvelopeXdrBase64())
+            };
 
             var response = await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
             if (response.Content != null)
@@ -80,9 +89,9 @@ namespace Kin.Stellar.Sdk
             var transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
 
             var paramsPairs = new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("tx", transactionEnvelopeBase64)
-                };
+            {
+                new KeyValuePair<string, string>("tx", transactionEnvelopeBase64)
+            };
 
             var response = await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
             if (response.Content != null)
@@ -94,7 +103,5 @@ namespace Kin.Stellar.Sdk
 
             return null;
         }
-
-
     }
 }

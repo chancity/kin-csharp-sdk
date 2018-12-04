@@ -10,10 +10,8 @@ namespace Kin.Stellar.Sdk.requests
         public RequestBuilderExecutePageable(Uri serverUri, string defaultSegment, HttpClient httpClient)
             : base(serverUri, defaultSegment, httpClient)
         {
-
         }
-
-
+        
         ///<Summary>
         /// Build and execute request.
         /// </Summary>

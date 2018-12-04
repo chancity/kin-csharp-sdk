@@ -8,10 +8,10 @@ namespace Kin.Jwt.Models
         public string Id { get; set; }
 
         [JsonProperty("amount")]
-        public string Amount { get; set; }
+        public int Amount { get; set; }
 
 
-        public JwtBodyPartOffer(string id, string amount)
+        public JwtBodyPartOffer(string id, int amount)
         {
             Id = id;
             Amount = amount;

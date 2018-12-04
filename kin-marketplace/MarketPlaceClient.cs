@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Kin.Marketplace.Models;
 using Kin.Shared.Models.Device;
@@ -23,7 +25,16 @@ namespace Kin.Marketplace
                 JsonSerializerSettings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore},
                 AuthorizationHeaderValueGetter = authorizationHeaderValueGetter
             };
-            _apiClient = RestService.For<IMarketPlaceClient>(baseEndPoint, refitSetting);
+
+             _apiClient = RestService.For<IMarketPlaceClient>(baseEndPoint, refitSetting);
+           //var httpHandler = new HttpClientHandler();
+           //httpHandler.Proxy = new WebProxy("http://192.168.1.9:9000");
+           //var httpClient = new HttpClient(httpHandler);
+           //httpClient.BaseAddress = new Uri(baseEndPoint);
+           //
+           //
+           //_apiClient = RestService.For<IMarketPlaceClient>(httpClient, refitSetting);
+
         }
 
         public async Task<Config> Config()
@@ -33,7 +44,16 @@ namespace Kin.Marketplace
 
         public async Task<OfferList> GetOffers()
         {
-            return await _apiClient.GetOffers().ConfigureAwait(false);
+            try
+            {
+                return await _apiClient.GetOffers().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+          
         }
 
         public async Task<AuthToken> Users(CommonSignInData commonSignInData)

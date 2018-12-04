@@ -23,8 +23,7 @@ namespace Kin.Stellar.Sdk.responses
             Links = links;
         }
 
-        [JsonProperty(PropertyName = "id")]
-        public long Id { get; private set; }
+        [JsonProperty(PropertyName = "id")] public long Id { get; private set; }
 
         [JsonProperty(PropertyName = "paging_token")]
         public string PagingToken { get; private set; }
@@ -41,25 +40,9 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "amount")]
         public string Amount { get; private set; }
 
-        [JsonProperty(PropertyName = "price")]
-        public string Price { get; private set; }
+        [JsonProperty(PropertyName = "price")] public string Price { get; private set; }
 
         [JsonProperty(PropertyName = "_links")]
         public OfferResponseLinks Links { get; private set; }
-    }
-
-    public class OfferResponseLinks
-    {
-        public OfferResponseLinks(Link self, Link offerMager)
-        {
-            Self = self;
-            OfferMager = offerMager;
-        }
-
-        [JsonProperty(PropertyName = "self")]
-        public Link Self { get; private set; }
-
-        [JsonProperty(PropertyName = "offer_maker")]
-        public Link OfferMager { get; private set; }
     }
 }

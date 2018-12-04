@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace kin_csharp_sample_app
 {
@@ -38,7 +40,6 @@ namespace kin_csharp_sample_app
         private readonly JwtProvider _marketPlaceJwtProvider;
         private AuthToken _authToken;
 
-
         public string UserId { get; }
 
         static SimpleKinClient()
@@ -51,28 +52,30 @@ namespace kin_csharp_sample_app
         {
             _deviceInfo = new Information("KinCsharpClient", "Samsung9+","Samsung","Android");
 
-            _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo,
-                AuthorizationHeaderValueGetter);
-
+            _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo, AuthorizationHeaderValueGetter);
+            
             Config config = _marketPlaceClient.Config().Result;
-
-            UserId = Guid.NewGuid().ToString();
-            _keyPair = KeyPair.Random();
 
             Dictionary<string, JwtSecurityKey> kinsKeys = new Dictionary<string, JwtSecurityKey>();
 
             foreach (KeyValuePair<string, JwtKey> configJwtKey in config.JwtKeys)
             {
-                kinsKeys.Add(configJwtKey.Key,
-                    new JwtSecurityKey(configJwtKey.Value.Algorithm, configJwtKey.Value.Key));
+                kinsKeys.Add(configJwtKey.Key,new JwtSecurityKey(configJwtKey.Value.Algorithm, configJwtKey.Value.Key));
             }
 
+            UserId = Guid.NewGuid().ToString();
+            _keyPair = KeyPair.Random();
+            Console.WriteLine(_keyPair.SecretSeed);
+
+
             _marketPlaceJwtProvider = new JwtProvider("kin", kinsKeys);
-            _blockChainHandler = new BlockChainHandler(config);
+            _blockChainHandler = new BlockChainHandler(config, "rced");
         }
 
         public async Task FirstTest()
         {
+         //   var orders1 = await _marketPlaceClient.GetOrderHistory();
+         //   Console.WriteLine(JsonConvert.SerializeObject(orders1, Formatting.Indented));
             //Creating a market place user
             _authToken = await _marketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await _marketPlaceClient.UsersMeActivate().ConfigureAwait(false);
@@ -81,21 +84,26 @@ namespace kin_csharp_sample_app
             await _blockChainHandler.TryUntilActivated(_keyPair).ConfigureAwait(false);
 
             //Completing the tutorial!
-            await DoFirstOffer().ConfigureAwait(false);
+            //await DoFirstOffer().ConfigureAwait(false);
 
             //Sending that p2p good stuff
-            await DoP2POffer().ConfigureAwait(false);
+            //await DoP2POffer().ConfigureAwait(false);
 
             //External speeeeeend offer"
-            await DoExternalSpendOffer().ConfigureAwait(false);
+           // await DoExternalSpendOffer().ConfigureAwait(false);
 
             //External earn offerrrr"
             await DoExternalEarnOffer().ConfigureAwait(false);
 
 
             OrderList orders = await _marketPlaceClient.GetOrderHistory().ConfigureAwait(false);
-            //Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
-            await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
+           // Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
+            var balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
+
+            Console.WriteLine(balance);
+
+       //    await _blockChainHandler.SendPayment(_keyPair, "GBY5PZFDZ6Y25S6YRRZ3CXOAIUWOZ3ADONFY2OYCA7GPQCPPF2RDXXZC",
+         //       balance);
         }
 
         private async Task DoFirstOffer()
@@ -124,7 +132,7 @@ namespace kin_csharp_sample_app
         public async Task DoP2POffer(string toUserId = null)
         {
             string p2POffer = JwtProviderBuilder.P2P
-                .AddOffer("p2p-" + toUserId, "1")
+                .AddOffer("p2p-" + toUserId, 1)
                 .AddSender(UserId, "p2p", "to myself")
                 .AddRecipient(toUserId ?? UserId, "p2p", "to him?")
                 .Jwt;
@@ -135,9 +143,7 @@ namespace kin_csharp_sample_app
             Order submitP2POffer =
                 await _marketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
 
-            SubmitTransactionResponse submitTransactionResponse = await _blockChainHandler.SendPayment(_keyPair,
-                submitP2POffer.BlockChainData.RecipientAddress,
-                submitP2POffer.Amount, submitP2POffer.Id).ConfigureAwait(false);
+            SubmitTransactionResponse submitTransactionResponse = await _blockChainHandler.SendPayment(_keyPair,submitP2POffer.BlockChainData.RecipientAddress,submitP2POffer.Amount, submitP2POffer.Id).ConfigureAwait(false);
 
             Order finishedOrder = await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
 
@@ -145,12 +151,16 @@ namespace kin_csharp_sample_app
             {
                 SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
             }
+
+            var coldWallet = KeyPair.FromSecretSeed("SEEED");
+            var txResponse = await _blockChainHandler.SendPayment(coldWallet, "hot wallet public address", 1337);
+
         }
 
         private async Task DoExternalSpendOffer()
         {
             string externalSpendOffer = JwtProviderBuilder.Spend
-                .AddOffer("spendit", "111")
+                .AddOffer("spendit", 111)
                 .AddSender(UserId, "speeend it", "block chain sutff isn't coded yet lawl, i'm neva goonna spend")
                 .Jwt;
 
@@ -176,7 +186,7 @@ namespace kin_csharp_sample_app
         private async Task DoExternalEarnOffer()
         {
             string externalEarnOffer = JwtProviderBuilder.Earn
-                .AddOffer("earrrnit", "111")
+                .AddOffer("earrrnit", 2)
                 .AddRecipient(UserId, "earrrnit it", "block chain sutff isn't coded yet lawl, i'm neva goonna earn")
                 .Jwt;
 
@@ -230,7 +240,8 @@ namespace kin_csharp_sample_app
         private JwtSignInData GetSignInData()
         {
             string registerJwt = JwtProviderBuilder.Register.AddUserId(UserId).Jwt;
-            return new JwtSignInData(_deviceInfo.XDeviceId, _keyPair.Address, registerJwt);
+            var signInData = new JwtSignInData(_deviceInfo.XDeviceId, _keyPair.Address, registerJwt);
+            return signInData;
         }
 
         private async Task<string> AuthorizationHeaderValueGetter()

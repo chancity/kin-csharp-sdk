@@ -15,7 +15,6 @@ namespace Kin.Stellar.Sdk
 
         public string Limit { get; }
 
-
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
             var op = new sdkxdr.ChangeTrustOp();

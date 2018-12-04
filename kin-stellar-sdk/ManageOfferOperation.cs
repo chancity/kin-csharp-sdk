@@ -25,7 +25,6 @@ namespace Kin.Stellar.Sdk
 
         public long OfferId { get; }
 
-
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
             var op = new sdkxdr.ManageOfferOp();

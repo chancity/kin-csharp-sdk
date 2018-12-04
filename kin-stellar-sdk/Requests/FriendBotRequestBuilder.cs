@@ -29,7 +29,7 @@ namespace Kin.Stellar.Sdk.requests
 
         public FriendBotRequestBuilder FundAccount(KeyPair account)
         {
-            _uriBuilder.SetQueryParam("addr", account.AccountId);
+            UriBuilder.SetQueryParam("addr", account.AccountId);
             return this;
         }
 

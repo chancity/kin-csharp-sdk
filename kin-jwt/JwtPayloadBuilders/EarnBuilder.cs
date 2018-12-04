@@ -6,7 +6,7 @@ namespace Kin.Jwt.JwtPayloadBuilders
     {
         internal EarnBuilder(JwtProvider provider) : base(provider, SubjectNames.Earn, 2) { }
 
-        public EarnBuilder AddOffer(string offerId, string amount)
+        public EarnBuilder AddOffer(string offerId, int amount)
         {
             JwtBodyPartOffer offer = new JwtBodyPartOffer(offerId, amount);
 

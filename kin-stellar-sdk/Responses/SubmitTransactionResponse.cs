@@ -7,12 +7,10 @@ namespace Kin.Stellar.Sdk.responses
 {
     public class SubmitTransactionResponse : Response
     {
-        private readonly string _EnvelopeXdr;
-        private readonly string _ResultXdr;
+        private readonly string _envelopeXdr;
+        private readonly string _resultXdr;
 
-
-        [JsonProperty(PropertyName = "hash")]
-        public string Hash { get; private set; }
+        [JsonProperty(PropertyName = "hash")] public string Hash { get; private set; }
 
         [JsonProperty(PropertyName = "ledger")]
         public long? Ledger { get; private set; }
@@ -24,7 +22,7 @@ namespace Kin.Stellar.Sdk.responses
             {
                 if (IsSuccess())
                 {
-                    return _EnvelopeXdr;
+                    return _envelopeXdr;
                 }
                 else
                 {
@@ -40,7 +38,7 @@ namespace Kin.Stellar.Sdk.responses
             {
                 if (IsSuccess())
                 {
-                    return _ResultXdr;
+                    return _resultXdr;
                 }
                 else
                 {
@@ -57,8 +55,8 @@ namespace Kin.Stellar.Sdk.responses
             SubmitTransactionResponseExtras = extras;
             Ledger = ledger;
             Hash = hash;
-            _EnvelopeXdr = envelopeXdr;
-            _ResultXdr = resultXdr;
+            _envelopeXdr = envelopeXdr;
+            _resultXdr = resultXdr;
         }
 
         public bool IsSuccess()
@@ -145,8 +143,8 @@ namespace Kin.Stellar.Sdk.responses
 
                 public ResultCodes(string transactionResultCode, List<string> operationsResultCodes)
                 {
-                    this.TransactionResultCode = transactionResultCode;
-                    this.OperationsResultCodes = operationsResultCodes;
+                    TransactionResultCode = transactionResultCode;
+                    OperationsResultCodes = operationsResultCodes;
                 }
             }
         }

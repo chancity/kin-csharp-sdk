@@ -126,6 +126,7 @@ namespace Kin.Stellar.Sdk
             {
                 return false;
             }
+
             return true;
         }
 

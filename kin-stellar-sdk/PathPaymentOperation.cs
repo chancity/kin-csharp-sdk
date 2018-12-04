@@ -26,7 +26,6 @@ namespace Kin.Stellar.Sdk
             }
         }
 
-
         public Asset SendAsset { get; }
 
         public string SendMax { get; }
@@ -145,7 +144,6 @@ namespace Kin.Stellar.Sdk
                 _SourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
-
 
             /// <summary>
             ///     Builds an operation

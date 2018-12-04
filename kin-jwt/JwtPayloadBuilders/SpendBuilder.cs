@@ -6,7 +6,7 @@ namespace Kin.Jwt.JwtPayloadBuilders
     {
         internal SpendBuilder(JwtProvider provider) : base(provider, SubjectNames.Spend, 2) { }
 
-        public SpendBuilder AddOffer(string offerId, string amount)
+        public SpendBuilder AddOffer(string offerId, int amount)
         {
             JwtBodyPartOffer offer = new JwtBodyPartOffer(offerId, amount);
 

@@ -6,7 +6,7 @@ namespace Kin.Jwt.JwtPayloadBuilders
     {
         internal P2PBuilder(JwtProvider provider) : base(provider, SubjectNames.PayToUser, 3) { }
 
-        public P2PBuilder AddOffer(string offerId, string amount)
+        public P2PBuilder AddOffer(string offerId, int amount)
         {
             JwtBodyPartOffer offer = new JwtBodyPartOffer(offerId, amount);
 

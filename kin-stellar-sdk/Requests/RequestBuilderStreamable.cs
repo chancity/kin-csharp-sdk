@@ -10,7 +10,6 @@ namespace Kin.Stellar.Sdk.requests
         public RequestBuilderStreamable(Uri serverUri, string defaultSegment, HttpClient httpClient)
             : base(serverUri, defaultSegment, httpClient)
         {
-
         }
 
         public RequestBuilderStreamable(Uri serverUri, string defaultSegment, HttpClient httpClient, IEventSource eventSource)
@@ -19,11 +18,7 @@ namespace Kin.Stellar.Sdk.requests
             EventSource = eventSource;
         }
 
-        public IEventSource EventSource
-        {
-            get;
-            set;
-        }
+        public IEventSource EventSource { get; set; }
 
         ///<Summary>
         /// Allows to stream SSE events from horizon.
@@ -45,12 +40,12 @@ namespace Kin.Stellar.Sdk.requests
                 if (e.Data == $"\"hello\"{Environment.NewLine}")
                     return;
 
-                var responseObject = JsonSingleton.GetInstance<TResponse>(e.Data) ?? throw new NotSupportedException("Uknown response type");
+                var responseObject = JsonSingleton.GetInstance<TResponse>(e.Data) ?? throw new NotSupportedException("Unknown response type");
 
-                var page = responseObject as IPagingToken;
-                if (page != null)
+                if (responseObject is IPagingToken page)
                 {
                     Cursor(page.PagingToken);
+                    EventSource.Url = BuildUri();
                 }
 
                 listener?.Invoke(this, responseObject);
