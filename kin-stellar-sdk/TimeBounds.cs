@@ -5,22 +5,24 @@ namespace Kin.Stellar.Sdk
 {
     public class TimeBounds
     {
-        ///<summary>
-        ///Timebounds constructor.
-        ///</summary>
-        ///<param name="minTime"> 64bit Unix timestamp</param>
+        public long MinTime { get; }
+
+        public long MaxTime { get; }
+
+        /// <summary>
+        ///     Timebounds constructor.
+        /// </summary>
+        /// <param name="minTime"> 64bit Unix timestamp</param>
         public TimeBounds(long minTime, long maxTime)
         {
             if (maxTime != 0 && minTime >= maxTime)
+            {
                 throw new ArgumentException("minTime must be >= maxTime");
+            }
 
             MinTime = minTime;
             MaxTime = maxTime;
         }
-
-        public long MinTime { get; }
-
-        public long MaxTime { get; }
 
         public static TimeBounds FromXdr(xdr.TimeBounds timeBounds)
         {
@@ -37,9 +39,9 @@ namespace Kin.Stellar.Sdk
 
         public xdr.TimeBounds ToXdr()
         {
-            var timeBounds = new xdr.TimeBounds();
-            var minTime = new Uint64();
-            var maxTime = new Uint64();
+            xdr.TimeBounds timeBounds = new xdr.TimeBounds();
+            Uint64 minTime = new Uint64();
+            Uint64 maxTime = new Uint64();
             minTime.InnerValue = MinTime;
             maxTime.InnerValue = MaxTime;
             timeBounds.MinTime = minTime;
@@ -47,14 +49,25 @@ namespace Kin.Stellar.Sdk
             return timeBounds;
         }
 
-        public override bool Equals(Object o)
+        public override bool Equals(object o)
         {
-            if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
 
             TimeBounds that = (TimeBounds) o;
 
-            if (MinTime != that.MinTime) return false;
+            if (MinTime != that.MinTime)
+            {
+                return false;
+            }
+
             return MaxTime == that.MaxTime;
         }
 

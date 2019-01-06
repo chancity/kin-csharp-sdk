@@ -9,10 +9,10 @@ namespace Kin.BlockChain
 {
     public class BlockChainHandler
     {
+        private readonly string _appId;
         private readonly Asset _kinAsset;
 
         private readonly Server _server;
-        private readonly string _appId;
         private readonly string TRUST_NO_LIMIT_VALUE;
         private string MAIN_NETWORK_ISSUER;
 

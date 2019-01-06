@@ -15,16 +15,16 @@ namespace Kin.Backup
     {
         public static Bitmap ToQrCode(KeyPair keyPair, string passPhrase)
         {
-            var encryptedKeyStore = ToKeyStore(keyPair, passPhrase);
+            EncryptedKeyStore encryptedKeyStore = ToKeyStore(keyPair, passPhrase);
             return KeyStoreToQrCode(JsonConvert.SerializeObject(encryptedKeyStore));
         }
 
         private static Bitmap KeyStoreToQrCode(string content)
         {
-            var writer = new BarcodeWriter { Format = BarcodeFormat.QR_CODE };
+            BarcodeWriter writer = new BarcodeWriter {Format = BarcodeFormat.QR_CODE};
             writer.Options.Height = 930;
             writer.Options.Width = 930;
-            var result = writer.Write(content);
+            Bitmap result = writer.Write(content);
             return new Bitmap(result);
         }
 
@@ -34,13 +34,15 @@ namespace Kin.Backup
             byte[] encryptionSalt = PasswordHash.ArgonGenerateSalt();
             byte[] keyHash = Shared.KeyHash(passPhraseBytes, encryptionSalt);
             byte[] encryptedSeed = EncryptSecretSeed(keyPair.SeedBytes, keyHash);
+
             return new EncryptedKeyStore(keyPair.AccountId, encryptedSeed.BinaryToHex(),
                 encryptionSalt.BinaryToHex());
         }
+
         private static byte[] EncryptSecretSeed(byte[] seedBytes, byte[] keyHash)
         {
             byte[] nonceBytes = SecretBox.GenerateNonce();
-            var cipherText = SecretBox.Create(seedBytes, nonceBytes, keyHash);
+            byte[] cipherText = SecretBox.Create(seedBytes, nonceBytes, keyHash);
             byte[] encryptedSeed = new byte[cipherText.Length + nonceBytes.Length];
             Array.Copy(nonceBytes, 0, encryptedSeed, 0, nonceBytes.Length);
             Array.Copy(cipherText, 0, encryptedSeed, nonceBytes.Length, cipherText.Length);

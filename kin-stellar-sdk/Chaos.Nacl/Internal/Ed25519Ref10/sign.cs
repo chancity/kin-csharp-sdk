@@ -44,32 +44,33 @@ namespace Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10
             byte[] m, int moffset, int mlen,
             byte[] sk, int skoffset)
         {
-            var hasher = new Sha512();
+            Sha512 hasher = new Sha512();
+
             {
                 hasher.Update(sk, skoffset, 32);
-                var az = hasher.Finish();
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.ScalarOperations.ScClamp(az, 0);
+                byte[] az = hasher.Finish();
+                ScalarOperations.ScClamp(az, 0);
 
                 hasher.Init();
                 hasher.Update(az, 32, 32);
                 hasher.Update(m, moffset, mlen);
-                var r = hasher.Finish();
+                byte[] r = hasher.Finish();
 
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.ScalarOperations.ScReduce(r);
+                ScalarOperations.ScReduce(r);
                 GroupElementP3 R;
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.GeScalarmultBase(out R, r, 0);
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.ge_p3_tobytes(sig, sigoffset, ref R);
+                GroupOperations.GeScalarmultBase(out R, r, 0);
+                GroupOperations.ge_p3_tobytes(sig, sigoffset, ref R);
 
                 hasher.Init();
                 hasher.Update(sig, sigoffset, 32);
                 hasher.Update(sk, skoffset + 32, 32);
                 hasher.Update(m, moffset, mlen);
-                var hram = hasher.Finish();
+                byte[] hram = hasher.Finish();
 
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.ScalarOperations.ScReduce(hram);
-                var s = new byte[32];
+                ScalarOperations.ScReduce(hram);
+                byte[] s = new byte[32];
                 Array.Copy(sig, sigoffset + 32, s, 0, 32);
-                Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.ScalarOperations.ScMulAdd(s, hram, az, r);
+                ScalarOperations.ScMulAdd(s, hram, az, r);
                 Array.Copy(s, 0, sig, sigoffset + 32, 32);
                 CryptoBytes.Wipe(s);
             }

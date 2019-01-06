@@ -7,13 +7,6 @@ namespace Kin.Stellar.Sdk.responses
     /// </summary>
     public class Thresholds
     {
-        public Thresholds(int lowThreshold, int medThreshold, int highThreshold)
-        {
-            LowThreshold = lowThreshold;
-            MedThreshold = medThreshold;
-            HighThreshold = highThreshold;
-        }
-
         [JsonProperty(PropertyName = "low_threshold")]
         public int LowThreshold { get; private set; }
 
@@ -22,5 +15,12 @@ namespace Kin.Stellar.Sdk.responses
 
         [JsonProperty(PropertyName = "high_threshold")]
         public int HighThreshold { get; private set; }
+
+        public Thresholds(int lowThreshold, int medThreshold, int highThreshold)
+        {
+            LowThreshold = lowThreshold;
+            MedThreshold = medThreshold;
+            HighThreshold = highThreshold;
+        }
     }
 }

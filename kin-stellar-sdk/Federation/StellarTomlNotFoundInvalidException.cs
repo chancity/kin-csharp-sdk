@@ -2,7 +2,5 @@
 
 namespace Kin.Stellar.Sdk.federation
 {
-    public class StellarTomlNotFoundInvalidException : Exception
-    {
-    }
+    public class StellarTomlNotFoundInvalidException : Exception { }
 }

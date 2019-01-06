@@ -10,17 +10,17 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// </summary>
     public class AccountFlagsUpdatedEffectResponse : EffectResponse
     {
+        [JsonProperty(PropertyName = "auth_required_flag")]
+        public bool AuthRequiredFlag { get; }
+
+        [JsonProperty(PropertyName = "auth_revokable_flag")]
+        public bool AuthRevokableFlag { get; }
+
         /// <inheritdoc />
         public AccountFlagsUpdatedEffectResponse(bool authRequiredFlag, bool authRevokableFlag)
         {
             AuthRequiredFlag = authRequiredFlag;
             AuthRevokableFlag = authRevokableFlag;
         }
-
-        [JsonProperty(PropertyName = "auth_required_flag")]
-        public bool AuthRequiredFlag { get; }
-
-        [JsonProperty(PropertyName = "auth_revokable_flag")]
-        public bool AuthRevokableFlag { get; }
     }
 }

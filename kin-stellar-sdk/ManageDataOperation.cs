@@ -5,31 +5,31 @@ namespace Kin.Stellar.Sdk
 {
     public class ManageDataOperation : Operation
     {
+        public string Name { get; }
+
+        public byte[] Value { get; }
+
         private ManageDataOperation(string name, byte[] value)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
             Value = value;
         }
 
-        public string Name { get; }
-
-        public byte[] Value { get; }
-
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.ManageDataOp();
-            var name = new sdkxdr.String64();
+            sdkxdr.ManageDataOp op = new sdkxdr.ManageDataOp();
+            sdkxdr.String64 name = new sdkxdr.String64();
             name.InnerValue = Name;
             op.DataName = name;
 
             if (Value != null)
             {
-                var dataValue = new sdkxdr.DataValue();
+                sdkxdr.DataValue dataValue = new sdkxdr.DataValue();
                 dataValue.InnerValue = Value;
                 op.DataValue = dataValue;
             }
 
-            var body = new sdkxdr.Operation.OperationBody();
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
             body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.MANAGE_DATA);
             body.ManageDataOp = op;
 
@@ -52,10 +52,15 @@ namespace Kin.Stellar.Sdk
             public Builder(sdkxdr.ManageDataOp op)
             {
                 name = op.DataName.InnerValue;
+
                 if (op.DataValue != null)
+                {
                     value = op.DataValue.InnerValue;
+                }
                 else
+                {
                     value = null;
+                }
             }
 
             /// <summary>
@@ -76,7 +81,8 @@ namespace Kin.Stellar.Sdk
             /// <returns>Builder object so you can chain methods.</returns>
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                mSourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                mSourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
@@ -85,9 +91,13 @@ namespace Kin.Stellar.Sdk
             /// </summary>
             public ManageDataOperation Build()
             {
-                var operation = new ManageDataOperation(name, value);
+                ManageDataOperation operation = new ManageDataOperation(name, value);
+
                 if (mSourceAccount != null)
+                {
                     operation.SourceAccount = mSourceAccount;
+                }
+
                 return operation;
             }
         }

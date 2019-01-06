@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Kin.Stellar.Sdk.responses;
 using Kin.Stellar.Sdk.responses.operations;
-using Kin.Stellar.Sdk.responses.page;
 
 namespace Kin.Stellar.Sdk.requests
 {
@@ -14,9 +12,7 @@ namespace Kin.Stellar.Sdk.requests
         /// </summary>
         /// <param name="serverUri"></param>
         public OperationsRequestBuilder(Uri serverUri, HttpClient httpClient)
-            : base(serverUri, "operations", httpClient)
-        {
-        }
+            : base(serverUri, "operations", httpClient) { }
 
         /// <summary>
         ///     Requests specific uri and returns <see cref="OperationResponse" />.
@@ -28,9 +24,9 @@ namespace Kin.Stellar.Sdk.requests
         /// </returns>
         public async Task<OperationResponse> Operation(Uri uri)
         {
-            var responseHandler = new ResponseHandler<OperationResponse>();
+            ResponseHandler<OperationResponse> responseHandler = new ResponseHandler<OperationResponse>();
 
-            var response = await HttpClient.GetAsync(uri);
+            HttpResponseMessage response = await HttpClient.GetAsync(uri);
             return await responseHandler.HandleResponse(response);
         }
 
@@ -61,7 +57,9 @@ namespace Kin.Stellar.Sdk.requests
         public OperationsRequestBuilder ForAccount(KeyPair account)
         {
             if (account == null)
+            {
                 throw new ArgumentNullException(nameof(account), "account cannot be null");
+            }
 
             SetSegments("accounts", account.AccountId, "operations");
 
@@ -94,7 +92,9 @@ namespace Kin.Stellar.Sdk.requests
         public OperationsRequestBuilder ForTransaction(string transactionId)
         {
             if (string.IsNullOrWhiteSpace(transactionId))
+            {
                 throw new ArgumentNullException(nameof(transactionId), "transactionId cannot be null");
+            }
 
             SetSegments("transactions", transactionId, "operations");
 

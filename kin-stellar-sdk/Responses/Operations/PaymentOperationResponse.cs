@@ -12,7 +12,46 @@ namespace Kin.Stellar.Sdk.responses.operations
     public class PaymentOperationResponse : OperationResponse
     {
         /// <summary>
-        /// Sends an amount in a specific asset to a destination account.
+        ///     Amount of the aforementioned asset to send.
+        /// </summary>
+        [JsonProperty(PropertyName = "amount")]
+        public string Amount { get; }
+
+        /// <summary>
+        ///     The asset type (USD, BTC, etc.)
+        /// </summary>
+        [JsonProperty(PropertyName = "asset_type")]
+        public string AssetType { get; }
+
+        /// <summary>
+        ///     The asset code (Alpha4, Alpha12, etc.)
+        /// </summary>
+        [JsonProperty(PropertyName = "asset_code")]
+        public string AssetCode { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "asset_issuer")]
+        public string AssetIssuer { get; }
+
+        /// <summary>
+        ///     Account address that is sending the payment.
+        /// </summary>
+        [JsonProperty(PropertyName = "from")]
+        public KeyPair From { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "to")]
+        public KeyPair To { get; }
+
+        /// <summary>
+        ///     Account address that receives the payment.
+        /// </summary>
+        public Asset Asset => Asset.CreateNonNativeAsset(AssetType, AssetIssuer, AssetCode);
+
+        /// <summary>
+        ///     Sends an amount in a specific asset to a destination account.
         /// </summary>
         /// <param name="amount">Amount of the aforementioned asset to send.</param>
         /// <param name="assetType">The asset type (USD, BTC, etc.)</param>
@@ -20,7 +59,8 @@ namespace Kin.Stellar.Sdk.responses.operations
         /// <param name="assetIssuer">The account that created the asset</param>
         /// <param name="from">Account address that is sending the payment.</param>
         /// <param name="to">Account address that receives the payment.</param>
-        public PaymentOperationResponse(string amount, string assetType, string assetCode, string assetIssuer, KeyPair from, KeyPair to)
+        public PaymentOperationResponse(string amount, string assetType, string assetCode, string assetIssuer,
+            KeyPair from, KeyPair to)
         {
             Amount = amount;
             AssetType = assetType;
@@ -29,46 +69,5 @@ namespace Kin.Stellar.Sdk.responses.operations
             From = from;
             To = to;
         }
-
-        /// <summary>
-        /// Amount of the aforementioned asset to send.
-        /// </summary>
-        [JsonProperty(PropertyName = "amount")]
-        public string Amount { get; }
-
-        /// <summary>
-        /// The asset type (USD, BTC, etc.)
-        /// </summary>
-        [JsonProperty(PropertyName = "asset_type")]
-        public string AssetType { get; }
-
-        /// <summary>
-        /// The asset code (Alpha4, Alpha12, etc.)
-        /// </summary>
-        [JsonProperty(PropertyName = "asset_code")]
-        public string AssetCode { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty(PropertyName = "asset_issuer")]
-        public string AssetIssuer { get; }
-
-        /// <summary>
-        /// Account address that is sending the payment.
-        /// </summary>
-        [JsonProperty(PropertyName = "from")]
-        public KeyPair From { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty(PropertyName = "to")]
-        public KeyPair To { get; }
-
-        /// <summary>
-        /// Account address that receives the payment.
-        /// </summary>
-        public Asset Asset => Asset.CreateNonNativeAsset(AssetType, AssetIssuer, AssetCode);
     }
 }

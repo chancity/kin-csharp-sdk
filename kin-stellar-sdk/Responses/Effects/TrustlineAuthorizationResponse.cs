@@ -5,14 +5,6 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// <inheritdoc />
     public class TrustlineAuthorizationResponse : EffectResponse
     {
-        /// <inheritdoc />
-        public TrustlineAuthorizationResponse(KeyPair trustor, string assetType, string assetCode)
-        {
-            Trustor = trustor;
-            AssetType = assetType;
-            AssetCode = assetCode;
-        }
-
         [JsonProperty(PropertyName = "trustor")]
         public KeyPair Trustor { get; }
 
@@ -21,5 +13,13 @@ namespace Kin.Stellar.Sdk.responses.effects
 
         [JsonProperty(PropertyName = "asset_code")]
         public string AssetCode { get; }
+
+        /// <inheritdoc />
+        public TrustlineAuthorizationResponse(KeyPair trustor, string assetType, string assetCode)
+        {
+            Trustor = trustor;
+            AssetType = assetType;
+            AssetCode = assetCode;
+        }
     }
 }

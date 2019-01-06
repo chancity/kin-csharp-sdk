@@ -10,8 +10,6 @@
     {
         /// <inheritdoc />
         public SignerCreatedEffectResponse(int weight, string publicKey)
-            : base(weight, publicKey)
-        {
-        }
+            : base(weight, publicKey) { }
     }
 }

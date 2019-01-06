@@ -5,30 +5,18 @@ namespace Kin.Stellar.Sdk.responses
 {
     public class Link
     {
-        public Link(string href, bool templated)
-        {
-            Href = href;
-            Templated = templated;
-        }
-
-        [JsonProperty(PropertyName = "href")] public string Href { get; set; }
+        [JsonProperty(PropertyName = "href")]
+        public string Href { get; set; }
 
         [JsonProperty(PropertyName = "templated")]
         public bool Templated { get; set; }
 
-        public Uri Uri
+        public Uri Uri => new Uri(Href);
+
+        public Link(string href, bool templated)
         {
-            get
-            {
-                try
-                {
-                    return new Uri(Href);
-                }
-                catch (UriFormatException)
-                {
-                    throw;
-                }
-            }
+            Href = href;
+            Templated = templated;
         }
 
         public bool IsTemplated()

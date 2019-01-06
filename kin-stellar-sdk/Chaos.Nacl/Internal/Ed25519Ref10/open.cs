@@ -50,27 +50,33 @@ namespace Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10
             byte[] m, int moffset, int mlen,
             byte[] pk, int pkoffset)
         {
-            var checkr = new byte[32];
+            byte[] checkr = new byte[32];
             GroupElementP3 A;
             GroupElementP2 R;
 
-            if ((sig[sigoffset + 63] & 224) != 0) return false;
-            if (Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.ge_frombytes_negate_vartime(out A, pk, pkoffset) != 0)
+            if ((sig[sigoffset + 63] & 224) != 0)
+            {
                 return false;
+            }
 
-            var hasher = new Sha512();
+            if (GroupOperations.ge_frombytes_negate_vartime(out A, pk, pkoffset) != 0)
+            {
+                return false;
+            }
+
+            Sha512 hasher = new Sha512();
             hasher.Update(sig, sigoffset, 32);
             hasher.Update(pk, pkoffset, 32);
             hasher.Update(m, moffset, mlen);
-            var h = hasher.Finish();
+            byte[] h = hasher.Finish();
 
             ScalarOperations.ScReduce(h);
 
-            var sm32 = new byte[32]; //todo: remove allocation
+            byte[] sm32 = new byte[32]; //todo: remove allocation
             Array.Copy(sig, sigoffset + 32, sm32, 0, 32);
-            Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.ge_double_scalarmult_vartime(out R, h, ref A, sm32);
-            Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.GeToBytes(checkr, 0, ref R);
-            var result = CryptoBytes.ConstantTimeEquals(checkr, 0, sig, sigoffset, 32);
+            GroupOperations.ge_double_scalarmult_vartime(out R, h, ref A, sm32);
+            GroupOperations.GeToBytes(checkr, 0, ref R);
+            bool result = CryptoBytes.ConstantTimeEquals(checkr, 0, sig, sigoffset, 32);
             CryptoBytes.Wipe(h);
             CryptoBytes.Wipe(checkr);
             return result;

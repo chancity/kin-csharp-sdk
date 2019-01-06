@@ -7,22 +7,111 @@ using Kin.Stellar.Sdk.xdr;
 namespace Kin.Stellar.Sdk
 {
     /// <summary>
-    /// <see cref="KeyPair"/> represents public (and secret) keys of the account.
-    /// Currently <see cref="KeyPair"/> only supports ed25519 but in a future this class can be abstraction layer for other public-key signature systems.
+    ///     <see cref="KeyPair" /> represents public (and secret) keys of the account.
+    ///     Currently <see cref="KeyPair" /> only supports ed25519 but in a future this class can be abstraction layer for
+    ///     other public-key signature systems.
     /// </summary>
     public class KeyPair
     {
         /// <summary>
-        /// Creates a new Keypair object from public key.
+        ///     The public key.
         /// </summary>
-        /// <param name="publicKey"></param>
-        public KeyPair(byte[] publicKey)
-            : this(publicKey, null, null)
+        public byte[] PublicKey { get; }
+
+        /// <summary>
+        ///     The private key.
+        /// </summary>
+        public byte[] PrivateKey { get; }
+
+        /// <summary>
+        ///     The bytes of the Secret Seed
+        /// </summary>
+        public byte[] SeedBytes { get; }
+
+        /// <summary>
+        ///     AccountId
+        /// </summary>
+        public string AccountId => StrKey.EncodeStellarAccountId(PublicKey);
+
+        /// <summary>
+        ///     Address
+        /// </summary>
+        public string Address => StrKey.EncodeCheck(StrKey.VersionByte.ACCOUNT_ID, PublicKey);
+
+        /// <summary>
+        ///     SecretSeed
+        /// </summary>
+        public string SecretSeed => StrKey.EncodeStellarSecretSeed(SeedBytes);
+
+        /// <summary>
+        ///     XDR Signature Hint
+        /// </summary>
+        public SignatureHint SignatureHint
         {
+            get
+            {
+                XdrDataOutputStream stream = new XdrDataOutputStream();
+                AccountID accountId = new AccountID(XdrPublicKey);
+                AccountID.Encode(stream, accountId);
+                byte[] bytes = stream.ToArray();
+                int length = bytes.Length;
+                byte[] signatureHintBytes = bytes.Skip(length - 4).Take(4).ToArray();
+
+                SignatureHint signatureHint = new SignatureHint(signatureHintBytes);
+                return signatureHint;
+            }
         }
 
         /// <summary>
-        /// Creates a new Keypair instance from secret. This can either be secret key or secret seed depending on underlying public-key signature system. Currently Keypair only supports ed25519.
+        ///     XDR Public Key
+        /// </summary>
+        public PublicKey XdrPublicKey
+        {
+            get
+            {
+                PublicKey publicKey = new PublicKey
+                {
+                    Discriminant = new PublicKeyType
+                        {InnerValue = PublicKeyType.PublicKeyTypeEnum.PUBLIC_KEY_TYPE_ED25519}
+                };
+
+                Uint256 uint256 = new Uint256(PublicKey);
+                publicKey.Ed25519 = uint256;
+
+                return publicKey;
+            }
+        }
+
+        /// <summary>
+        ///     XDR Signer Key
+        /// </summary>
+        public SignerKey XdrSignerKey
+        {
+            get
+            {
+                SignerKey signerKey = new SignerKey
+                {
+                    Discriminant = new SignerKeyType
+                        {InnerValue = SignerKeyType.SignerKeyTypeEnum.SIGNER_KEY_TYPE_ED25519}
+                };
+
+                Uint256 uint256 = new Uint256(PublicKey);
+                signerKey.Ed25519 = uint256;
+
+                return signerKey;
+            }
+        }
+
+        /// <summary>
+        ///     Creates a new Keypair object from public key.
+        /// </summary>
+        /// <param name="publicKey"></param>
+        public KeyPair(byte[] publicKey)
+            : this(publicKey, null, null) { }
+
+        /// <summary>
+        ///     Creates a new Keypair instance from secret. This can either be secret key or secret seed depending on underlying
+        ///     public-key signature system. Currently Keypair only supports ed25519.
         /// </summary>
         /// <param name="publicKey"></param>
         /// <param name="privateKey"></param>
@@ -35,107 +124,24 @@ namespace Kin.Stellar.Sdk
         }
 
         /// <summary>
-        /// The public key.
-        /// </summary>
-        public byte[] PublicKey { get; }
-
-        /// <summary>
-        /// The private key.
-        /// </summary>
-        public byte[] PrivateKey { get; }
-
-        /// <summary>
-        /// The bytes of the Secret Seed
-        /// </summary>
-        public byte[] SeedBytes { get; }
-
-        /// <summary>
-        /// AccountId
-        /// </summary>
-        public string AccountId => StrKey.EncodeStellarAccountId(PublicKey);
-
-        /// <summary>
-        /// Address
-        /// </summary>
-        public string Address => StrKey.EncodeCheck(StrKey.VersionByte.ACCOUNT_ID, PublicKey);
-
-        /// <summary>
-        /// SecretSeed
-        /// </summary>
-        public string SecretSeed => StrKey.EncodeStellarSecretSeed(SeedBytes);
-
-        /// <summary>
-        /// XDR Signature Hint
-        /// </summary>
-        public SignatureHint SignatureHint
-        {
-            get
-            {
-                var stream = new XdrDataOutputStream();
-                var accountId = new AccountID(XdrPublicKey);
-                AccountID.Encode(stream, accountId);
-                var bytes = stream.ToArray();
-                var length = bytes.Length;
-                var signatureHintBytes = bytes.Skip(length - 4).Take(4).ToArray();
-
-                var signatureHint = new SignatureHint(signatureHintBytes);
-                return signatureHint;
-            }
-        }
-
-        /// <summary>
-        /// XDR Public Key
-        /// </summary>
-        public PublicKey XdrPublicKey
-        {
-            get
-            {
-                var publicKey = new PublicKey
-                {
-                    Discriminant = new PublicKeyType {InnerValue = PublicKeyType.PublicKeyTypeEnum.PUBLIC_KEY_TYPE_ED25519}
-                };
-
-                var uint256 = new Uint256(PublicKey);
-                publicKey.Ed25519 = uint256;
-
-                return publicKey;
-            }
-        }
-
-        /// <summary>
-        /// XDR Signer Key
-        /// </summary>
-        public SignerKey XdrSignerKey
-        {
-            get
-            {
-                var signerKey = new SignerKey
-                {
-                    Discriminant = new SignerKeyType {InnerValue = SignerKeyType.SignerKeyTypeEnum.SIGNER_KEY_TYPE_ED25519}
-                };
-
-                var uint256 = new Uint256(PublicKey);
-                signerKey.Ed25519 = uint256;
-
-                return signerKey;
-            }
-        }
-
-        /// <summary>
-        /// Returns a KeyPair from a Public Key
+        ///     Returns a KeyPair from a Public Key
         /// </summary>
         /// <param name="publicKey"></param>
-        /// <returns><see cref="KeyPair"/></returns>
+        /// <returns>
+        ///     <see cref="KeyPair" />
+        /// </returns>
         public static KeyPair FromXdrPublicKey(PublicKey publicKey)
         {
             return FromPublicKey(publicKey.Ed25519.InnerValue);
         }
 
         /// <summary>
-        /// Returns a KeyPair from an XDR SignerKey
+        ///     Returns a KeyPair from an XDR SignerKey
         /// </summary>
         /// <param name="signerKey"></param>
-        /// <returns><see cref="KeyPair"/></returns>
+        /// <returns>
+        ///     <see cref="KeyPair" />
+        /// </returns>
         public static KeyPair FromXdrSignerKey(SignerKey signerKey)
         {
             return FromPublicKey(signerKey.Ed25519.InnerValue);
@@ -159,7 +165,7 @@ namespace Kin.Stellar.Sdk
         /// </returns>
         public static KeyPair FromSecretSeed(string seed)
         {
-            var bytes = StrKey.DecodeStellarSecretSeed(seed);
+            byte[] bytes = StrKey.DecodeStellarSecretSeed(seed);
             return FromSecretSeed(bytes);
         }
 
@@ -172,7 +178,7 @@ namespace Kin.Stellar.Sdk
         /// </returns>
         public static KeyPair FromSecretSeed(byte[] seed)
         {
-            Ed25519.KeyPairFromSeed(out var publicKey, out var privateKey, seed);
+            Ed25519.KeyPairFromSeed(out byte[] publicKey, out byte[] privateKey, seed);
 
             return new KeyPair(publicKey, privateKey, seed);
         }
@@ -186,7 +192,7 @@ namespace Kin.Stellar.Sdk
         /// </returns>
         public static KeyPair FromAccountId(string accountId)
         {
-            var decoded = StrKey.DecodeStellarAccountId(accountId);
+            byte[] decoded = StrKey.DecodeStellarAccountId(accountId);
             return FromPublicKey(decoded);
         }
 
@@ -208,8 +214,9 @@ namespace Kin.Stellar.Sdk
         /// <returns>a random Stellar keypair</returns>
         public static KeyPair Random()
         {
-            var b = new byte[32];
-            using (var rngCrypto = new RNGCryptoServiceProvider())
+            byte[] b = new byte[32];
+
+            using (RNGCryptoServiceProvider rngCrypto = new RNGCryptoServiceProvider())
             {
                 rngCrypto.GetBytes(b);
             }
@@ -225,19 +232,24 @@ namespace Kin.Stellar.Sdk
         public byte[] Sign(byte[] data)
         {
             if (PrivateKey == null)
-                throw new Exception("KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
+            {
+                throw new Exception(
+                    "KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
+            }
 
             return Ed25519.Sign(data, PrivateKey);
         }
 
         /// <summary>
-        /// Sign a message and return an XDR Decorated Signature
+        ///     Sign a message and return an XDR Decorated Signature
         /// </summary>
         /// <param name="message"></param>
-        /// <returns><see cref="DecoratedSignature"/></returns>
+        /// <returns>
+        ///     <see cref="DecoratedSignature" />
+        /// </returns>
         public DecoratedSignature SignDecorated(byte[] message)
         {
-            var rawSig = Sign(message);
+            byte[] rawSig = Sign(message);
 
             return new DecoratedSignature
             {
@@ -254,7 +266,7 @@ namespace Kin.Stellar.Sdk
         /// <returns>True if they match, false otherwise.</returns>
         public bool Verify(byte[] data, byte[] signature)
         {
-            var result = false;
+            bool result = false;
 
             try
             {

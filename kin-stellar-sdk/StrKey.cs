@@ -36,42 +36,50 @@ namespace Kin.Stellar.Sdk
 
         public static string EncodeCheck(VersionByte versionByte, byte[] data)
         {
-            var bytes = new List<byte>
+            List<byte> bytes = new List<byte>
             {
                 (byte) versionByte
             };
 
             bytes.AddRange(data);
-            var checksum = CalculateChecksum(bytes.ToArray());
+            byte[] checksum = CalculateChecksum(bytes.ToArray());
             bytes.AddRange(checksum);
             return Base32Encoding.ToString(bytes.ToArray());
         }
 
         public static byte[] DecodeCheck(VersionByte versionByte, string encoded)
         {
-            for (var i = 0; i < encoded.Length; i++)
+            for (int i = 0; i < encoded.Length; i++)
+            {
                 if (encoded[i] > 127)
+                {
                     throw new ArgumentException("Illegal characters in encoded char array.");
+                }
+            }
 
-            var decoded = Base32Encoding.ToBytes(encoded);
-            var decodedVersionByte = decoded[0];
+            byte[] decoded = Base32Encoding.ToBytes(encoded);
+            byte decodedVersionByte = decoded[0];
 
-            var payload = new byte[decoded.Length - 2];
+            byte[] payload = new byte[decoded.Length - 2];
             Array.Copy(decoded, 0, payload, 0, payload.Length);
 
-            var data = new byte[payload.Length - 1];
+            byte[] data = new byte[payload.Length - 1];
             Array.Copy(payload, 1, data, 0, data.Length);
 
-            var checksum = new byte[2];
+            byte[] checksum = new byte[2];
             Array.Copy(decoded, decoded.Length - 2, checksum, 0, checksum.Length);
 
             if (decodedVersionByte != (byte) versionByte)
+            {
                 throw new FormatException("Version byte is invalid");
+            }
 
-            var expectedChecksum = CalculateChecksum(payload);
+            byte[] expectedChecksum = CalculateChecksum(payload);
 
             if (!expectedChecksum.SequenceEqual(checksum))
+            {
                 throw new FormatException("Checksum invalid");
+            }
 
             return data;
         }
@@ -80,9 +88,9 @@ namespace Kin.Stellar.Sdk
         {
             // This code calculates CRC16-XModem checksum
             // Ported from https://github.com/alexgorbatchev/node-crc
-            var crc = 0x0000;
-            var count = bytes.Length;
-            var i = 0;
+            int crc = 0x0000;
+            int count = bytes.Length;
+            int i = 0;
             int code;
 
             while (count > 0)
@@ -116,7 +124,8 @@ namespace Kin.Stellar.Sdk
 
             try
             {
-                var decoded = DecodeCheck(versionByte, encoded);
+                byte[] decoded = DecodeCheck(versionByte, encoded);
+
                 if (decoded.Length != 32)
                 {
                     return false;

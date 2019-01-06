@@ -15,9 +15,7 @@ namespace Kin.Stellar.Sdk.requests
         /// </summary>
         /// <param name="serverUri"></param>
         public AccountsRequestBuilder(Uri serverUri, HttpClient httpClient)
-            : base(serverUri, "accounts", httpClient)
-        {
-        }
+            : base(serverUri, "accounts", httpClient) { }
 
         /// <summary>
         ///     Requests specific uri and returns AccountResponse
@@ -27,17 +25,17 @@ namespace Kin.Stellar.Sdk.requests
         /// <returns></returns>
         public async Task<AccountResponse> Account(Uri uri)
         {
-            var responseHandler = new ResponseHandler<AccountResponse>();
+            ResponseHandler<AccountResponse> responseHandler = new ResponseHandler<AccountResponse>();
 
-            var response = await HttpClient.GetAsync(uri);
+            HttpResponseMessage response = await HttpClient.GetAsync(uri);
             return await responseHandler.HandleResponse(response);
         }
 
         public async Task<AccountDataResponse> AccountData(Uri uri)
         {
-            var responseHandler = new ResponseHandler<AccountDataResponse>();
+            ResponseHandler<AccountDataResponse> responseHandler = new ResponseHandler<AccountDataResponse>();
 
-            var response = await HttpClient.GetAsync(uri);
+            HttpResponseMessage response = await HttpClient.GetAsync(uri);
             return await responseHandler.HandleResponse(response);
         }
 

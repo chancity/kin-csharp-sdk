@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Kin.Stellar.Sdk.responses;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -11,9 +7,11 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "_links")]
         public FriendBotResponseLinks Links { get; set; }
 
-        [JsonProperty(PropertyName = "type")] public string Type { get; set; }
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
 
-        [JsonProperty(PropertyName = "title")] public string Title { get; set; }
+        [JsonProperty(PropertyName = "title")]
+        public string Title { get; set; }
 
         [JsonProperty(PropertyName = "status")]
         public string Status { get; set; }
@@ -24,7 +22,8 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "detail")]
         public string Detail { get; set; }
 
-        [JsonProperty(PropertyName = "hash")] public string Hash { get; set; }
+        [JsonProperty(PropertyName = "hash")]
+        public string Hash { get; set; }
 
         [JsonProperty(PropertyName = "ledger")]
         public string Ledger { get; set; }

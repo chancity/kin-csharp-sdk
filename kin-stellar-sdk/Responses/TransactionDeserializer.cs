@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -11,24 +11,26 @@ namespace Kin.Stellar.Sdk.responses
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             reader.DateParseHandling = DateParseHandling.None;
 
-            var jsonObject = JObject.Load(reader);
+            JObject jsonObject = JObject.Load(reader);
 
             TransactionResponse transaction = jsonObject.ToObject<TransactionResponse>();
 
-            var memoType = jsonObject.GetValue("memo_type").ToObject<string>();
+            string memoType = jsonObject.GetValue("memo_type").ToObject<string>();
 
             Memo memo;
+
             if (memoType.Equals("none"))
             {
                 memo = Memo.None();
             }
             else
             {
-                String memoValue = transaction.MemoStr;
+                string memoValue = transaction.MemoStr;
 
                 if (memoType.Equals("text"))
                 {

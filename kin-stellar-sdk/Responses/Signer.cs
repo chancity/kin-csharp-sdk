@@ -8,13 +8,6 @@ namespace Kin.Stellar.Sdk.responses
     /// </summary>
     public class Signer
     {
-        public Signer(String key, String type, int? weight)
-        {
-            Key = key ?? throw new ArgumentNullException(nameof(key), "key cannot be null");
-            Type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
-            Weight = weight ?? throw new ArgumentNullException(nameof(weight), "weight cannot be null");
-        }
-
         [Obsolete("Use Key instead.", false)]
         [JsonProperty(PropertyName = "public_key")]
         public string AccountId { get; private set; }
@@ -27,5 +20,12 @@ namespace Kin.Stellar.Sdk.responses
 
         [JsonProperty(PropertyName = "weight")]
         public int Weight { get; private set; }
+
+        public Signer(string key, string type, int? weight)
+        {
+            Key = key ?? throw new ArgumentNullException(nameof(key), "key cannot be null");
+            Type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
+            Weight = weight ?? throw new ArgumentNullException(nameof(weight), "weight cannot be null");
+        }
     }
 }

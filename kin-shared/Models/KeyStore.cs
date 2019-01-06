@@ -6,6 +6,7 @@ namespace Kin.Shared.Models
     {
         [JsonProperty("pkey")]
         public string AccountId { get; private set; }
+
         [JsonProperty("seed")]
         public string Seed { get; private set; }
 

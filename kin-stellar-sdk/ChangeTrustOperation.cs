@@ -5,25 +5,25 @@ namespace Kin.Stellar.Sdk
 {
     public class ChangeTrustOperation : Operation
     {
+        public Asset Asset { get; }
+
+        public string Limit { get; }
+
         private ChangeTrustOperation(Asset asset, string limit)
         {
             Asset = asset ?? throw new ArgumentNullException(nameof(asset), "asset cannot be null");
             Limit = limit ?? throw new ArgumentNullException(nameof(limit), "limit cannot be null");
         }
 
-        public Asset Asset { get; }
-
-        public string Limit { get; }
-
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.ChangeTrustOp();
+            sdkxdr.ChangeTrustOp op = new sdkxdr.ChangeTrustOp();
             op.Line = Asset.ToXdr();
-            var limit = new sdkxdr.Int64();
+            sdkxdr.Int64 limit = new sdkxdr.Int64();
             limit.InnerValue = ToXdrAmount(Limit);
             op.Limit = limit;
 
-            var body = new sdkxdr.Operation.OperationBody();
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
             body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.CHANGE_TRUST);
             body.ChangeTrustOp = op;
             return body;
@@ -70,7 +70,8 @@ namespace Kin.Stellar.Sdk
             /// <returns>Builder object so you can chain methods.</returns>
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                _SourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                _SourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
@@ -79,9 +80,13 @@ namespace Kin.Stellar.Sdk
             /// </summary>
             public ChangeTrustOperation Build()
             {
-                var operation = new ChangeTrustOperation(_Asset, _Limit);
+                ChangeTrustOperation operation = new ChangeTrustOperation(_Asset, _Limit);
+
                 if (_SourceAccount != null)
+                {
                     operation.SourceAccount = _SourceAccount;
+                }
+
                 return operation;
             }
         }

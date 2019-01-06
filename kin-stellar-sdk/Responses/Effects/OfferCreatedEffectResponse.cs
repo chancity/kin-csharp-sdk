@@ -6,7 +6,5 @@
     ///     <seealso cref="requests.EffectsRequestBuilder" />
     ///     <seealso cref="Server" />
     /// </summary>
-    public class OfferCreatedEffectResponse : EffectResponse
-    {
-    }
+    public class OfferCreatedEffectResponse : EffectResponse { }
 }

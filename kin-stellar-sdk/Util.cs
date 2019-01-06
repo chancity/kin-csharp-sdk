@@ -11,12 +11,13 @@ namespace Kin.Stellar.Sdk
 
         public static string BytesToHex(byte[] bytes)
         {
-            var hexChars = new char[bytes.Length * 2];
-            for (var j = 0; j < bytes.Length; j++)
+            char[] hexChars = new char[bytes.Length * 2];
+
+            for (int j = 0; j < bytes.Length; j++)
             {
-                var v = bytes[j] & 0xFF;
+                int v = bytes[j] & 0xFF;
                 hexChars[j * 2] = HexArray[(uint) v >> 4];
-                hexChars[(j * 2) + 1] = HexArray[v & 0x0F];
+                hexChars[j * 2 + 1] = HexArray[v & 0x0F];
             }
 
             return new string(hexChars);
@@ -24,11 +25,15 @@ namespace Kin.Stellar.Sdk
 
         public static byte[] HexToBytes(string s)
         {
-            var len = s.Length;
-            var data = new byte[len / 2];
-            for (var i = 0; i < len; i += 2)
+            int len = s.Length;
+            byte[] data = new byte[len / 2];
+
+            for (int i = 0; i < len; i += 2)
+            {
                 data[i / 2] = (byte) ((Convert.ToByte(s[i].ToString(), 16) << 4)
                                       + Convert.ToByte(s[i + 1].ToString(), 16));
+            }
+
             return data;
         }
 
@@ -39,8 +44,8 @@ namespace Kin.Stellar.Sdk
         /// <returns>Sha-256 Hash</returns>
         public static byte[] Hash(byte[] data)
         {
-            var mySHA256 = SHA256.Create();
-            var hash = mySHA256.ComputeHash(data);
+            SHA256 mySHA256 = SHA256.Create();
+            byte[] hash = mySHA256.ComputeHash(data);
             return hash;
         }
 
@@ -52,7 +57,7 @@ namespace Kin.Stellar.Sdk
         /// <returns>zero padded byte array</returns>
         public static byte[] PaddedByteArray(byte[] bytes, int length)
         {
-            var finalBytes = new byte[length];
+            byte[] finalBytes = new byte[length];
             Fill(finalBytes, (byte) 0);
             Array.Copy(bytes, 0, finalBytes, 0, bytes.Length);
 
@@ -83,15 +88,19 @@ namespace Kin.Stellar.Sdk
         public static bool IsIdentical(this byte[] a1, byte[] a2)
         {
             if (a1.Length != a2.Length)
+            {
                 return false;
+            }
 
             return !a1.Where((t, i) => t != a2[i]).Any();
         }
 
         public static void Fill<T>(this T[] arr, T value)
         {
-            for (var i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Length; i++)
+            {
                 arr[i] = value;
+            }
         }
 
         public static int ComputeByteArrayHash(params byte[] data)
@@ -99,7 +108,7 @@ namespace Kin.Stellar.Sdk
             unchecked
             {
                 const int p = 16777619;
-                var hash = data.Aggregate((int) 2166136261, (current, t) => (current ^ t) * p);
+                int hash = data.Aggregate((int) 2166136261, (current, t) => (current ^ t) * p);
 
                 hash += hash << 13;
                 hash ^= hash >> 7;

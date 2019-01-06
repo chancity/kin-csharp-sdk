@@ -10,7 +10,8 @@ namespace Kin.Stellar.Sdk.responses
             return objectType == typeof(KeyPair);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             return KeyPair.FromAccountId(reader.Value.ToString());
         }

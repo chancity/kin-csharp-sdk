@@ -6,20 +6,12 @@ namespace Kin.Stellar.Sdk
     [Serializable]
     public class MemoTooLongException : Exception
     {
-        public MemoTooLongException()
-        {
-        }
+        public MemoTooLongException() { }
 
-        public MemoTooLongException(string message) : base(message)
-        {
-        }
+        public MemoTooLongException(string message) : base(message) { }
 
-        public MemoTooLongException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+        public MemoTooLongException(string message, Exception innerException) : base(message, innerException) { }
 
-        protected MemoTooLongException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+        protected MemoTooLongException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

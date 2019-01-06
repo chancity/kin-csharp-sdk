@@ -6,15 +6,23 @@ namespace Kin.Stellar.Sdk
     {
         public override xdr.Memo ToXdr()
         {
-            var memo = new xdr.Memo();
+            xdr.Memo memo = new xdr.Memo();
             memo.Discriminant = MemoType.Create(MemoType.MemoTypeEnum.MEMO_NONE);
             return memo;
         }
 
-        public override bool Equals(System.Object o)
+        public override bool Equals(object o)
         {
-            if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+
             return true;
         }
 

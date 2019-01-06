@@ -10,14 +10,6 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// </summary>
     public class AccountThresholdsUpdatedEffectResponse : EffectResponse
     {
-        /// <inheritdoc />
-        public AccountThresholdsUpdatedEffectResponse(int lowThreshold, int medThreshold, int highThreshold)
-        {
-            LowThreshold = lowThreshold;
-            MedThreshold = medThreshold;
-            HighThreshold = highThreshold;
-        }
-
         [JsonProperty(PropertyName = "low_threshold")]
         public int LowThreshold { get; }
 
@@ -26,5 +18,13 @@ namespace Kin.Stellar.Sdk.responses.effects
 
         [JsonProperty(PropertyName = "high_threshold")]
         public int HighThreshold { get; }
+
+        /// <inheritdoc />
+        public AccountThresholdsUpdatedEffectResponse(int lowThreshold, int medThreshold, int highThreshold)
+        {
+            LowThreshold = lowThreshold;
+            MedThreshold = medThreshold;
+            HighThreshold = highThreshold;
+        }
     }
 }

@@ -5,27 +5,6 @@ namespace Kin.Stellar.Sdk
 {
     public class PathPaymentOperation : Operation
     {
-        private PathPaymentOperation(Asset sendAsset, string sendMax, KeyPair destination,
-            Asset destAsset, string destAmount, Asset[] path)
-        {
-            SendAsset = sendAsset ?? throw new ArgumentNullException(nameof(sendAsset), "sendAsset cannot be null");
-            SendMax = sendMax ?? throw new ArgumentNullException(nameof(sendMax), "sendMax cannot be null");
-            Destination = destination ?? throw new ArgumentNullException(nameof(destination), "destination cannot be null");
-            DestAsset = destAsset ?? throw new ArgumentNullException(nameof(destAsset), "destAsset cannot be null");
-            DestAmount = destAmount ?? throw new ArgumentNullException(nameof(destAmount), "destAmount cannot be null");
-
-            if (path == null)
-            {
-                Path = new Asset[0];
-            }
-            else
-            {
-                if (path.Length > 5)
-                    throw new ArgumentException(nameof(path), "The maximum number of assets in the path is 5");
-                Path = path;
-            }
-        }
-
         public Asset SendAsset { get; }
 
         public string SendMax { get; }
@@ -38,33 +17,63 @@ namespace Kin.Stellar.Sdk
 
         public Asset[] Path { get; }
 
+        private PathPaymentOperation(Asset sendAsset, string sendMax, KeyPair destination,
+            Asset destAsset, string destAmount, Asset[] path)
+        {
+            SendAsset = sendAsset ?? throw new ArgumentNullException(nameof(sendAsset), "sendAsset cannot be null");
+            SendMax = sendMax ?? throw new ArgumentNullException(nameof(sendMax), "sendMax cannot be null");
+
+            Destination = destination ??
+                          throw new ArgumentNullException(nameof(destination), "destination cannot be null");
+            DestAsset = destAsset ?? throw new ArgumentNullException(nameof(destAsset), "destAsset cannot be null");
+            DestAmount = destAmount ?? throw new ArgumentNullException(nameof(destAmount), "destAmount cannot be null");
+
+            if (path == null)
+            {
+                Path = new Asset[0];
+            }
+            else
+            {
+                if (path.Length > 5)
+                {
+                    throw new ArgumentException(nameof(path), "The maximum number of assets in the path is 5");
+                }
+
+                Path = path;
+            }
+        }
+
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.PathPaymentOp();
+            sdkxdr.PathPaymentOp op = new sdkxdr.PathPaymentOp();
 
             // sendAsset
             op.SendAsset = SendAsset.ToXdr();
             // sendMax
-            var sendMax = new sdkxdr.Int64();
+            sdkxdr.Int64 sendMax = new sdkxdr.Int64();
             sendMax.InnerValue = ToXdrAmount(SendMax);
             op.SendMax = sendMax;
             // destination
-            var destination = new sdkxdr.AccountID();
+            sdkxdr.AccountID destination = new sdkxdr.AccountID();
             destination.InnerValue = Destination.XdrPublicKey;
             op.Destination = destination;
             // destAsset
             op.DestAsset = DestAsset.ToXdr();
             // destAmount
-            var destAmount = new sdkxdr.Int64();
+            sdkxdr.Int64 destAmount = new sdkxdr.Int64();
             destAmount.InnerValue = ToXdrAmount(DestAmount);
             op.DestAmount = destAmount;
             // path
-            var path = new sdkxdr.Asset[Path.Length];
-            for (var i = 0; i < Path.Length; i++)
+            sdkxdr.Asset[] path = new sdkxdr.Asset[Path.Length];
+
+            for (int i = 0; i < Path.Length; i++)
+            {
                 path[i] = Path[i].ToXdr();
+            }
+
             op.Path = path;
 
-            var body = new sdkxdr.Operation.OperationBody();
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
             body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.PATH_PAYMENT);
             body.PathPaymentOp = op;
             return body;
@@ -93,8 +102,11 @@ namespace Kin.Stellar.Sdk
                 _DestAsset = Asset.FromXdr(op.DestAsset);
                 _DestAmount = FromXdrAmount(op.DestAmount.InnerValue);
                 _Path = new Asset[op.Path.Length];
-                for (var i = 0; i < op.Path.Length; i++)
+
+                for (int i = 0; i < op.Path.Length; i++)
+                {
                     _Path[i] = Asset.FromXdr(op.Path[i]);
+                }
             }
 
             /// <summary>
@@ -107,11 +119,18 @@ namespace Kin.Stellar.Sdk
             ///     <exception cref="ArithmeticException"> When sendMax or destAmount has more than 7 decimal places.</exception>
             public Builder(Asset sendAsset, string sendMax, KeyPair destination, Asset destAsset, string destAmount)
             {
-                _SendAsset = sendAsset ?? throw new ArgumentNullException(nameof(sendAsset), "sendAsset cannot be null");
+                _SendAsset = sendAsset ??
+                             throw new ArgumentNullException(nameof(sendAsset), "sendAsset cannot be null");
                 _SendMax = sendMax ?? throw new ArgumentNullException(nameof(sendMax), "sendMax cannot be null");
-                _Destination = destination ?? throw new ArgumentNullException(nameof(destination), "destination cannot be null");
-                _DestAsset = destAsset ?? throw new ArgumentNullException(nameof(destAsset), "destAsset cannot be null");
-                _DestAmount = destAmount ?? throw new ArgumentNullException(nameof(destAmount), "destAmount cannot be null");
+
+                _Destination = destination ??
+                               throw new ArgumentNullException(nameof(destination), "destination cannot be null");
+
+                _DestAsset = destAsset ??
+                             throw new ArgumentNullException(nameof(destAsset), "destAsset cannot be null");
+
+                _DestAmount = destAmount ??
+                              throw new ArgumentNullException(nameof(destAmount), "destAmount cannot be null");
             }
 
             /// <summary>
@@ -126,10 +145,15 @@ namespace Kin.Stellar.Sdk
             public Builder SetPath(Asset[] path)
             {
                 if (path == null)
+                {
                     throw new ArgumentNullException(nameof(path), "path cannot be null");
+                }
 
                 if (path.Length > 5)
+                {
                     throw new ArgumentException(nameof(path), "The maximum number of assets in the path is 5");
+                }
+
                 _Path = path;
                 return this;
             }
@@ -141,7 +165,8 @@ namespace Kin.Stellar.Sdk
             /// <returns>Builder object so you can chain methods.</returns>
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                _SourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                _SourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
@@ -151,9 +176,14 @@ namespace Kin.Stellar.Sdk
             /// <returns></returns>
             public PathPaymentOperation Build()
             {
-                var operation = new PathPaymentOperation(_SendAsset, _SendMax, _Destination, _DestAsset, _DestAmount, _Path);
+                PathPaymentOperation operation = new PathPaymentOperation(_SendAsset, _SendMax, _Destination,
+                    _DestAsset, _DestAmount, _Path);
+
                 if (_SourceAccount != null)
+                {
                     operation.SourceAccount = _SourceAccount;
+                }
+
                 return operation;
             }
         }

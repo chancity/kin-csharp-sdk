@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Kin.Stellar.Sdk.xdr;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Kin.Stellar.Sdk.xdr;
+using Newtonsoft.Json;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -10,7 +10,8 @@ namespace Kin.Stellar.Sdk.responses
         private readonly string _envelopeXdr;
         private readonly string _resultXdr;
 
-        [JsonProperty(PropertyName = "hash")] public string Hash { get; private set; }
+        [JsonProperty(PropertyName = "hash")]
+        public string Hash { get; private set; }
 
         [JsonProperty(PropertyName = "ledger")]
         public long? Ledger { get; private set; }
@@ -24,10 +25,8 @@ namespace Kin.Stellar.Sdk.responses
                 {
                     return _envelopeXdr;
                 }
-                else
-                {
-                    return SubmitTransactionResponseExtras.EnvelopeXdr;
-                }
+
+                return SubmitTransactionResponseExtras.EnvelopeXdr;
             }
         }
 
@@ -40,10 +39,8 @@ namespace Kin.Stellar.Sdk.responses
                 {
                     return _resultXdr;
                 }
-                else
-                {
-                    return SubmitTransactionResponseExtras.ResultXdr;
-                }
+
+                return SubmitTransactionResponseExtras.ResultXdr;
             }
         }
 
@@ -64,12 +61,18 @@ namespace Kin.Stellar.Sdk.responses
             return Ledger != null;
         }
 
-        ///<summary>
-        /// Helper method that returns Offer ID for ManageOffer from TransactionResult Xdr.
-        /// This is helpful when you need ID of an offer to update it later.
+        /// <summary>
+        ///     Helper method that returns Offer ID for ManageOffer from TransactionResult Xdr.
+        ///     This is helpful when you need ID of an offer to update it later.
         /// </summary>
-        /// <param name="position">Position of ManageOffer operation. If ManageOffer is second operation in this transaction this should be equal <code>1</code>.</param> 
-        /// <returns>Offer ID or <code>null</code> when operation at <code>position</code> is not a ManageOffer operation or error has occurred.</returns>
+        /// <param name="position">
+        ///     Position of ManageOffer operation. If ManageOffer is second operation in this transaction this
+        ///     should be equal <code>1</code>.
+        /// </param>
+        /// <returns>
+        ///     Offer ID or <code>null</code> when operation at <code>position</code> is not a ManageOffer operation or error
+        ///     has occurred.
+        /// </returns>
         public long? GetOfferIdFromResult(int position)
         {
             if (!IsSuccess())
@@ -95,7 +98,8 @@ namespace Kin.Stellar.Sdk.responses
                 return null;
             }
 
-            if (result.Result.Results[position].Tr.Discriminant.InnerValue != OperationType.OperationTypeEnum.MANAGE_OFFER)
+            if (result.Result.Results[position].Tr.Discriminant.InnerValue !=
+                OperationType.OperationTypeEnum.MANAGE_OFFER)
             {
                 return null;
             }
@@ -108,9 +112,9 @@ namespace Kin.Stellar.Sdk.responses
             return result.Result.Results[0].Tr.ManageOfferResult.Success.Offer.Offer.OfferID.InnerValue;
         }
 
-        ///<summary>
-        /// Additional information returned by a server.
-        ///</summary>
+        /// <summary>
+        ///     Additional information returned by a server.
+        /// </summary>
         public class Extras
         {
             [JsonProperty(PropertyName = "envelope_xdr")]
@@ -129,9 +133,13 @@ namespace Kin.Stellar.Sdk.responses
                 ExtrasResultCodes = resultCodes;
             }
 
-            ///<summary>
-            /// Contains result codes for this transaction.
-            /// see <a href="https://github.com/stellar/horizon/blob/master/src/github.com/stellar/horizon/codes/main.go" target="_blank">Possible values</a>
+            /// <summary>
+            ///     Contains result codes for this transaction.
+            ///     see
+            ///     <a href="https://github.com/stellar/horizon/blob/master/src/github.com/stellar/horizon/codes/main.go"
+            ///         target="_blank">
+            ///         Possible values
+            ///     </a>
             /// </summary>
             public class ResultCodes
             {

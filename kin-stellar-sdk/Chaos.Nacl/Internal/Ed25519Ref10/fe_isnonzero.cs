@@ -16,8 +16,8 @@
         // This code actually returns 0 if f==0 and 1 if f != 0
         internal static int fe_isnonzero(ref FieldElement f)
         {
-            FieldOperations.fe_reduce(out var fr, ref f);
-            var differentBits = 0;
+            fe_reduce(out FieldElement fr, ref f);
+            int differentBits = 0;
             differentBits |= fr.x0;
             differentBits |= fr.x1;
             differentBits |= fr.x2;

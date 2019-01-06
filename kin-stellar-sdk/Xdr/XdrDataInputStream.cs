@@ -6,7 +6,7 @@ using System.Text;
 namespace Kin.Stellar.Sdk.xdr
 {
     /// <summary>
-    /// Stream class for Reading XDR Data
+    ///     Stream class for Reading XDR Data
     /// </summary>
     public class XdrDataInputStream
     {
@@ -14,7 +14,7 @@ namespace Kin.Stellar.Sdk.xdr
         private int _pos;
 
         /// <summary>
-        /// Create the stream from a byte array.
+        ///     Create the stream from a byte array.
         /// </summary>
         /// <param name="bytes"></param>
         public XdrDataInputStream(byte[] bytes)
@@ -23,31 +23,31 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read single byte from stream.
+        ///     Read single byte from stream.
         /// </summary>
         /// <returns></returns>
         public byte Read()
         {
-            var res = _bytes[_pos];
+            byte res = _bytes[_pos];
             _pos++;
 
             return res;
         }
 
         /// <summary>
-        /// Read from Stream and move position.
+        ///     Read from Stream and move position.
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
         public void Read(byte[] buffer, int offset, int count)
         {
-            var result = ReadFixOpaque((uint) count);
+            byte[] result = ReadFixOpaque((uint) count);
             Array.Copy(result, 0, buffer, offset, count);
         }
 
         /// <summary>
-        /// Read a string from stream.
+        ///     Read a string from stream.
         /// </summary>
         /// <returns></returns>
         public string ReadString()
@@ -56,20 +56,24 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read array of int from stream.
+        ///     Read array of int from stream.
         /// </summary>
         /// <returns></returns>
         public int[] ReadIntArray()
         {
-            var l = ReadInt();
+            int l = ReadInt();
             return ReadIntArray(l);
         }
 
         private int[] ReadIntArray(int l)
         {
-            var arr = new int[l];
-            for (var i = 0; i < l; i++)
+            int[] arr = new int[l];
+
+            for (int i = 0; i < l; i++)
+            {
                 arr[i] = ReadInt();
+            }
+
             return arr;
         }
 
@@ -87,7 +91,7 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read Int32 from Stream
+        ///     Read Int32 from Stream
         /// </summary>
         /// <returns></returns>
         public int ReadInt()
@@ -100,7 +104,7 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read UInt from stream
+        ///     Read UInt from stream
         /// </summary>
         /// <returns></returns>
         public uint ReadUInt()
@@ -114,55 +118,62 @@ namespace Kin.Stellar.Sdk.xdr
 
         private unsafe float ReadSingle()
         {
-            var num = ReadInt();
+            int num = ReadInt();
             return *(float*) &num;
         }
 
         /// <summary>
-        /// Read float from stream.
+        ///     Read float from stream.
         /// </summary>
         /// <returns></returns>
         public float[] ReadSingleArray()
         {
-            var l = ReadInt();
+            int l = ReadInt();
             return ReadSingleArray(l);
         }
 
         private float[] ReadSingleArray(int l)
         {
-            var arr = new float[l];
-            for (var i = 0; i < l; i++)
+            float[] arr = new float[l];
+
+            for (int i = 0; i < l; i++)
+            {
                 arr[i] = ReadSingle();
+            }
 
             return arr;
         }
 
         private unsafe double ReadDouble()
         {
-            var num = ReadLong();
+            long num = ReadLong();
             return *(double*) &num;
         }
 
         /// <summary>
-        /// Read double from stream.
+        ///     Read double from stream.
         /// </summary>
         /// <returns></returns>
         public double[] ReadDoubleArray()
         {
-            var l = ReadInt();
+            int l = ReadInt();
             return ReadDoubleArray(l);
         }
 
         private double[] ReadDoubleArray(int l)
         {
-            var arr = new double[l];
-            for (var i = 0; i < l; i++)
+            double[] arr = new double[l];
+
+            for (int i = 0; i < l; i++)
+            {
                 arr[i] = ReadDouble();
+            }
+
             return arr;
         }
 
         /// <summary>
-        /// Return bytes as an Array
+        ///     Return bytes as an Array
         /// </summary>
         /// <returns></returns>
         public byte[] ToArray()
@@ -171,7 +182,7 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read the array with the proper padding applied and check max length.
+        ///     Read the array with the proper padding applied and check max length.
         /// </summary>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -183,29 +194,33 @@ namespace Kin.Stellar.Sdk.xdr
         }
 
         /// <summary>
-        /// Read array with proper padding fixed if needed.
+        ///     Read array with proper padding fixed if needed.
         /// </summary>
         /// <param name="len"></param>
         /// <returns></returns>
         /// <exception cref="IOException"></exception>
         public byte[] ReadFixOpaque(uint len)
         {
-            var result = new byte[len];
+            byte[] result = new byte[len];
             Array.Copy(_bytes, _pos, result, 0, (int) len);
 
-            var tail = len % 4u;
+            uint tail = len % 4u;
+
             if (tail == 0)
             {
                 _pos += (int) len;
                 return result;
             }
-            var tailLength = (int) (4u - tail);
-            var tailBytes = new byte[tailLength];
+
+            int tailLength = (int) (4u - tail);
+            byte[] tailBytes = new byte[tailLength];
 
             Array.Copy(_bytes, _pos + len, tailBytes, 0, tailLength);
 
             if (tailBytes.Any(a => a != 0))
+            {
                 throw new IOException("non-zero padding");
+            }
 
             _pos += (int) len + tailLength;
 
@@ -215,6 +230,7 @@ namespace Kin.Stellar.Sdk.xdr
         private uint CheckedReadLength(uint max)
         {
             uint len;
+
             try
             {
                 len = ReadUInt();
@@ -225,10 +241,14 @@ namespace Kin.Stellar.Sdk.xdr
             }
 
             if (len > max)
+            {
                 throw new FormatException("unexpected length: " + len);
+            }
 
             if (max <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(max));
+            }
 
             return len;
         }

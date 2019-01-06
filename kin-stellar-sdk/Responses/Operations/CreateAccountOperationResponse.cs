@@ -3,10 +3,10 @@
 namespace Kin.Stellar.Sdk.responses.operations
 {
     /// <summary>
-    /// Represents CreateAccount operation response.
-    /// See: https://www.stellar.org/developers/horizon/reference/resources/operation.html
-    /// <seealso cref="requests.OperationsRequestBuilder"/>
-    /// <seealso cref="Server"/>
+    ///     Represents CreateAccount operation response.
+    ///     See: https://www.stellar.org/developers/horizon/reference/resources/operation.html
+    ///     <seealso cref="requests.OperationsRequestBuilder" />
+    ///     <seealso cref="Server" />
     /// </summary>
     public class CreateAccountOperationResponse : OperationResponse
     {

@@ -6,8 +6,10 @@ namespace Kin.Backup.Models
     {
         [JsonProperty("pkey")]
         public string AccountId { get; private set; }
+
         [JsonProperty("seed")]
         public string EncryptedSeed { get; private set; }
+
         [JsonProperty("salt")]
         public string EncryptionSalt { get; private set; }
 

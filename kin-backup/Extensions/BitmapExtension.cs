@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
-using Kin.Stellar.Sdk;
 using System.Threading.Tasks;
+using Kin.Stellar.Sdk;
 
 namespace Kin.Backup.Extensions
 {

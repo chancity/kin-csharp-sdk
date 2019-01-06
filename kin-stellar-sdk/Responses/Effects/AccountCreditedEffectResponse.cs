@@ -10,15 +10,6 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// </summary>
     public class AccountCreditedEffectResponse : EffectResponse
     {
-        /// <inheritdoc />
-        public AccountCreditedEffectResponse(string amount, string assetType, string assetCode, string assetIssuer)
-        {
-            Amount = amount;
-            AssetType = assetType;
-            AssetCode = assetCode;
-            AssetIssuer = assetIssuer;
-        }
-
         [JsonProperty(PropertyName = "amount")]
         public string Amount { get; }
 
@@ -32,5 +23,14 @@ namespace Kin.Stellar.Sdk.responses.effects
         public string AssetIssuer { get; }
 
         public Asset Asset => Asset.CreateNonNativeAsset(AssetType, AssetIssuer, AssetCode);
+
+        /// <inheritdoc />
+        public AccountCreditedEffectResponse(string amount, string assetType, string assetCode, string assetIssuer)
+        {
+            Amount = amount;
+            AssetType = assetType;
+            AssetCode = assetCode;
+            AssetIssuer = assetIssuer;
+        }
     }
 }

@@ -11,26 +11,6 @@ namespace Kin.Stellar.Sdk
     {
         private readonly Uri _serverUri;
 
-        public Server(string uri, HttpClient httpClient)
-        {
-            HttpClient = httpClient;
-            _serverUri = new Uri(uri);
-        }
-
-        public Server(string uri)
-            : this(uri, new HttpClient())
-        {
-        }
-
-        public RootResponse Root()
-        {
-            ResponseHandler<RootResponse> responseHandler = new ResponseHandler<RootResponse>();
-
-            var response = HttpClient.GetAsync(_serverUri).Result;
-
-            return responseHandler.HandleResponse(response).Result;
-        }
-
         public static HttpClient HttpClient { get; set; }
 
         public AccountsRequestBuilder Accounts => new AccountsRequestBuilder(_serverUri, HttpClient);
@@ -57,27 +37,50 @@ namespace Kin.Stellar.Sdk
 
         public FriendBotRequestBuilder TestNetFriendBot => new FriendBotRequestBuilder(_serverUri, HttpClient);
 
+        public TradesAggregationRequestBuilder TradeAggregations =>
+            new TradesAggregationRequestBuilder(_serverUri, HttpClient);
+
+        public Server(string uri, HttpClient httpClient)
+        {
+            HttpClient = httpClient;
+            _serverUri = new Uri(uri);
+        }
+
+        public Server(string uri)
+            : this(uri, new HttpClient()) { }
+
         public void Dispose()
         {
             HttpClient?.Dispose();
         }
 
-        public TradesAggregationRequestBuilder TradeAggregations => new TradesAggregationRequestBuilder(_serverUri, HttpClient);
+        public RootResponse Root()
+        {
+            ResponseHandler<RootResponse> responseHandler = new ResponseHandler<RootResponse>();
+
+            HttpResponseMessage response = HttpClient.GetAsync(_serverUri).Result;
+
+            return responseHandler.HandleResponse(response).Result;
+        }
 
         public async Task<SubmitTransactionResponse> SubmitTransaction(Transaction transaction)
         {
-            var transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
+            Uri transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
 
-            var paramsPairs = new List<KeyValuePair<string, string>>
+            List<KeyValuePair<string, string>> paramsPairs = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("tx", transaction.ToEnvelopeXdrBase64())
             };
 
-            var response = await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
+            HttpResponseMessage response =
+                await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
+
             if (response.Content != null)
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var submitTransactionResponse = JsonSingleton.GetInstance<SubmitTransactionResponse>(responseString);
+                string responseString = await response.Content.ReadAsStringAsync();
+
+                SubmitTransactionResponse submitTransactionResponse =
+                    JsonSingleton.GetInstance<SubmitTransactionResponse>(responseString);
                 return submitTransactionResponse;
             }
 
@@ -86,18 +89,22 @@ namespace Kin.Stellar.Sdk
 
         public async Task<SubmitTransactionResponse> SubmitTransaction(string transactionEnvelopeBase64)
         {
-            var transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
+            Uri transactionUri = new UriBuilder(_serverUri).SetPath("/transactions").Uri;
 
-            var paramsPairs = new List<KeyValuePair<string, string>>
+            List<KeyValuePair<string, string>> paramsPairs = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("tx", transactionEnvelopeBase64)
             };
 
-            var response = await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
+            HttpResponseMessage response =
+                await HttpClient.PostAsync(transactionUri, new FormUrlEncodedContent(paramsPairs.ToArray()));
+
             if (response.Content != null)
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var submitTransactionResponse = JsonSingleton.GetInstance<SubmitTransactionResponse>(responseString);
+                string responseString = await response.Content.ReadAsStringAsync();
+
+                SubmitTransactionResponse submitTransactionResponse =
+                    JsonSingleton.GetInstance<SubmitTransactionResponse>(responseString);
                 return submitTransactionResponse;
             }
 

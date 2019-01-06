@@ -21,7 +21,7 @@ namespace Kin.Stellar.Sdk
 
         public override xdr.Asset ToXdr()
         {
-            var thisXdr = new xdr.Asset();
+            xdr.Asset thisXdr = new xdr.Asset();
             thisXdr.Discriminant = AssetType.Create(AssetType.AssetTypeEnum.ASSET_TYPE_NATIVE);
             return thisXdr;
         }

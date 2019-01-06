@@ -10,22 +10,6 @@ namespace Kin.Stellar.Sdk.responses.effects
     /// </summary>
     public class TradeEffectResponse : EffectResponse
     {
-        /// <inheritdoc />
-        public TradeEffectResponse(KeyPair seller, long offerId, string soldAmount, string soldAssetType, string soldAssetCode,
-            string soldAssetIssuer, string boughtAmount, string boughtAssetType, string boughtAssetCode, string boughtAssetIssuer)
-        {
-            Seller = seller;
-            OfferId = offerId;
-            SoldAmount = soldAmount;
-            SoldAssetType = soldAssetType;
-            SoldAssetCode = soldAssetCode;
-            SoldAssetIssuer = soldAssetIssuer;
-            BoughtAmount = boughtAmount;
-            BoughtAssetType = boughtAssetType;
-            BoughtAssetCode = boughtAssetCode;
-            BoughtAssetIssuer = boughtAssetIssuer;
-        }
-
         [JsonProperty(PropertyName = "seller")]
         public KeyPair Seller { get; }
 
@@ -59,5 +43,23 @@ namespace Kin.Stellar.Sdk.responses.effects
         public Asset BoughtAsset => Asset.CreateNonNativeAsset(BoughtAssetType, BoughtAssetIssuer, BoughtAssetCode);
 
         public Asset SoldAsset => Asset.CreateNonNativeAsset(SoldAssetType, SoldAssetIssuer, SoldAssetCode);
+
+        /// <inheritdoc />
+        public TradeEffectResponse(KeyPair seller, long offerId, string soldAmount, string soldAssetType,
+            string soldAssetCode,
+            string soldAssetIssuer, string boughtAmount, string boughtAssetType, string boughtAssetCode,
+            string boughtAssetIssuer)
+        {
+            Seller = seller;
+            OfferId = offerId;
+            SoldAmount = soldAmount;
+            SoldAssetType = soldAssetType;
+            SoldAssetCode = soldAssetCode;
+            SoldAssetIssuer = soldAssetIssuer;
+            BoughtAmount = boughtAmount;
+            BoughtAssetType = boughtAssetType;
+            BoughtAssetCode = boughtAssetCode;
+            BoughtAssetIssuer = boughtAssetIssuer;
+        }
     }
 }

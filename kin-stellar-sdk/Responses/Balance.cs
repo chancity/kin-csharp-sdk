@@ -11,17 +11,6 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "asset_issuer")]
         private string _assetIssuer;
 
-        public Balance(string assetType, string assetCode, string assetIssuer, string balance, string limit, string buyingLiabilities, string sellingLiabilities)
-        {
-            AssetType = assetType ?? throw new ArgumentNullException(nameof(assetType), "assertType cannot be null");
-            BalanceString = balance ?? throw new ArgumentNullException(nameof(balance), "balance cannot be null");
-            Limit = limit;
-            AssetCode = assetCode;
-            _assetIssuer = assetIssuer;
-            BuyingLiabilities = buyingLiabilities;
-            SellingLiabilities = sellingLiabilities;
-        }
-
         [JsonProperty(PropertyName = "asset_type")]
         public string AssetType { get; private set; }
 
@@ -31,7 +20,8 @@ namespace Kin.Stellar.Sdk.responses
         //This prop is dynamic based on private field serialized above.
         public KeyPair AssetIssuer => KeyPair.FromAccountId(_assetIssuer);
 
-        [JsonProperty(PropertyName = "limit")] public string Limit { get; private set; }
+        [JsonProperty(PropertyName = "limit")]
+        public string Limit { get; private set; }
 
         [JsonProperty(PropertyName = "balance")]
         public string BalanceString { get; private set; }
@@ -41,5 +31,17 @@ namespace Kin.Stellar.Sdk.responses
 
         [JsonProperty(PropertyName = "selling_liabilities")]
         public string SellingLiabilities { get; private set; }
+
+        public Balance(string assetType, string assetCode, string assetIssuer, string balance, string limit,
+            string buyingLiabilities, string sellingLiabilities)
+        {
+            AssetType = assetType ?? throw new ArgumentNullException(nameof(assetType), "assertType cannot be null");
+            BalanceString = balance ?? throw new ArgumentNullException(nameof(balance), "balance cannot be null");
+            Limit = limit;
+            AssetCode = assetCode;
+            _assetIssuer = assetIssuer;
+            BuyingLiabilities = buyingLiabilities;
+            SellingLiabilities = sellingLiabilities;
+        }
     }
 }

@@ -1,21 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Kin.Stellar.Sdk.responses.effects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Kin.Stellar.Sdk.responses.effects;
 
 namespace Kin.Stellar.Sdk.responses
 {
     public class EffectDeserializer : JsonConverter
     {
-        private static readonly IDictionary<int, Func<string, EffectResponse>> Effects = new ConcurrentDictionary<int, Func<string, EffectResponse>>();
+        private static readonly IDictionary<int, Func<string, EffectResponse>> Effects =
+            new ConcurrentDictionary<int, Func<string, EffectResponse>>();
 
         static EffectDeserializer()
         {
             if (Effects.Count > 0)
+            {
                 return;
+            }
 
             Effects.Add(0, JsonSingleton.GetInstance<AccountCreatedEffectResponse>);
             Effects.Add(1, JsonSingleton.GetInstance<AccountRemovedEffectResponse>);
@@ -56,10 +58,11 @@ namespace Kin.Stellar.Sdk.responses
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
-            var jsonObject = JObject.Load(reader);
-            var type = jsonObject.GetValue("type_i").ToObject<int>();
+            JObject jsonObject = JObject.Load(reader);
+            int type = jsonObject.GetValue("type_i").ToObject<int>();
 
             return Effects[type].Invoke(jsonObject.Root.ToString());
         }

@@ -8,14 +8,6 @@ namespace Kin.Stellar.Sdk.federation
     /// </summary>
     public class FederationResponse
     {
-        public FederationResponse(string stellarAddress, string accountId, string memoType, string memo)
-        {
-            StellarAddress = stellarAddress;
-            AccountId = accountId;
-            MemoType = memoType;
-            Memo = memo;
-        }
-
         [JsonProperty(PropertyName = "stellar_address")]
         public string StellarAddress { get; private set; }
 
@@ -25,6 +17,15 @@ namespace Kin.Stellar.Sdk.federation
         [JsonProperty(PropertyName = "memo_type")]
         public string MemoType { get; private set; }
 
-        [JsonProperty(PropertyName = "memo")] public string Memo { get; private set; }
+        [JsonProperty(PropertyName = "memo")]
+        public string Memo { get; private set; }
+
+        public FederationResponse(string stellarAddress, string accountId, string memoType, string memo)
+        {
+            StellarAddress = stellarAddress;
+            AccountId = accountId;
+            MemoType = memoType;
+            Memo = memo;
+        }
     }
 }

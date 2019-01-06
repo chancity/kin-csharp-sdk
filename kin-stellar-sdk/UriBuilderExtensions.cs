@@ -13,12 +13,12 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         public static UriBuilder SetQueryParam(this UriBuilder uri, string key, string value)
         {
-            var collection = uri.ParseQuery();
+            NameValueCollection collection = uri.ParseQuery();
 
             // add (or replace existing) key-value pair
             collection.Set(key, value);
 
-            var query = collection
+            string query = collection
                 .AsKeyValuePairs()
                 .ToConcatenatedString(pair =>
                     pair.Key == null
@@ -52,8 +52,10 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         private static IEnumerable<KeyValuePair<string, string>> AsKeyValuePairs(this NameValueCollection collection)
         {
-            foreach (var key in collection.AllKeys)
+            foreach (string key in collection.AllKeys)
+            {
                 yield return new KeyValuePair<string, string>(key, collection.Get(key));
+            }
         }
 
         /// <summary>

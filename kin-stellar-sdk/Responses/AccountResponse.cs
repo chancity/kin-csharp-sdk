@@ -5,30 +5,6 @@ namespace Kin.Stellar.Sdk.responses
 {
     public class AccountResponse : Response, ITransactionBuilderAccount, IPagingToken
     {
-        private AccountResponse()
-        {
-        }
-
-        public AccountResponse(KeyPair keyPair)
-        {
-            KeyPair = keyPair;
-        }
-
-        public AccountResponse(KeyPair keyPair, long sequenceNumber)
-            : this(keyPair)
-        {
-            SequenceNumber = sequenceNumber;
-        }
-
-        [JsonProperty(PropertyName = "account_id")]
-        public KeyPair KeyPair { get; set; }
-
-        [JsonProperty(PropertyName = "sequence")]
-        public long SequenceNumber { get; set; }
-
-        [JsonProperty(PropertyName = "paging_token")]
-        public string PagingToken { get; set; }
-
         [JsonProperty(PropertyName = "subentry_count")]
         public int SubentryCount { get; set; }
 
@@ -41,7 +17,8 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "thresholds")]
         public Thresholds Thresholds { get; set; }
 
-        [JsonProperty(PropertyName = "flags")] public Flags Flags { get; set; }
+        [JsonProperty(PropertyName = "flags")]
+        public Flags Flags { get; set; }
 
         [JsonProperty(PropertyName = "balances")]
         public Balance[] Balances { get; set; }
@@ -52,7 +29,30 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "_links")]
         public AccountResponseLinks Links { get; set; }
 
-        [JsonProperty("Data")] public Dictionary<string, string> Data { get; private set; }
+        [JsonProperty("Data")]
+        public Dictionary<string, string> Data { get; private set; }
+
+        private AccountResponse() { }
+
+        public AccountResponse(KeyPair keyPair)
+        {
+            KeyPair = keyPair;
+        }
+
+        public AccountResponse(KeyPair keyPair, long sequenceNumber)
+            : this(keyPair)
+        {
+            SequenceNumber = sequenceNumber;
+        }
+
+        [JsonProperty(PropertyName = "paging_token")]
+        public string PagingToken { get; set; }
+
+        [JsonProperty(PropertyName = "account_id")]
+        public KeyPair KeyPair { get; set; }
+
+        [JsonProperty(PropertyName = "sequence")]
+        public long SequenceNumber { get; set; }
 
         public long IncrementedSequenceNumber => SequenceNumber + 1;
 

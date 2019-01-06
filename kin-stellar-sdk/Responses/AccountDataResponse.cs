@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Kin.Stellar.Sdk.responses
 {
     public class AccountDataResponse
     {
-
         [JsonProperty(PropertyName = "value")]
         public string Value { get; private set; }
 
@@ -15,7 +13,7 @@ namespace Kin.Stellar.Sdk.responses
         {
             get
             {
-                var data = Convert.FromBase64String(Value);
+                byte[] data = Convert.FromBase64String(Value);
                 return Encoding.UTF8.GetString(data);
             }
         }

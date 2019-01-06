@@ -5,10 +5,28 @@ using sdkxdr = Kin.Stellar.Sdk.xdr;
 namespace Kin.Stellar.Sdk
 {
     /// <summary>
-    ///An XDR AllowTrustOp. An "allow trust" operation authorizes another account to hold your account's credit for a given asset.
+    ///     An XDR AllowTrustOp. An "allow trust" operation authorizes another account to hold your account's credit for a
+    ///     given asset.
     /// </summary>
     public class AllowTrustOperation : Operation
     {
+        /// <summary>
+        ///     The asset code being authorized.
+        /// </summary>
+        public string AssetCode { get; }
+
+        /// <summary>
+        ///     The trusting account (the one being authorized)
+        /// </summary>
+        public KeyPair Trustor { get; }
+
+        /// <summary>
+        ///     True to authorize the line, false to deauthorize.
+        /// </summary>
+        public bool Authorize { get; }
+
+        public override OperationThreshold Threshold => OperationThreshold.Low;
+
         private AllowTrustOperation(KeyPair trustor, string assetCode, bool authorize)
         {
             Trustor = trustor ?? throw new ArgumentNullException(nameof(trustor), "trustor cannot be null");
@@ -17,47 +35,30 @@ namespace Kin.Stellar.Sdk
         }
 
         /// <summary>
-        /// The asset code being authorized.
-        /// </summary>
-        public string AssetCode { get; }
-
-        /// <summary>
-        /// The trusting account (the one being authorized)
-        /// </summary>
-        public KeyPair Trustor { get; }
-
-        /// <summary>
-        /// True to authorize the line, false to deauthorize.
-        /// </summary>
-        public bool Authorize { get; }
-
-        public override OperationThreshold Threshold
-        {
-            get => OperationThreshold.Low;
-        }
-
-        /// <summary>
-        /// Returns the Allow Trust XDR Operation Body
+        ///     Returns the Allow Trust XDR Operation Body
         /// </summary>
         /// <returns></returns>
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.AllowTrustOp();
+            sdkxdr.AllowTrustOp op = new sdkxdr.AllowTrustOp();
 
             // trustor
-            var trustor = new sdkxdr.AccountID();
+            sdkxdr.AccountID trustor = new sdkxdr.AccountID();
             trustor.InnerValue = Trustor.XdrPublicKey;
             op.Trustor = trustor;
             // asset
-            var asset = new sdkxdr.AllowTrustOp.AllowTrustOpAsset();
+            sdkxdr.AllowTrustOp.AllowTrustOpAsset asset = new sdkxdr.AllowTrustOp.AllowTrustOpAsset();
+
             if (AssetCode.Length <= 4)
             {
-                asset.Discriminant = sdkxdr.AssetType.Create(sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM4);
+                asset.Discriminant =
+                    sdkxdr.AssetType.Create(sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM4);
                 asset.AssetCode4 = Util.PaddedByteArray(AssetCode, 4);
             }
             else
             {
-                asset.Discriminant = sdkxdr.AssetType.Create(sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM12);
+                asset.Discriminant =
+                    sdkxdr.AssetType.Create(sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM12);
                 asset.AssetCode12 = Util.PaddedByteArray(AssetCode, 12);
             }
 
@@ -65,7 +66,7 @@ namespace Kin.Stellar.Sdk
             // authorize
             op.Authorize = Authorize;
 
-            var body = new sdkxdr.Operation.OperationBody();
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
             body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.ALLOW_TRUST);
             body.AllowTrustOp = op;
             return body;
@@ -84,13 +85,14 @@ namespace Kin.Stellar.Sdk
             private KeyPair _sourceAccount;
 
             /// <summary>
-            /// Builder to build the AllowTrust Operation given an XDR AllowTrustOp
+            ///     Builder to build the AllowTrust Operation given an XDR AllowTrustOp
             /// </summary>
             /// <param name="op"></param>
             /// <exception cref="Exception"></exception>
             public Builder(sdkxdr.AllowTrustOp op)
             {
                 _trustor = KeyPair.FromXdrPublicKey(op.Trustor.InnerValue);
+
                 switch (op.Asset.Discriminant.InnerValue)
                 {
                     case sdkxdr.AssetType.AssetTypeEnum.ASSET_TYPE_CREDIT_ALPHANUM4:
@@ -140,9 +142,13 @@ namespace Kin.Stellar.Sdk
             /// </summary>
             public AllowTrustOperation Build()
             {
-                var operation = new AllowTrustOperation(_trustor, _assetCode, _authorize);
+                AllowTrustOperation operation = new AllowTrustOperation(_trustor, _assetCode, _authorize);
+
                 if (_sourceAccount != null)
+                {
                     operation.SourceAccount = _sourceAccount;
+                }
+
                 return operation;
             }
         }

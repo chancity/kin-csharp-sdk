@@ -33,7 +33,7 @@ namespace Kin.Stellar.Sdk.xdr
 
         public void Write(byte[] bytes, int offset, int count)
         {
-            var newBytes = new byte[count];
+            byte[] newBytes = new byte[count];
             Array.Copy(bytes, offset, newBytes, 0, count);
 
             _bytes.AddRange(newBytes);
@@ -43,7 +43,7 @@ namespace Kin.Stellar.Sdk.xdr
 
         public void WriteString(string str)
         {
-            var bytes = Encoding.UTF8.GetBytes(str);
+            byte[] bytes = Encoding.UTF8.GetBytes(str);
             WriteVarOpaque((uint) bytes.Length, bytes);
         }
 
@@ -55,8 +55,10 @@ namespace Kin.Stellar.Sdk.xdr
 
         private void WriteIntArray(int[] a, int l)
         {
-            for (var i = 0; i < l; i++)
+            for (int i = 0; i < l; i++)
+            {
                 WriteInt(a[i]);
+            }
         }
 
         public void WriteLong(long v)
@@ -100,8 +102,10 @@ namespace Kin.Stellar.Sdk.xdr
 
         private void WriteSingleArray(float[] a, int l)
         {
-            for (var i = 0; i < l; i++)
+            for (int i = 0; i < l; i++)
+            {
                 WriteSingle(a[i]);
+            }
         }
 
         private unsafe void WriteDouble(double v)
@@ -117,8 +121,10 @@ namespace Kin.Stellar.Sdk.xdr
 
         private void WriteDoubleArray(double[] a, int l)
         {
-            for (var i = 0; i < l; i++)
+            for (int i = 0; i < l; i++)
+            {
                 WriteDouble(a[i]);
+            }
         }
 
         public byte[] ToArray()
@@ -128,9 +134,12 @@ namespace Kin.Stellar.Sdk.xdr
 
         public void WriteVarOpaque(uint max, byte[] v)
         {
-            var len = (uint) v.LongLength;
+            uint len = (uint) v.LongLength;
+
             if (len > max)
+            {
                 throw new FormatException("unexpected length: " + len);
+            }
 
             try
             {
@@ -140,6 +149,7 @@ namespace Kin.Stellar.Sdk.xdr
             {
                 throw new FormatException("can't write length", ex);
             }
+
             NoCheckWriteFixOpaque(len, v);
         }
 
@@ -158,13 +168,16 @@ namespace Kin.Stellar.Sdk.xdr
 
         private void Padd(uint length)
         {
-            var tail = length % 4u;
+            uint tail = length % 4u;
+
             if (tail != 0)
             {
-                var padd = _tails[4u - tail];
+                byte[] padd = _tails[4u - tail];
 
-                for (var i = 0; i < padd.Length; i++)
+                for (int i = 0; i < padd.Length; i++)
+                {
                     Write(padd[i]);
+                }
             }
         }
     }

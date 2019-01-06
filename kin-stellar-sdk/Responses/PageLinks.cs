@@ -5,17 +5,17 @@
     /// </summary>
     public class PageLinks
     {
+        public Link Next { get; }
+
+        public Link Prev { get; }
+
+        public Link Self { get; }
+
         public PageLinks(Link next, Link prev, Link self)
         {
             Next = next;
             Prev = prev;
             Self = self;
         }
-
-        public Link Next { get; }
-
-        public Link Prev { get; }
-
-        public Link Self { get; }
     }
 }

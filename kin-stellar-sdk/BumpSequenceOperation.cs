@@ -1,6 +1,7 @@
-﻿using Kin.Stellar.Sdk.xdr;
-using System;
+﻿using System;
+using Kin.Stellar.Sdk.xdr;
 using static Kin.Stellar.Sdk.xdr.Operation;
+using Int64 = Kin.Stellar.Sdk.xdr.Int64;
 
 namespace Kin.Stellar.Sdk
 {
@@ -8,10 +9,7 @@ namespace Kin.Stellar.Sdk
     {
         public long BumpTo { get; }
 
-        public override OperationThreshold Threshold
-        {
-            get => OperationThreshold.Low;
-        }
+        public override OperationThreshold Threshold => OperationThreshold.Low;
 
         public BumpSequenceOperation(long bumpTo)
         {
@@ -20,13 +18,13 @@ namespace Kin.Stellar.Sdk
 
         public override OperationBody ToOperationBody()
         {
-            var op = new BumpSequenceOp();
-            var bumpTo = new xdr.Int64 { InnerValue = BumpTo };
-            var sequenceNumber = new SequenceNumber { InnerValue = bumpTo };
+            BumpSequenceOp op = new BumpSequenceOp();
+            Int64 bumpTo = new Int64 {InnerValue = BumpTo};
+            SequenceNumber sequenceNumber = new SequenceNumber {InnerValue = bumpTo};
 
             op.BumpTo = sequenceNumber;
 
-            var body = new OperationBody
+            OperationBody body = new OperationBody
             {
                 Discriminant = OperationType.Create(OperationType.OperationTypeEnum.BUMP_SEQUENCE),
                 BumpSequenceOp = op
@@ -37,8 +35,8 @@ namespace Kin.Stellar.Sdk
 
         public class Builder
         {
-            public long BumpTo { get; }
             private KeyPair _sourceAccount;
+            public long BumpTo { get; }
 
             public Builder(BumpSequenceOp op)
             {
@@ -52,13 +50,15 @@ namespace Kin.Stellar.Sdk
 
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                _sourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                _sourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
             public BumpSequenceOperation Build()
             {
-                var operation = new BumpSequenceOperation(BumpTo);
+                BumpSequenceOperation operation = new BumpSequenceOperation(BumpTo);
+
                 if (_sourceAccount != null)
                 {
                     operation.SourceAccount = _sourceAccount;

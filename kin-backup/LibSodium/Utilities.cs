@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Kin.Backup.LibSodium
 {
@@ -23,6 +22,7 @@ namespace Kin.Backup.LibSodium
 
             return Marshal.PtrToStringAnsi(ret);
         }
+
         /// <summary>Converts a hex-encoded string to a byte array.</summary>
         /// <param name="hex">Hex-encoded data.</param>
         /// <returns>A byte array of the decoded string.</returns>

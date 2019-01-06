@@ -1,9 +1,10 @@
-﻿using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Linq;
 using Kin.Stellar.Sdk.responses.effects;
 using Kin.Stellar.Sdk.responses.operations;
 using Kin.Stellar.Sdk.responses.page;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -11,7 +12,7 @@ namespace Kin.Stellar.Sdk.responses
     {
         public static T GetInstance<T>(string content)
         {
-            var pageResponseConversions = new[]
+            Type[] pageResponseConversions =
             {
                 typeof(Page<AccountResponse>),
                 typeof(Page<AssetResponse>),
@@ -26,7 +27,7 @@ namespace Kin.Stellar.Sdk.responses
                 typeof(Page<TransactionResponse>)
             };
 
-            var jsonConverters = new JsonConverter[]
+            JsonConverter[] jsonConverters =
             {
                 new AssetDeserializer(),
                 new KeyPairTypeAdapter(),
@@ -35,7 +36,7 @@ namespace Kin.Stellar.Sdk.responses
                 new TransactionDeserializer()
             };
 
-            var pageJsonConverters = new JsonConverter[]
+            JsonConverter[] pageJsonConverters =
             {
                 new AssetDeserializer(),
                 new KeyPairTypeAdapter(),
@@ -54,8 +55,8 @@ namespace Kin.Stellar.Sdk.responses
 
         private static string PageAccountResponseConverter(string content)
         {
-            var json = JObject.Parse(content);
-            var newJson = new JObject();
+            JObject json = JObject.Parse(content);
+            JObject newJson = new JObject();
             newJson.Add("records", json.SelectToken("$._embedded.records"));
             newJson.Add("links", json.SelectToken("$._links"));
 

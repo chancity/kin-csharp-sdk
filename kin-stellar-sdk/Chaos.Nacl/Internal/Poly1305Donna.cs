@@ -12,29 +12,29 @@
             int j;
 
             /* clamp key */
-            var t0 = key.x0;
-            var t1 = key.x1;
-            var t2 = key.x2;
-            var t3 = key.x3;
+            uint t0 = key.x0;
+            uint t1 = key.x1;
+            uint t2 = key.x2;
+            uint t3 = key.x3;
 
             /* precompute multipliers */
-            var r0 = t0 & 0x3ffffff;
+            uint r0 = t0 & 0x3ffffff;
             t0 >>= 26;
             t0 |= t1 << 6;
-            var r1 = t0 & 0x3ffff03;
+            uint r1 = t0 & 0x3ffff03;
             t1 >>= 20;
             t1 |= t2 << 12;
-            var r2 = t1 & 0x3ffc0ff;
+            uint r2 = t1 & 0x3ffc0ff;
             t2 >>= 14;
             t2 |= t3 << 18;
-            var r3 = t2 & 0x3f03fff;
+            uint r3 = t2 & 0x3f03fff;
             t3 >>= 8;
-            var r4 = t3 & 0x00fffff;
+            uint r4 = t3 & 0x00fffff;
 
-            var s1 = r1 * 5;
-            var s2 = r2 * 5;
-            var s3 = r3 * 5;
-            var s4 = r4 * 5;
+            uint s1 = r1 * 5;
+            uint s2 = r2 * 5;
+            uint s3 = r3 * 5;
+            uint s4 = r4 * 5;
 
             /* init state */
             uint h0 = 0;
@@ -45,7 +45,9 @@
 
             /* full blocks */
             if (mLength < 16)
+            {
                 goto poly1305_donna_atmost15bytes;
+            }
 
             poly1305_donna_16bytes:
             mStart += 16;
@@ -65,16 +67,16 @@
 
 
             poly1305_donna_mul:
-            var tt0 = (ulong) h0 * r0 + (ulong) h1 * s4 + (ulong) h2 * s3 + (ulong) h3 * s2 + (ulong) h4 * s1;
-            var tt1 = (ulong) h0 * r1 + (ulong) h1 * r0 + (ulong) h2 * s4 + (ulong) h3 * s3 + (ulong) h4 * s2;
-            var tt2 = (ulong) h0 * r2 + (ulong) h1 * r1 + (ulong) h2 * r0 + (ulong) h3 * s4 + (ulong) h4 * s3;
-            var tt3 = (ulong) h0 * r3 + (ulong) h1 * r2 + (ulong) h2 * r1 + (ulong) h3 * r0 + (ulong) h4 * s4;
-            var tt4 = (ulong) h0 * r4 + (ulong) h1 * r3 + (ulong) h2 * r2 + (ulong) h3 * r1 + (ulong) h4 * r0;
+            ulong tt0 = (ulong) h0 * r0 + (ulong) h1 * s4 + (ulong) h2 * s3 + (ulong) h3 * s2 + (ulong) h4 * s1;
+            ulong tt1 = (ulong) h0 * r1 + (ulong) h1 * r0 + (ulong) h2 * s4 + (ulong) h3 * s3 + (ulong) h4 * s2;
+            ulong tt2 = (ulong) h0 * r2 + (ulong) h1 * r1 + (ulong) h2 * r0 + (ulong) h3 * s4 + (ulong) h4 * s3;
+            ulong tt3 = (ulong) h0 * r3 + (ulong) h1 * r2 + (ulong) h2 * r1 + (ulong) h3 * r0 + (ulong) h4 * s4;
+            ulong tt4 = (ulong) h0 * r4 + (ulong) h1 * r3 + (ulong) h2 * r2 + (ulong) h3 * r1 + (ulong) h4 * r0;
 
             unchecked
             {
                 h0 = (uint) tt0 & 0x3ffffff;
-                var c = tt0 >> 26;
+                ulong c = tt0 >> 26;
                 tt1 += c;
                 h1 = (uint) tt1 & 0x3ffffff;
                 b = (uint) (tt1 >> 26);
@@ -92,20 +94,32 @@
             h0 += b * 5;
 
             if (mLength >= 16)
+            {
                 goto poly1305_donna_16bytes;
+            }
 
             /* final bytes */
             poly1305_donna_atmost15bytes:
-            if (mLength == 0)
-                goto poly1305_donna_finish;
 
-            var mp = new byte[16];
+            if (mLength == 0)
+            {
+                goto poly1305_donna_finish;
+            }
+
+            byte[] mp = new byte[16];
 
             for (j = 0; j < mLength; j++)
+            {
                 mp[j] = m[mStart + j];
+            }
+
             mp[j++] = 1;
+
             for (; j < 16; j++)
+            {
                 mp[j] = 0;
+            }
+
             mLength = 0;
 
             t0 = ByteIntegerConverter.LoadLittleEndian32(mp, 0);
@@ -139,32 +153,32 @@
             h4 = h4 & 0x3ffffff;
             h0 += b * 5;
 
-            var g0 = h0 + 5;
+            uint g0 = h0 + 5;
             b = g0 >> 26;
             g0 &= 0x3ffffff;
-            var g1 = h1 + b;
+            uint g1 = h1 + b;
             b = g1 >> 26;
             g1 &= 0x3ffffff;
-            var g2 = h2 + b;
+            uint g2 = h2 + b;
             b = g2 >> 26;
             g2 &= 0x3ffffff;
-            var g3 = h3 + b;
+            uint g3 = h3 + b;
             b = g3 >> 26;
             g3 &= 0x3ffffff;
-            var g4 = unchecked(h4 + b - (1 << 26));
+            uint g4 = unchecked(h4 + b - (1 << 26));
 
             b = (g4 >> 31) - 1;
-            var nb = ~b;
+            uint nb = ~b;
             h0 = (h0 & nb) | (g0 & b);
             h1 = (h1 & nb) | (g1 & b);
             h2 = (h2 & nb) | (g2 & b);
             h3 = (h3 & nb) | (g3 & b);
             h4 = (h4 & nb) | (g4 & b);
 
-            var f0 = (h0 | (h1 << 26)) + (ulong) key.x4;
-            var f1 = ((h1 >> 6) | (h2 << 20)) + (ulong) key.x5;
-            var f2 = ((h2 >> 12) | (h3 << 14)) + (ulong) key.x6;
-            var f3 = ((h3 >> 18) | (h4 << 8)) + (ulong) key.x7;
+            ulong f0 = (h0 | (h1 << 26)) + (ulong) key.x4;
+            ulong f1 = ((h1 >> 6) | (h2 << 20)) + (ulong) key.x5;
+            ulong f2 = ((h2 >> 12) | (h3 << 14)) + (ulong) key.x6;
+            ulong f3 = ((h3 >> 18) | (h4 << 8)) + (ulong) key.x7;
 
             unchecked
             {

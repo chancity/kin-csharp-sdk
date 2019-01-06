@@ -13,26 +13,26 @@
         */
         internal static void fe_neg(out FieldElement h, ref FieldElement f)
         {
-            var f0 = f.x0;
-            var f1 = f.x1;
-            var f2 = f.x2;
-            var f3 = f.x3;
-            var f4 = f.x4;
-            var f5 = f.x5;
-            var f6 = f.x6;
-            var f7 = f.x7;
-            var f8 = f.x8;
-            var f9 = f.x9;
-            var h0 = -f0;
-            var h1 = -f1;
-            var h2 = -f2;
-            var h3 = -f3;
-            var h4 = -f4;
-            var h5 = -f5;
-            var h6 = -f6;
-            var h7 = -f7;
-            var h8 = -f8;
-            var h9 = -f9;
+            int f0 = f.x0;
+            int f1 = f.x1;
+            int f2 = f.x2;
+            int f3 = f.x3;
+            int f4 = f.x4;
+            int f5 = f.x5;
+            int f6 = f.x6;
+            int f7 = f.x7;
+            int f8 = f.x8;
+            int f9 = f.x9;
+            int h0 = -f0;
+            int h1 = -f1;
+            int h2 = -f2;
+            int h3 = -f3;
+            int h4 = -f4;
+            int h5 = -f5;
+            int h6 = -f6;
+            int h7 = -f7;
+            int h8 = -f8;
+            int h9 = -f9;
             h.x0 = h0;
             h.x1 = h1;
             h.x2 = h2;

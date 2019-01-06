@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -28,7 +25,8 @@ namespace Kin.Stellar.Sdk.responses
         [JsonProperty(PropertyName = "protocol_version")]
         public int ProtocolVersion { get; }
 
-        public RootResponse(string horizonVersion, string stellarCoreVersion, int historyLatestLedger, int historyElderLedger, int coreLatestLedger, string networkPassphrase, int protocolVersion)
+        public RootResponse(string horizonVersion, string stellarCoreVersion, int historyLatestLedger,
+            int historyElderLedger, int coreLatestLedger, string networkPassphrase, int protocolVersion)
         {
             HorizonVersion = horizonVersion;
             StellarCoreVersion = stellarCoreVersion;
@@ -37,7 +35,6 @@ namespace Kin.Stellar.Sdk.responses
             CoreLatestLedger = coreLatestLedger;
             NetworkPassphrase = networkPassphrase;
             ProtocolVersion = protocolVersion;
-            
         }
     }
 }

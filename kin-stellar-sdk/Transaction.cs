@@ -3,27 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Kin.Stellar.Sdk.xdr;
+using Int64 = Kin.Stellar.Sdk.xdr.Int64;
 
 namespace Kin.Stellar.Sdk
 {
     public class Transaction
     {
         private const int BaseFee = 100;
-
-        private Transaction(KeyPair sourceAccount, int fee, long sequenceNumber, Operation[] operations, Memo memo, TimeBounds timeBounds)
-        {
-            SourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
-            SequenceNumber = sequenceNumber;
-            Operations = operations ?? throw new ArgumentNullException(nameof(operations), "operations cannot be null");
-
-            if (operations.Length == 0)
-                throw new ArgumentNullException(nameof(operations), "At least one operation required");
-
-            Fee = fee;
-            Signatures = new List<DecoratedSignature>();
-            Memo = memo ?? Memo.None();
-            TimeBounds = timeBounds;
-        }
 
         public int Fee { get; }
 
@@ -39,26 +25,47 @@ namespace Kin.Stellar.Sdk
 
         public List<DecoratedSignature> Signatures { get; }
 
+        private Transaction(KeyPair sourceAccount, int fee, long sequenceNumber, Operation[] operations, Memo memo,
+            TimeBounds timeBounds)
+        {
+            SourceAccount = sourceAccount ??
+                            throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+            SequenceNumber = sequenceNumber;
+            Operations = operations ?? throw new ArgumentNullException(nameof(operations), "operations cannot be null");
+
+            if (operations.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(operations), "At least one operation required");
+            }
+
+            Fee = fee;
+            Signatures = new List<DecoratedSignature>();
+            Memo = memo ?? Memo.None();
+            TimeBounds = timeBounds;
+        }
+
         /// <summary>
-        /// Adds a new signature ed25519PublicKey to this transaction.
+        ///     Adds a new signature ed25519PublicKey to this transaction.
         /// </summary>
-        /// <param name="signer"> signer <see cref="KeyPair"/> object representing a signer</param>
+        /// <param name="signer"> signer <see cref="KeyPair" /> object representing a signer</param>
         public void Sign(KeyPair signer)
         {
             Sign(signer, Network.Current);
         }
 
         /// <summary>
-        /// Adds a new signature ed25519PublicKey to this transaction.
+        ///     Adds a new signature ed25519PublicKey to this transaction.
         /// </summary>
-        /// <param name="signer"> signer <see cref="KeyPair"/> object representing a signer</param>
-        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        /// <param name="signer"> signer <see cref="KeyPair" /> object representing a signer</param>
+        /// <param name="network">The network <see cref="Network" /> the transaction will be sent to.</param>
         public void Sign(KeyPair signer, Network network)
         {
             if (signer == null)
+            {
                 throw new ArgumentNullException(nameof(signer), "signer cannot be null");
+            }
 
-            var txHash = Hash(network);
+            byte[] txHash = Hash(network);
             Signatures.Add(signer.SignDecorated(txHash));
         }
 
@@ -68,19 +75,19 @@ namespace Kin.Stellar.Sdk
         /// <param name="preimage">the sha256 hash of preimage should be equal to signer hash</param>
         public void Sign(byte[] preimage)
         {
-            var signature = new Signature
+            Signature signature = new Signature
             {
                 InnerValue = preimage ?? throw new ArgumentNullException(nameof(preimage), "preimage cannot be null")
             };
 
-            var hash = Util.Hash(preimage);
+            byte[] hash = Util.Hash(preimage);
 
-            var length = hash.Length;
-            var signatureHintBytes = hash.Skip(length - 4).Take(4).ToArray();
+            int length = hash.Length;
+            byte[] signatureHintBytes = hash.Skip(length - 4).Take(4).ToArray();
 
-            var signatureHint = new SignatureHint {InnerValue = signatureHintBytes};
+            SignatureHint signatureHint = new SignatureHint {InnerValue = signatureHintBytes};
 
-            var decoratedSignature = new DecoratedSignature
+            DecoratedSignature decoratedSignature = new DecoratedSignature
             {
                 Hint = signatureHint,
                 Signature = signature
@@ -101,7 +108,7 @@ namespace Kin.Stellar.Sdk
         /// <summary>
         ///     Returns transaction hash for the given network.
         /// </summary>
-        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        /// <param name="network">The network <see cref="Network" /> the transaction will be sent to.</param>
         /// <returns></returns>
         public byte[] Hash(Network network)
         {
@@ -120,14 +127,16 @@ namespace Kin.Stellar.Sdk
         /// <summary>
         ///     Returns signature base for the given network.
         /// </summary>
-        /// <param name="network">The network <see cref="Network"/> the transaction will be sent to.</param>
+        /// <param name="network">The network <see cref="Network" /> the transaction will be sent to.</param>
         /// <returns></returns>
         public byte[] SignatureBase(Network network)
         {
             if (network == null)
+            {
                 throw new NoNetworkSelectedException();
+            }
 
-            var writer = new XdrDataOutputStream();
+            XdrDataOutputStream writer = new XdrDataOutputStream();
 
             // Hashed NetworkID
             writer.Write(network.NetworkId);
@@ -136,7 +145,7 @@ namespace Kin.Stellar.Sdk
             EnvelopeType.Encode(writer, EnvelopeType.Create(EnvelopeType.EnvelopeTypeEnum.ENVELOPE_TYPE_TX));
 
             // Transaction XDR bytes
-            var txWriter = new XdrDataOutputStream();
+            XdrDataOutputStream txWriter = new XdrDataOutputStream();
             xdr.Transaction.Encode(txWriter, ToXdr());
 
             writer.Write(txWriter.ToArray());
@@ -151,25 +160,27 @@ namespace Kin.Stellar.Sdk
         public xdr.Transaction ToXdr()
         {
             // fee
-            var fee = new Uint32 {InnerValue = Fee};
+            Uint32 fee = new Uint32 {InnerValue = Fee};
 
             // sequenceNumber
-            var sequenceNumberUint = new xdr.Int64(SequenceNumber);
-            var sequenceNumber = new SequenceNumber {InnerValue = sequenceNumberUint};
+            Int64 sequenceNumberUint = new Int64(SequenceNumber);
+            SequenceNumber sequenceNumber = new SequenceNumber {InnerValue = sequenceNumberUint};
 
             // sourceAccount
-            var sourceAccount = new AccountID {InnerValue = SourceAccount.XdrPublicKey};
+            AccountID sourceAccount = new AccountID {InnerValue = SourceAccount.XdrPublicKey};
 
             // operations
-            var operations = new xdr.Operation[Operations.Length];
+            xdr.Operation[] operations = new xdr.Operation[Operations.Length];
 
-            for (var i = 0; i < Operations.Length; i++)
+            for (int i = 0; i < Operations.Length; i++)
+            {
                 operations[i] = Operations[i].ToXdr();
+            }
 
             // ext
-            var ext = new xdr.Transaction.TransactionExt {Discriminant = 0};
+            xdr.Transaction.TransactionExt ext = new xdr.Transaction.TransactionExt {Discriminant = 0};
 
-            var transaction = new xdr.Transaction
+            xdr.Transaction transaction = new xdr.Transaction
             {
                 Fee = fee,
                 SeqNum = sequenceNumber,
@@ -189,13 +200,16 @@ namespace Kin.Stellar.Sdk
         public TransactionEnvelope ToEnvelopeXdr()
         {
             if (Signatures.Count == 0)
-                throw new NotEnoughSignaturesException("Transaction must be signed by at least one signer. Use transaction.sign().");
+            {
+                throw new NotEnoughSignaturesException(
+                    "Transaction must be signed by at least one signer. Use transaction.sign().");
+            }
 
-            var thisXdr = new TransactionEnvelope();
-            var transaction = ToXdr();
+            TransactionEnvelope thisXdr = new TransactionEnvelope();
+            xdr.Transaction transaction = ToXdr();
             thisXdr.Tx = transaction;
 
-            var signatures = Signatures.ToArray();
+            DecoratedSignature[] signatures = Signatures.ToArray();
             thisXdr.Signatures = signatures;
             return thisXdr;
         }
@@ -207,10 +221,12 @@ namespace Kin.Stellar.Sdk
         public TransactionEnvelope ToUnsignedEnvelopeXdr()
         {
             if (Signatures.Count > 0)
+            {
                 throw new TooManySignaturesException("Transaction must not be signed. Use ToEnvelopeXDR.");
+            }
 
-            var thisXdr = new TransactionEnvelope();
-            var transaction = ToXdr();
+            TransactionEnvelope thisXdr = new TransactionEnvelope();
+            xdr.Transaction transaction = ToXdr();
             thisXdr.Tx = transaction;
             thisXdr.Signatures = new DecoratedSignature[0];
 
@@ -223,8 +239,8 @@ namespace Kin.Stellar.Sdk
         /// <returns></returns>
         public string ToUnsignedEnvelopeXdrBase64()
         {
-            var envelope = ToUnsignedEnvelopeXdr();
-            var writer = new XdrDataOutputStream();
+            TransactionEnvelope envelope = ToUnsignedEnvelopeXdr();
+            XdrDataOutputStream writer = new XdrDataOutputStream();
             TransactionEnvelope.Encode(writer, envelope);
 
             return Convert.ToBase64String(writer.ToArray());
@@ -236,8 +252,8 @@ namespace Kin.Stellar.Sdk
         /// <returns></returns>
         public string ToEnvelopeXdrBase64()
         {
-            var envelope = ToEnvelopeXdr();
-            var writer = new XdrDataOutputStream();
+            TransactionEnvelope envelope = ToEnvelopeXdr();
+            XdrDataOutputStream writer = new XdrDataOutputStream();
             TransactionEnvelope.Encode(writer, envelope);
 
             return Convert.ToBase64String(writer.ToArray());
@@ -261,6 +277,7 @@ namespace Kin.Stellar.Sdk
             TimeBounds timeBounds = TimeBounds.FromXdr(transactionXdr.TimeBounds);
 
             Operation[] operations = new Operation[transactionXdr.Operations.Length];
+
             for (int i = 0; i < transactionXdr.Operations.Length; i++)
             {
                 operations[i] = Operation.FromXdr(transactionXdr.Operations[i]);
@@ -268,7 +285,7 @@ namespace Kin.Stellar.Sdk
 
             Transaction transaction = new Transaction(sourceAccount, fee, sequenceNumber, operations, memo, timeBounds);
 
-            foreach (var signature in envelope.Signatures)
+            foreach (DecoratedSignature signature in envelope.Signatures)
             {
                 transaction.Signatures.Add(signature);
             }
@@ -286,6 +303,8 @@ namespace Kin.Stellar.Sdk
             private Memo _memo;
             private TimeBounds _timeBounds;
 
+            public int OperationsCount => _operations.Count;
+
             /// <summary>
             ///     Construct a new transaction builder.
             /// </summary>
@@ -295,11 +314,10 @@ namespace Kin.Stellar.Sdk
             /// </param>
             public Builder(ITransactionBuilderAccount sourceAccount)
             {
-                _sourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                _sourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 _operations = new BlockingCollection<Operation>();
             }
-
-            public int OperationsCount => _operations.Count;
 
             /// <summary>
             ///     Adds a new operation to this transaction.
@@ -310,7 +328,9 @@ namespace Kin.Stellar.Sdk
             public Builder AddOperation(Operation operation)
             {
                 if (operation == null)
+                {
                     throw new ArgumentNullException(nameof(operation), "operation cannot be null");
+                }
 
                 _operations.Add(operation);
                 return this;
@@ -325,7 +345,9 @@ namespace Kin.Stellar.Sdk
             public Builder AddMemo(Memo memo)
             {
                 if (_memo != null)
+                {
                     throw new ArgumentException("Memo has been already added.", nameof(memo));
+                }
 
                 _memo = memo ?? throw new ArgumentNullException(nameof(memo), "memo cannot be null");
 
@@ -341,9 +363,12 @@ namespace Kin.Stellar.Sdk
             public Builder AddTimeBounds(TimeBounds timeBounds)
             {
                 if (_timeBounds != null)
+                {
                     throw new ArgumentException("TimeBounds has been already added.", nameof(timeBounds));
+                }
 
-                _timeBounds = timeBounds ?? throw new ArgumentNullException(nameof(timeBounds), "timeBounds cannot be null");
+                _timeBounds = timeBounds ??
+                              throw new ArgumentNullException(nameof(timeBounds), "timeBounds cannot be null");
 
                 return this;
             }
@@ -354,9 +379,10 @@ namespace Kin.Stellar.Sdk
             /// <returns></returns>
             public Transaction Build()
             {
-                var operations = _operations.ToArray();
+                Operation[] operations = _operations.ToArray();
 
-                var transaction = new Transaction(_sourceAccount.KeyPair, operations.Length * BaseFee, _sourceAccount.IncrementedSequenceNumber, operations, _memo, _timeBounds);
+                Transaction transaction = new Transaction(_sourceAccount.KeyPair, operations.Length * BaseFee,
+                    _sourceAccount.IncrementedSequenceNumber, operations, _memo, _timeBounds);
                 // Increment sequence number when there were no exceptions when creating a transaction
                 _sourceAccount.IncrementSequenceNumber();
                 return transaction;

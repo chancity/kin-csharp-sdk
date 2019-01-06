@@ -6,27 +6,31 @@ namespace Kin.Stellar.Sdk
 {
     public class CreateAccountOperation : Operation
     {
-        public CreateAccountOperation(KeyPair destination, string startingBalance)
-        {
-            Destination = destination ?? throw new ArgumentNullException(nameof(destination), "destination cannot be null");
-            StartingBalance = startingBalance ?? throw new ArgumentNullException(nameof(startingBalance), "startingBalance cannot be null");
-        }
-
         public KeyPair Destination { get; }
 
         public string StartingBalance { get; }
 
+        public CreateAccountOperation(KeyPair destination, string startingBalance)
+        {
+            Destination = destination ??
+                          throw new ArgumentNullException(nameof(destination), "destination cannot be null");
+
+            StartingBalance = startingBalance ??
+                              throw new ArgumentNullException(nameof(startingBalance),
+                                  "startingBalance cannot be null");
+        }
+
         public override xdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new CreateAccountOp();
-            var destination = new AccountID();
+            CreateAccountOp op = new CreateAccountOp();
+            AccountID destination = new AccountID();
             destination.InnerValue = Destination.XdrPublicKey;
             op.Destination = destination;
-            var startingBalance = new Int64();
+            Int64 startingBalance = new Int64();
             startingBalance.InnerValue = ToXdrAmount(StartingBalance);
             op.StartingBalance = startingBalance;
 
-            var body = new xdr.Operation.OperationBody();
+            xdr.Operation.OperationBody body = new xdr.Operation.OperationBody();
             body.Discriminant = OperationType.Create(OperationType.OperationTypeEnum.CREATE_ACCOUNT);
             body.CreateAccountOp = op;
             return body;
@@ -59,9 +63,13 @@ namespace Kin.Stellar.Sdk
 
             public CreateAccountOperation Build()
             {
-                var operation = new CreateAccountOperation(destination, startingBalance);
+                CreateAccountOperation operation = new CreateAccountOperation(destination, startingBalance);
+
                 if (_SourceAccount != null)
+                {
                     operation.SourceAccount = _SourceAccount;
+                }
+
                 return operation;
             }
         }

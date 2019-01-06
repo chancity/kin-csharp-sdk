@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Kin.Marketplace.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 using NJsonSchema;
+using NJsonSchema.Validation;
 
 namespace Kin.Marketplace
 {
@@ -46,19 +44,18 @@ namespace Kin.Marketplace
             try
             {
                 HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-                
-                    if (!response.IsSuccessStatusCode)
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                    if (TryParseMarketPlaceError(jsonResponse, out MarketPlaceError error))
                     {
-                        string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                        if (TryParseMarketPlaceError(jsonResponse, out MarketPlaceError error))
-                        {
-                            throw new MarketPlaceException(error, response);
-                        }
+                        throw new MarketPlaceException(error, response);
                     }
+                }
 
-                    return response;
-                
+                return response;
             }
             catch (WebException wex)
             {
@@ -78,7 +75,7 @@ namespace Kin.Marketplace
                 return false;
             }
 
-            var errors = _schema.Validate(jsonResponse);
+            ICollection<ValidationError> errors = _schema.Validate(jsonResponse);
 
             if (errors.Count > 0)
             {

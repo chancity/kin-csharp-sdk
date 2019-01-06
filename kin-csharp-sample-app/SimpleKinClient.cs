@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kin.BlockChain;
 using Kin.Jwt;
+using Kin.Jwt.JwtPayloadBuilders;
 using Kin.Jwt.Models;
 using Kin.Marketplace;
 using Kin.Marketplace.Models;
@@ -14,7 +14,6 @@ using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace kin_csharp_sample_app
 {
@@ -50,17 +49,19 @@ namespace kin_csharp_sample_app
 
         public SimpleKinClient()
         {
-            _deviceInfo = new Information("KinCsharpClient", "Samsung9+","Samsung","Android");
+            _deviceInfo = new Information("KinCsharpClient", "Samsung9+", "Samsung", "Android");
 
-            _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo, AuthorizationHeaderValueGetter);
-            
+            _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo,
+                AuthorizationHeaderValueGetter);
+
             Config config = _marketPlaceClient.Config().Result;
 
             Dictionary<string, JwtSecurityKey> kinsKeys = new Dictionary<string, JwtSecurityKey>();
 
             foreach (KeyValuePair<string, JwtKey> configJwtKey in config.JwtKeys)
             {
-                kinsKeys.Add(configJwtKey.Key,new JwtSecurityKey(configJwtKey.Value.Algorithm, configJwtKey.Value.Key));
+                kinsKeys.Add(configJwtKey.Key,
+                    new JwtSecurityKey(configJwtKey.Value.Algorithm, configJwtKey.Value.Key));
             }
 
             UserId = Guid.NewGuid().ToString();
@@ -69,13 +70,12 @@ namespace kin_csharp_sample_app
 
             _marketPlaceJwtProvider = new JwtProvider("kin", kinsKeys);
             _blockChainHandler = new BlockChainHandler(config, "test");
-
         }
 
         public async Task FirstTest()
         {
-         //   var orders1 = await _marketPlaceClient.GetOrderHistory();
-         //   Console.WriteLine(JsonConvert.SerializeObject(orders1, Formatting.Indented));
+            //   var orders1 = await _marketPlaceClient.GetOrderHistory();
+            //   Console.WriteLine(JsonConvert.SerializeObject(orders1, Formatting.Indented));
             //Creating a market place user
             _authToken = await _marketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await _marketPlaceClient.UsersMeActivate().ConfigureAwait(false);
@@ -90,20 +90,20 @@ namespace kin_csharp_sample_app
             //await DoP2POffer().ConfigureAwait(false);
 
             //External speeeeeend offer"
-           // await DoExternalSpendOffer().ConfigureAwait(false);
+            // await DoExternalSpendOffer().ConfigureAwait(false);
 
             //External earn offerrrr"
             await DoExternalEarnOffer().ConfigureAwait(false);
 
 
             OrderList orders = await _marketPlaceClient.GetOrderHistory().ConfigureAwait(false);
-           // Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
-            var balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
+            // Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
+            double balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
 
             Console.WriteLine(balance);
 
-       //    await _blockChainHandler.SendPayment(_keyPair, "GBY5PZFDZ6Y25S6YRRZ3CXOAIUWOZ3ADONFY2OYCA7GPQCPPF2RDXXZC",
-         //       balance);
+            //    await _blockChainHandler.SendPayment(_keyPair, "GBY5PZFDZ6Y25S6YRRZ3CXOAIUWOZ3ADONFY2OYCA7GPQCPPF2RDXXZC",
+            //       balance);
         }
 
         private async Task DoFirstOffer()
@@ -131,19 +131,22 @@ namespace kin_csharp_sample_app
 
         public async Task DoP2POffer(string toUserId = null)
         {
-            var p2POffer = JwtProviderBuilder.P2P
+            P2PBuilder p2POffer = JwtProviderBuilder.P2P
                 .AddOffer("p2p-" + toUserId, 1)
                 .AddSender(UserId, "p2p", "to myself")
                 .AddRecipient(toUserId ?? UserId, "p2p", "to him?");
-                
+
             Console.WriteLine(p2POffer.ToString());
+
             OpenOrder createExternalP2POffer =
                 await _marketPlaceClient.CreateExternalOffer(p2POffer.Jwt).ConfigureAwait(false);
 
             Order submitP2POffer =
                 await _marketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);
 
-            SubmitTransactionResponse submitTransactionResponse = await _blockChainHandler.SendPayment(_keyPair,submitP2POffer.BlockChainData.RecipientAddress,submitP2POffer.Amount, submitP2POffer.Id).ConfigureAwait(false);
+            SubmitTransactionResponse submitTransactionResponse = await _blockChainHandler
+                .SendPayment(_keyPair, submitP2POffer.BlockChainData.RecipientAddress, submitP2POffer.Amount,
+                    submitP2POffer.Id).ConfigureAwait(false);
 
             Order finishedOrder = await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
 
@@ -152,9 +155,10 @@ namespace kin_csharp_sample_app
                 SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
             }
 
-            var coldWallet = KeyPair.FromSecretSeed("SEEED");
-            var txResponse = await _blockChainHandler.SendPayment(coldWallet, "hot wallet public address", 1337);
+            KeyPair coldWallet = KeyPair.FromSecretSeed("SEEED");
 
+            SubmitTransactionResponse txResponse =
+                await _blockChainHandler.SendPayment(coldWallet, "hot wallet public address", 1337);
         }
 
         private async Task DoExternalSpendOffer()
@@ -240,7 +244,7 @@ namespace kin_csharp_sample_app
         private JwtSignInData GetSignInData()
         {
             string registerJwt = JwtProviderBuilder.Register.AddUserId(UserId).Jwt;
-            var signInData = new JwtSignInData(_deviceInfo.XDeviceId, _keyPair.Address, registerJwt);
+            JwtSignInData signInData = new JwtSignInData(_deviceInfo.XDeviceId, _keyPair.Address, registerJwt);
             return signInData;
         }
 

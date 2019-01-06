@@ -7,7 +7,9 @@ namespace Kin.Stellar.Sdk.chaos.nacl.Internal
         public static void Assert(bool condition, string message)
         {
             if (!condition)
+            {
                 throw new InvalidOperationException("An assertion in Chaos.Crypto failed " + message);
+            }
         }
     }
 }

@@ -5,14 +5,6 @@ namespace Kin.Stellar.Sdk
 {
     public class CreatePassiveOfferOperation : Operation
     {
-        private CreatePassiveOfferOperation(Asset selling, Asset buying, string amount, string price)
-        {
-            Selling = selling ?? throw new ArgumentNullException(nameof(selling), "selling cannot be null");
-            Buying = buying ?? throw new ArgumentNullException(nameof(buying), "buying cannot be null");
-            Amount = amount ?? throw new ArgumentNullException(nameof(amount), "amount cannot be null");
-            Price = price ?? throw new ArgumentNullException(nameof(price), "price cannot be null");
-        }
-
         public Asset Selling { get; }
 
         public Asset Buying { get; }
@@ -21,19 +13,29 @@ namespace Kin.Stellar.Sdk
 
         public string Price { get; }
 
+        private CreatePassiveOfferOperation(Asset selling, Asset buying, string amount, string price)
+        {
+            Selling = selling ?? throw new ArgumentNullException(nameof(selling), "selling cannot be null");
+            Buying = buying ?? throw new ArgumentNullException(nameof(buying), "buying cannot be null");
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount), "amount cannot be null");
+            Price = price ?? throw new ArgumentNullException(nameof(price), "price cannot be null");
+        }
+
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.CreatePassiveOfferOp();
+            sdkxdr.CreatePassiveOfferOp op = new sdkxdr.CreatePassiveOfferOp();
             op.Selling = Selling.ToXdr();
             op.Buying = Buying.ToXdr();
-            var amount = new sdkxdr.Int64();
+            sdkxdr.Int64 amount = new sdkxdr.Int64();
             amount.InnerValue = ToXdrAmount(Amount);
             op.Amount = amount;
-            var price = Kin.Stellar.Sdk.Price.FromString(Price);
+            Price price = Sdk.Price.FromString(Price);
             op.Price = price.ToXdr();
 
-            var body = new sdkxdr.Operation.OperationBody();
-            body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.CREATE_PASSIVE_OFFER);
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
+
+            body.Discriminant =
+                sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.CREATE_PASSIVE_OFFER);
             body.CreatePassiveOfferOp = op;
 
             return body;
@@ -62,8 +64,8 @@ namespace Kin.Stellar.Sdk
                 _Selling = Asset.FromXdr(op.Selling);
                 _Buying = Asset.FromXdr(op.Buying);
                 _Amount = FromXdrAmount(op.Amount.InnerValue);
-                var n = new decimal(op.Price.N.InnerValue);
-                var d = new decimal(op.Price.D.InnerValue);
+                decimal n = new decimal(op.Price.N.InnerValue);
+                decimal d = new decimal(op.Price.D.InnerValue);
                 _Price = decimal.Divide(n, d).ToString();
             }
 
@@ -90,7 +92,8 @@ namespace Kin.Stellar.Sdk
             /// <returns>Builder object so you can chain methods.</returns>
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                mSourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                mSourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
@@ -99,9 +102,14 @@ namespace Kin.Stellar.Sdk
             /// </summary>
             public CreatePassiveOfferOperation Build()
             {
-                var operation = new CreatePassiveOfferOperation(_Selling, _Buying, _Amount, _Price);
+                CreatePassiveOfferOperation operation =
+                    new CreatePassiveOfferOperation(_Selling, _Buying, _Amount, _Price);
+
                 if (mSourceAccount != null)
+                {
                     operation.SourceAccount = mSourceAccount;
+                }
+
                 return operation;
             }
         }

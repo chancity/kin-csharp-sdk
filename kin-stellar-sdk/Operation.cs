@@ -16,44 +16,46 @@ namespace Kin.Stellar.Sdk
         }
 
         /// <summary>
-        /// Threshold level for the operation.
+        ///     Threshold level for the operation.
         /// </summary>
-        public virtual OperationThreshold Threshold
-        {
-            get => OperationThreshold.Medium;
-        }
+        public virtual OperationThreshold Threshold => OperationThreshold.Medium;
 
         public static long ToXdrAmount(string value)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 throw new ArgumentNullException(nameof(value), "value cannot be null");
+            }
 
             //This bascially takes a decimal value and turns it into a large integer.
-            var amount = decimal.Parse(value) * ONE;
+            decimal amount = decimal.Parse(value) * ONE;
 
             //MJM: Added to satify the OperationTest unit test of making sure a failure
             //happens when casting a decimal with fractional places into a long.
             if (amount % 1 > 0)
+            {
                 throw new ArithmeticException("Unable to cast decimal with fractional places into long.");
+            }
 
             return (long) amount;
         }
 
         public static string FromXdrAmount(long value)
         {
-            var amount = decimal.Divide(new decimal(value), ONE);
+            decimal amount = decimal.Divide(new decimal(value), ONE);
             return amount.ToString();
         }
 
-        ///<summary>
-        /// Generates Operation XDR object.
-        ///</summary>
+        /// <summary>
+        ///     Generates Operation XDR object.
+        /// </summary>
         public xdr.Operation ToXdr()
         {
-            var thisXdr = new xdr.Operation();
+            xdr.Operation thisXdr = new xdr.Operation();
+
             if (SourceAccount != null)
             {
-                var sourceAccount = new AccountID();
+                AccountID sourceAccount = new AccountID();
                 sourceAccount.InnerValue = SourceAccount.XdrPublicKey;
                 thisXdr.SourceAccount = sourceAccount;
             }
@@ -62,25 +64,26 @@ namespace Kin.Stellar.Sdk
             return thisXdr;
         }
 
-        ///<summary>
-        /// Returns base64-encoded Operation XDR object.
-        ///</summary>
+        /// <summary>
+        ///     Returns base64-encoded Operation XDR object.
+        /// </summary>
         public string ToXdrBase64()
         {
-            var operation = ToXdr();
-            var writer = new XdrDataOutputStream();
+            xdr.Operation operation = ToXdr();
+            XdrDataOutputStream writer = new XdrDataOutputStream();
             xdr.Operation.Encode(writer, operation);
             return Convert.ToBase64String(writer.ToArray());
         }
 
-        ///<summary>
-        ///</summary>
+        /// <summary>
+        /// </summary>
         /// <returns>new Operation object from Operation XDR object.</returns>
         /// <param name="thisXdr">XDR object</param>
         public static Operation FromXdr(xdr.Operation thisXdr)
         {
-            var body = thisXdr.Body;
+            xdr.Operation.OperationBody body = thisXdr.Body;
             Operation operation;
+
             switch (body.Discriminant.InnerValue)
             {
                 case OperationType.OperationTypeEnum.CREATE_ACCOUNT:
@@ -124,14 +127,17 @@ namespace Kin.Stellar.Sdk
             }
 
             if (thisXdr.SourceAccount != null)
+            {
                 operation.SourceAccount = KeyPair.FromXdrPublicKey(thisXdr.SourceAccount.InnerValue);
+            }
+
             return operation;
         }
 
-        ///<summary>
-        /// Generates OperationBody XDR object
-        ///</summary>
-        ///<returns>OperationBody XDR object</returns>
+        /// <summary>
+        ///     Generates OperationBody XDR object
+        /// </summary>
+        /// <returns>OperationBody XDR object</returns>
         public abstract xdr.Operation.OperationBody ToOperationBody();
     }
 }

@@ -4,13 +4,6 @@ namespace Kin.Stellar.Sdk.responses
 {
     public class TradeResponseLinks
     {
-        public TradeResponseLinks(Link baseLink, Link counterLink, Link operationLink)
-        {
-            Base = baseLink;
-            Counter = counterLink;
-            Operation = operationLink;
-        }
-
         [JsonProperty(PropertyName = "base")] public Link Base;
 
         [JsonProperty(PropertyName = "counter")]
@@ -18,5 +11,12 @@ namespace Kin.Stellar.Sdk.responses
 
         [JsonProperty(PropertyName = "operation")]
         public Link Operation;
+
+        public TradeResponseLinks(Link baseLink, Link counterLink, Link operationLink)
+        {
+            Base = baseLink;
+            Counter = counterLink;
+            Operation = operationLink;
+        }
     }
 }

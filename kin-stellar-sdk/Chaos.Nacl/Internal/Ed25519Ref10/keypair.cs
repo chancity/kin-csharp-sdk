@@ -10,13 +10,17 @@ namespace Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10
             int i;
 
             Array.Copy(seed, seedoffset, sk, skoffset, 32);
-            var h = Sha512.Hash(sk, skoffset, 32); //ToDo: Remove alloc
+            byte[] h = Sha512.Hash(sk, skoffset, 32); //ToDo: Remove alloc
             ScalarOperations.ScClamp(h, 0);
 
-            Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.GeScalarmultBase(out var a, h, 0);
-            Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.GroupOperations.ge_p3_tobytes(pk, pkoffset, ref a);
+            GroupOperations.GeScalarmultBase(out GroupElementP3 a, h, 0);
+            GroupOperations.ge_p3_tobytes(pk, pkoffset, ref a);
 
-            for (i = 0; i < 32; ++i) sk[skoffset + 32 + i] = pk[pkoffset + i];
+            for (i = 0; i < 32; ++i)
+            {
+                sk[skoffset + 32 + i] = pk[pkoffset + i];
+            }
+
             CryptoBytes.Wipe(h);
         }
     }

@@ -1,16 +1,13 @@
-﻿using Kin.Stellar.Sdk.responses;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using Kin.Stellar.Sdk.responses;
 
 namespace Kin.Stellar.Sdk.requests
 {
     public class FriendBotRequestBuilder : RequestBuilder<FriendBotRequestBuilder>
     {
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="serverUri"></param>
         public FriendBotRequestBuilder(Uri serverUri, HttpClient httpClient)
@@ -33,8 +30,8 @@ namespace Kin.Stellar.Sdk.requests
             return this;
         }
 
-        ///<Summary>
-        /// Build and execute request.
+        /// <Summary>
+        ///     Build and execute request.
         /// </Summary>
         public async Task<FriendBotResponse> Execute()
         {

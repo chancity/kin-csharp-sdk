@@ -5,16 +5,6 @@ namespace Kin.Stellar.Sdk
 {
     public class ManageOfferOperation : Operation
     {
-        private ManageOfferOperation(Asset selling, Asset buying, string amount, string price, long offerId)
-        {
-            Selling = selling ?? throw new ArgumentNullException(nameof(selling), "selling cannot be null");
-            Buying = buying ?? throw new ArgumentNullException(nameof(buying), "buying cannot be null");
-            Amount = amount ?? throw new ArgumentNullException(nameof(amount), "amount cannot be null");
-            Price = price ?? throw new ArgumentNullException(nameof(price), "price cannot be null");
-            // offerId can be null
-            OfferId = offerId;
-        }
-
         public Asset Selling { get; }
 
         public Asset Buying { get; }
@@ -25,21 +15,31 @@ namespace Kin.Stellar.Sdk
 
         public long OfferId { get; }
 
+        private ManageOfferOperation(Asset selling, Asset buying, string amount, string price, long offerId)
+        {
+            Selling = selling ?? throw new ArgumentNullException(nameof(selling), "selling cannot be null");
+            Buying = buying ?? throw new ArgumentNullException(nameof(buying), "buying cannot be null");
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount), "amount cannot be null");
+            Price = price ?? throw new ArgumentNullException(nameof(price), "price cannot be null");
+            // offerId can be null
+            OfferId = offerId;
+        }
+
         public override sdkxdr.Operation.OperationBody ToOperationBody()
         {
-            var op = new sdkxdr.ManageOfferOp();
+            sdkxdr.ManageOfferOp op = new sdkxdr.ManageOfferOp();
             op.Selling = Selling.ToXdr();
             op.Buying = Buying.ToXdr();
-            var amount = new sdkxdr.Int64();
+            sdkxdr.Int64 amount = new sdkxdr.Int64();
             amount.InnerValue = ToXdrAmount(Amount);
             op.Amount = amount;
-            var price = Kin.Stellar.Sdk.Price.FromString(Price);
+            Price price = Sdk.Price.FromString(Price);
             op.Price = price.ToXdr();
-            var offerId = new sdkxdr.Uint64();
+            sdkxdr.Uint64 offerId = new sdkxdr.Uint64();
             offerId.InnerValue = OfferId;
             op.OfferID = offerId;
 
-            var body = new sdkxdr.Operation.OperationBody();
+            sdkxdr.Operation.OperationBody body = new sdkxdr.Operation.OperationBody();
             body.Discriminant = sdkxdr.OperationType.Create(sdkxdr.OperationType.OperationTypeEnum.MANAGE_OFFER);
             body.ManageOfferOp = op;
 
@@ -73,8 +73,8 @@ namespace Kin.Stellar.Sdk
                 _Selling = Asset.FromXdr(op.Selling);
                 _Buying = Asset.FromXdr(op.Buying);
                 _Amount = FromXdrAmount(op.Amount.InnerValue);
-                var n = new decimal(op.Price.N.InnerValue);
-                var d = new decimal(op.Price.D.InnerValue);
+                decimal n = new decimal(op.Price.N.InnerValue);
+                decimal d = new decimal(op.Price.D.InnerValue);
                 _Price = decimal.Divide(n, d).ToString();
                 offerId = op.OfferID.InnerValue;
             }
@@ -113,7 +113,8 @@ namespace Kin.Stellar.Sdk
             /// <returns>Builder object so you can chain methods.</returns>
             public Builder SetSourceAccount(KeyPair sourceAccount)
             {
-                mSourceAccount = sourceAccount ?? throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
+                mSourceAccount = sourceAccount ??
+                                 throw new ArgumentNullException(nameof(sourceAccount), "sourceAccount cannot be null");
                 return this;
             }
 
@@ -122,9 +123,13 @@ namespace Kin.Stellar.Sdk
             /// </summary>
             public ManageOfferOperation Build()
             {
-                var operation = new ManageOfferOperation(_Selling, _Buying, _Amount, _Price, offerId);
+                ManageOfferOperation operation = new ManageOfferOperation(_Selling, _Buying, _Amount, _Price, offerId);
+
                 if (mSourceAccount != null)
+                {
                     operation.SourceAccount = mSourceAccount;
+                }
+
                 return operation;
             }
         }

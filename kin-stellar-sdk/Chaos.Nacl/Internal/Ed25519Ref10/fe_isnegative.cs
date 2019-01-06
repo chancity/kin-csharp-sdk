@@ -12,7 +12,7 @@
         //int fe_isnegative(const fe f)
         public static int fe_isnegative(ref FieldElement f)
         {
-            FieldOperations.fe_reduce(out var fr, ref f);
+            fe_reduce(out FieldElement fr, ref f);
             return fr.x0 & 1;
         }
     }

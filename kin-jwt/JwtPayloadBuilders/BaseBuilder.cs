@@ -14,17 +14,18 @@ namespace Kin.Jwt.JwtPayloadBuilders
 
         public string Jwt => ToJwt();
         public string Payload => ToPayload();
+
         protected BaseBuilder(JwtProvider provider, string subject, int expectedPayloadsCount)
         {
             _provider = provider;
             _subject = subject;
             _expectedPayloadsCount = expectedPayloadsCount;
-            _payloads = new Dictionary<string,object>();
+            _payloads = new Dictionary<string, object>();
         }
 
         protected void AddPayload(KinJwtPayload payload)
         {
-            _payloads.Add(payload.Name,payload.Data);
+            _payloads.Add(payload.Name, payload.Data);
 
             if (_expectedPayloadsCount != 0 && _payloads.Count > _expectedPayloadsCount)
             {
@@ -36,7 +37,9 @@ namespace Kin.Jwt.JwtPayloadBuilders
         private string ToJwt()
         {
             if (_provider == null)
+            {
                 throw new ArgumentNullException($"{nameof(_provider)} is null, use property Payload instead");
+            }
 
             if (_expectedPayloadsCount == 0 || _payloads.Count == _expectedPayloadsCount)
             {

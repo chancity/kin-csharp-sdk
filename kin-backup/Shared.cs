@@ -6,7 +6,7 @@ namespace Kin.Backup
     {
         public static byte[] KeyHash(byte[] passPhraseBytes, byte[] saltBytes)
         {
-            var keyHash = PasswordHash.ArgonHashBinary(passPhraseBytes, saltBytes, 2, 67108864, 32);
+            byte[] keyHash = PasswordHash.ArgonHashBinary(passPhraseBytes, saltBytes, 2, 67108864, 32);
             return keyHash;
         }
     }

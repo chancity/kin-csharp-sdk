@@ -1,6 +1,5 @@
 ﻿using Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10;
 using Kin.Stellar.Sdk.chaos.nacl.Internal.Salsa;
-using FieldOperations = Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.FieldOperations;
 
 namespace Kin.Stellar.Sdk.chaos.nacl
 {
@@ -19,8 +18,8 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         internal static void EdwardsToMontgomeryX(out FieldElement montgomeryX, ref FieldElement edwardsY,
             ref FieldElement edwardsZ)
         {
-            FieldOperations.fe_add(out var tempX, ref edwardsZ, ref edwardsY);
-            FieldOperations.fe_sub(out var tempZ, ref edwardsZ, ref edwardsY);
+            FieldOperations.fe_add(out FieldElement tempX, ref edwardsZ, ref edwardsY);
+            FieldOperations.fe_sub(out FieldElement tempZ, ref edwardsZ, ref edwardsY);
             FieldOperations.fe_invert(out tempZ, ref tempZ);
             FieldOperations.fe_mul(out montgomeryX, ref tempX, ref tempZ);
         }

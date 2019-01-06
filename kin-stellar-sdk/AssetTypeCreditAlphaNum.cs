@@ -3,15 +3,26 @@
 namespace Kin.Stellar.Sdk
 {
     /// <summary>
-    /// Assets are uniquely identified by the asset code and the issuer. Ultimately, it’s up to the issuer to set the asset code. By convention, however, currencies should be represented by 
-    /// the appropriate ISO 4217 code. For stocks and bonds, use the appropriate ISIN number.
+    ///     Assets are uniquely identified by the asset code and the issuer. Ultimately, it’s up to the issuer to set the asset
+    ///     code. By convention, however, currencies should be represented by
+    ///     the appropriate ISO 4217 code. For stocks and bonds, use the appropriate ISIN number.
     /// </summary>
     public class AssetTypeCreditAlphaNum : Asset
     {
         private readonly KeyPair _issuer;
 
         /// <summary>
-        /// Creates an AssetTypeCreditAlphaNum based on the code and KeyPair
+        ///     Return the asset code
+        /// </summary>
+        public string Code { get; }
+
+        /// <summary>
+        ///     Return the asset issuer
+        /// </summary>
+        public KeyPair Issuer => KeyPair.FromAccountId(_issuer.AccountId);
+
+        /// <summary>
+        ///     Creates an AssetTypeCreditAlphaNum based on the code and KeyPair
         /// </summary>
         /// <param name="code">The asset code.</param>
         /// <param name="issuer">The KeyPair of the issuer.</param>
@@ -21,20 +32,12 @@ namespace Kin.Stellar.Sdk
             Code = code ?? throw new ArgumentNullException(nameof(code), "code cannot be null");
 
             if (issuer == null)
+            {
                 throw new ArgumentNullException(nameof(issuer), "issuer cannot be null");
+            }
 
             _issuer = KeyPair.FromAccountId(issuer.AccountId);
         }
-
-        /// <summary>
-        /// Return the asset code
-        /// </summary>
-        public string Code { get; }
-
-        /// <summary>
-        /// Return the asset issuer
-        /// </summary>
-        public KeyPair Issuer => KeyPair.FromAccountId(_issuer.AccountId);
 
         /// <inheritdoc />
         public override int GetHashCode()
@@ -46,9 +49,11 @@ namespace Kin.Stellar.Sdk
                 const int hashingBase = (int) 2166136261;
                 const int hashingMultiplier = 16777619;
 
-                var hash = hashingBase;
+                int hash = hashingBase;
                 hash = (hash * hashingMultiplier) ^ (!ReferenceEquals(null, Code) ? Code.GetHashCode() : 0);
-                hash = (hash * hashingMultiplier) ^ (!ReferenceEquals(null, Issuer) ? Issuer.AccountId.GetHashCode() : 0);
+
+                hash = (hash * hashingMultiplier) ^
+                       (!ReferenceEquals(null, Issuer) ? Issuer.AccountId.GetHashCode() : 0);
                 return hash;
             }
         }
@@ -56,7 +61,7 @@ namespace Kin.Stellar.Sdk
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var o = (AssetTypeCreditAlphaNum) obj;
+            AssetTypeCreditAlphaNum o = (AssetTypeCreditAlphaNum) obj;
 
             return Code.Equals(o.Code) &&
                    Issuer.AccountId.Equals(o.Issuer.AccountId);

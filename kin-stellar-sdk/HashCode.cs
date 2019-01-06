@@ -1,4 +1,6 @@
-﻿namespace Kin.Stellar.Sdk
+﻿using System.Collections.Generic;
+
+namespace Kin.Stellar.Sdk
 {
     public static class HashCode
     {
@@ -6,8 +8,8 @@
 
         public static int Hash<T>(this int hash, T obj)
         {
-            var h = System.Collections.Generic.EqualityComparer<T>.Default.GetHashCode(obj);
-            return unchecked((hash * 31) + h);
+            int h = EqualityComparer<T>.Default.GetHashCode(obj);
+            return unchecked(hash * 31 + h);
         }
     }
 }

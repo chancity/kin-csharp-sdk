@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Kin.Stellar.Sdk.requests;
+using Newtonsoft.Json;
 
 namespace Kin.Stellar.Sdk.responses.page
 {
@@ -17,7 +17,8 @@ namespace Kin.Stellar.Sdk.responses.page
         [JsonProperty(PropertyName = "records")]
         public List<T> Records { get; private set; }
 
-        [JsonProperty(PropertyName = "links")] public PageLinks Links { get; private set; }
+        [JsonProperty(PropertyName = "links")]
+        public PageLinks Links { get; private set; }
 
         /// <summary>
         ///     The next page of results or null when there is no more results
@@ -26,14 +27,16 @@ namespace Kin.Stellar.Sdk.responses.page
         public async Task<Page<T>> NextPage()
         {
             if (Links.Next == null)
-                return null;
-
-            var responseHandler = new ResponseHandler<Page<T>>();
-            var uri = new Uri(Links.Next.Href);
-
-            using (var httpClient = new HttpClient())
             {
-                var response = await httpClient.GetAsync(uri);
+                return null;
+            }
+
+            ResponseHandler<Page<T>> responseHandler = new ResponseHandler<Page<T>>();
+            Uri uri = new Uri(Links.Next.Href);
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                HttpResponseMessage response = await httpClient.GetAsync(uri);
                 return await responseHandler.HandleResponse(response);
             }
         }

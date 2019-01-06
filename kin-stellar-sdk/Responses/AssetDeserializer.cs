@@ -11,19 +11,20 @@ namespace Kin.Stellar.Sdk.responses
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
-            var jsonObject = JObject.Load(reader);
+            JObject jsonObject = JObject.Load(reader);
 
-            var type = jsonObject.GetValue("asset_type").ToObject<string>();
+            string type = jsonObject.GetValue("asset_type").ToObject<string>();
 
             if (type == "native")
             {
                 return new AssetTypeNative();
             }
 
-            var code = jsonObject.GetValue("asset_code").ToObject<string>();
-            var issuer = jsonObject.GetValue("asset_issuer").ToObject<string>();
+            string code = jsonObject.GetValue("asset_code").ToObject<string>();
+            string issuer = jsonObject.GetValue("asset_issuer").ToObject<string>();
             return Asset.CreateNonNativeAsset(code, KeyPair.FromAccountId(issuer));
         }
 

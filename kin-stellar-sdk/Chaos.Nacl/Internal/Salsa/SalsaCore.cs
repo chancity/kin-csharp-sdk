@@ -6,28 +6,28 @@
         {
             InternalAssert.Assert(rounds % 2 == 0, "Number of salsa rounds must be even");
 
-            var doubleRounds = rounds / 2;
+            int doubleRounds = rounds / 2;
 
-            var x0 = input.x0;
-            var x1 = input.x1;
-            var x2 = input.x2;
-            var x3 = input.x3;
-            var x4 = input.x4;
-            var x5 = input.x5;
-            var x6 = input.x6;
-            var x7 = input.x7;
-            var x8 = input.x8;
-            var x9 = input.x9;
-            var x10 = input.x10;
-            var x11 = input.x11;
-            var x12 = input.x12;
-            var x13 = input.x13;
-            var x14 = input.x14;
-            var x15 = input.x15;
+            uint x0 = input.x0;
+            uint x1 = input.x1;
+            uint x2 = input.x2;
+            uint x3 = input.x3;
+            uint x4 = input.x4;
+            uint x5 = input.x5;
+            uint x6 = input.x6;
+            uint x7 = input.x7;
+            uint x8 = input.x8;
+            uint x9 = input.x9;
+            uint x10 = input.x10;
+            uint x11 = input.x11;
+            uint x12 = input.x12;
+            uint x13 = input.x13;
+            uint x14 = input.x14;
+            uint x15 = input.x15;
 
             unchecked
             {
-                for (var i = 0; i < doubleRounds; i++)
+                for (int i = 0; i < doubleRounds; i++)
                 {
                     uint y;
 

@@ -49,7 +49,7 @@ namespace Kin.Jwt
             };
         }
 
-        public string GenerateJwtToken(string subject, Dictionary<string,object> payloads)
+        public string GenerateJwtToken(string subject, Dictionary<string, object> payloads)
         {
             if (string.IsNullOrEmpty(subject))
             {
@@ -99,7 +99,7 @@ namespace Kin.Jwt
                 currentTime.AddHours(6),
                 currentTime);
 
-            foreach (var kinJwtPayload in kinJwtPayloads)
+            foreach (KeyValuePair<string, object> kinJwtPayload in kinJwtPayloads)
             {
                 payload.Add(kinJwtPayload.Key, kinJwtPayload.Value);
             }

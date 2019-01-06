@@ -3,9 +3,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
-using Kin.Marketplace;
 using Kin.Backup.Extensions;
 using Kin.Jwt;
+using Kin.Marketplace;
+using Kin.Stellar.Sdk;
 
 namespace kin_csharp_sample_app
 {
@@ -13,16 +14,16 @@ namespace kin_csharp_sample_app
     {
         private static void Main(string[] args)
         {
-            var jwtProviderBuilder = new JwtProviderBuilder();
+            JwtProviderBuilder jwtProviderBuilder = new JwtProviderBuilder();
 
-            var payload = jwtProviderBuilder.Earn
+            string payload = jwtProviderBuilder.Earn
                 .AddOffer(Guid.NewGuid().ToString("N"), 20)
-                .AddRecipient(Guid.NewGuid().ToString("N"),"title","description")
+                .AddRecipient(Guid.NewGuid().ToString("N"), "title", "description")
                 .Payload;
 
 
             Bitmap bitmap = GetBitmapFromFile("./unnamed_chanceynick.png");
-            var keyPair = bitmap.ToKeyPair("chanceynick");
+            KeyPair keyPair = bitmap.ToKeyPair("chanceynick");
 
             Bitmap qrCode = keyPair.ToQrCode("chanceynick");
             qrCode.Save("./test_chanceynick.png", ImageFormat.Png);
@@ -50,9 +51,9 @@ namespace kin_csharp_sample_app
                 }
             }
         }
+
         public static async Task Test()
         {
-
             for (;;)
             {
                 SimpleKinClient firstKinClient = new SimpleKinClient();

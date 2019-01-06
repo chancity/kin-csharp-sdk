@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kin.Stellar.Sdk.responses.effects
 {
@@ -18,7 +15,7 @@ namespace Kin.Stellar.Sdk.responses.effects
 
         public SequenceBumpedEffectResponse(long newSequence)
         {
-            this.NewSequence = newSequence;
+            NewSequence = newSequence;
         }
     }
 }

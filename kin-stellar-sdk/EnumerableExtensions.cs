@@ -25,13 +25,15 @@ namespace Kin.Stellar.Sdk
             Func<T, string> stringSelector,
             string separator)
         {
-            var b = new StringBuilder();
-            var needsSeparator = false; // don't use for first item
+            StringBuilder b = new StringBuilder();
+            bool needsSeparator = false; // don't use for first item
 
-            foreach (var item in source)
+            foreach (T item in source)
             {
                 if (needsSeparator)
+                {
                     b.Append(separator);
+                }
 
                 b.Append(stringSelector(item));
                 needsSeparator = true;

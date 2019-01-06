@@ -1,17 +1,14 @@
-﻿using Kin.Stellar.Sdk.responses;
-using Kin.Stellar.Sdk.responses.page;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Kin.Stellar.Sdk.responses;
 
 namespace Kin.Stellar.Sdk.requests
 {
     public class LedgersRequestBuilder : RequestBuilderStreamable<LedgersRequestBuilder, LedgerResponse>
     {
         public LedgersRequestBuilder(Uri serverUri, HttpClient httpClient)
-            : base(serverUri, "ledgers", httpClient)
-        {
-        }
+            : base(serverUri, "ledgers", httpClient) { }
 
         /// <summary>
         ///     Requests specific uri and returns LedgerResponse
@@ -21,17 +18,17 @@ namespace Kin.Stellar.Sdk.requests
         /// <returns></returns>
         public async Task<LedgerResponse> Ledger(Uri uri)
         {
-            var responseHandler = new ResponseHandler<LedgerResponse>();
+            ResponseHandler<LedgerResponse> responseHandler = new ResponseHandler<LedgerResponse>();
 
-            var response = await HttpClient.GetAsync(uri);
+            HttpResponseMessage response = await HttpClient.GetAsync(uri);
             return await responseHandler.HandleResponse(response);
         }
 
-        ///<summary>
-        /// Requests <code>GET /ledgers/{ledgerSeq}</code>
-        /// <a href="https://www.stellar.org/developers/horizon/reference/ledgers-single.html">Ledger Details</a>
-        ///</summary>
-        ///<param name="ledgerSeq">Ledger to fetch</param>
+        /// <summary>
+        ///     Requests <code>GET /ledgers/{ledgerSeq}</code>
+        ///     <a href="https://www.stellar.org/developers/horizon/reference/ledgers-single.html">Ledger Details</a>
+        /// </summary>
+        /// <param name="ledgerSeq">Ledger to fetch</param>
         public Task<LedgerResponse> Ledger(long ledgerSeq)
         {
             SetSegments("ledgers", ledgerSeq.ToString());

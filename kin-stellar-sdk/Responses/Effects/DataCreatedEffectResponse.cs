@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Kin.Stellar.Sdk.responses.effects
 {
     /// <summary>
@@ -8,7 +6,5 @@ namespace Kin.Stellar.Sdk.responses.effects
     ///     <seealso cref="requests.EffectsRequestBuilder" />
     ///     <seealso cref="Server" />
     /// </summary>
-    public class DataCreatedEffectResponse : EffectResponse
-    {
-    }
+    public class DataCreatedEffectResponse : EffectResponse { }
 }

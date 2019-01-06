@@ -9,19 +9,39 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         public static bool ConstantTimeEquals(byte[] x, int xOffset, byte[] y, int yOffset, int length)
         {
             if (x == null)
+            {
                 throw new ArgumentNullException(nameof(x));
+            }
+
             if (xOffset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(xOffset), "xOffset < 0");
+            }
+
             if (y == null)
+            {
                 throw new ArgumentNullException(nameof(y));
+            }
+
             if (yOffset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(yOffset), "yOffset < 0");
+            }
+
             if (length < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(length), "length < 0");
+            }
+
             if (x.Length - xOffset < length)
+            {
                 throw new ArgumentException("xOffset + length > x.Length");
+            }
+
             if (y.Length - yOffset < length)
+            {
                 throw new ArgumentException("yOffset + length > y.Length");
+            }
 
             return InternalConstantTimeEquals(x, xOffset, y, yOffset, length) != 0;
         }
@@ -29,16 +49,23 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         private static uint InternalConstantTimeEquals(IReadOnlyList<byte> x, int xOffset, IReadOnlyList<byte> y,
             int yOffset, int length)
         {
-            var differentbits = 0;
-            for (var i = 0; i < length; i++)
+            int differentbits = 0;
+
+            for (int i = 0; i < length; i++)
+            {
                 differentbits |= x[xOffset + i] ^ y[yOffset + i];
+            }
+
             return 1 & (unchecked((uint) differentbits - 1) >> 8);
         }
 
         public static void Wipe(byte[] data)
         {
             if (data == null)
+            {
                 throw new ArgumentNullException(nameof(data));
+            }
+
             InternalWipe(data, 0, data.Length);
         }
 

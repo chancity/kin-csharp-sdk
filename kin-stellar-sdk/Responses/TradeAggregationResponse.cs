@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -14,32 +11,38 @@ namespace Kin.Stellar.Sdk.responses
         public int TradeCount { get; }
 
         [JsonProperty(PropertyName = "base_volume")]
-        public String BaseVolume { get; }
+        public string BaseVolume { get; }
 
         [JsonProperty(PropertyName = "counter_volume")]
-        public String CounterVolume { get; }
+        public string CounterVolume { get; }
 
-        [JsonProperty(PropertyName = "avg")] public String Avg { get; }
+        [JsonProperty(PropertyName = "avg")]
+        public string Avg { get; }
 
-        [JsonProperty(PropertyName = "high")] public String High { get; }
+        [JsonProperty(PropertyName = "high")]
+        public string High { get; }
 
-        [JsonProperty(PropertyName = "low")] public String Low { get; }
+        [JsonProperty(PropertyName = "low")]
+        public string Low { get; }
 
-        [JsonProperty(PropertyName = "open")] public String Open { get; }
+        [JsonProperty(PropertyName = "open")]
+        public string Open { get; }
 
-        [JsonProperty(PropertyName = "close")] public String Close { get; }
+        [JsonProperty(PropertyName = "close")]
+        public string Close { get; }
 
-        public TradeAggregationResponse(long timestamp, int tradeCount, String baseVolume, String counterVolume, String avg, String high, String low, String open, String close)
+        public TradeAggregationResponse(long timestamp, int tradeCount, string baseVolume, string counterVolume,
+            string avg, string high, string low, string open, string close)
         {
-            this.Timestamp = timestamp;
-            this.TradeCount = tradeCount;
-            this.BaseVolume = baseVolume;
-            this.CounterVolume = counterVolume;
-            this.Avg = avg;
-            this.High = high;
-            this.Low = low;
-            this.Open = open;
-            this.Close = close;
+            Timestamp = timestamp;
+            TradeCount = tradeCount;
+            BaseVolume = baseVolume;
+            CounterVolume = counterVolume;
+            Avg = avg;
+            High = high;
+            Low = low;
+            Open = open;
+            Close = close;
         }
     }
 }

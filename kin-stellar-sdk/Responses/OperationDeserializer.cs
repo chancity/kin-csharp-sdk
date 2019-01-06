@@ -1,7 +1,7 @@
 ﻿using System;
+using Kin.Stellar.Sdk.responses.operations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Kin.Stellar.Sdk.responses.operations;
 
 namespace Kin.Stellar.Sdk.responses
 {
@@ -12,10 +12,11 @@ namespace Kin.Stellar.Sdk.responses
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
-            var jsonObject = JObject.Load(reader);
-            var type = jsonObject.GetValue("type_i").ToObject<int>();
+            JObject jsonObject = JObject.Load(reader);
+            int type = jsonObject.GetValue("type_i").ToObject<int>();
 
             switch (type)
             {

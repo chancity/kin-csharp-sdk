@@ -70,9 +70,7 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         /// <param name="requestUriString">The URL.</param>
         public EventSource(string requestUriString)
-            : this(new Uri(requestUriString))
-        {
-        }
+            : this(new Uri(requestUriString)) { }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EventSource" /> class.
@@ -162,7 +160,9 @@ namespace Kin.Stellar.Sdk
         public async Task Connect()
         {
             if (ReadyState == EventSourceState.Connecting || ReadyState == EventSourceState.Open)
+            {
                 throw new InvalidOperationException("Cannot call connect while connection is " + ReadyState);
+            }
 
             _shutdownToken = false;
 
@@ -185,7 +185,10 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         public void Shutdown()
         {
-            if (_shutdownToken) return;
+            if (_shutdownToken)
+            {
+                return;
+            }
 
             _shutdownToken = true;
             CloseConnection();
@@ -207,8 +210,16 @@ namespace Kin.Stellar.Sdk
             request.AllowAutoRedirect = true;
             request.KeepAlive = true;
             request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
-            if (Headers != null) request.Headers.Add(Headers);
-            if (!string.IsNullOrEmpty(LastEventId)) request.Headers.Add("Last-Event-Id", LastEventId);
+
+            if (Headers != null)
+            {
+                request.Headers.Add(Headers);
+            }
+
+            if (!string.IsNullOrEmpty(LastEventId))
+            {
+                request.Headers.Add("Last-Event-Id", LastEventId);
+            }
         }
 
         /// <summary>
@@ -219,16 +230,24 @@ namespace Kin.Stellar.Sdk
         /// <param name="content">The lines received.</param>
         private void DispatchEvent(string[] content)
         {
-            if (_shutdownToken) return;
+            if (_shutdownToken)
+            {
+                return;
+            }
+
             StringBuilder sb = null;
 
-            foreach (var line in content)
+            foreach (string line in content)
             {
-                var pos = line.IndexOf(':');
-                if (pos <= 0 || pos + 2 >= line.Length) continue;
+                int pos = line.IndexOf(':');
 
-                var type = line.Substring(0, pos);
-                var value = line.Substring(pos + 2);
+                if (pos <= 0 || pos + 2 >= line.Length)
+                {
+                    continue;
+                }
+
+                string type = line.Substring(0, pos);
+                string value = line.Substring(pos + 2);
 
                 Trace.TraceInformation("DispatchEvent (Type={0})", type);
                 Trace.TraceData(TraceEventType.Verbose, 0, value);
@@ -244,9 +263,14 @@ namespace Kin.Stellar.Sdk
                         break;
 
                     case "data":
+
                         if (IsWanted(_eventType))
                         {
-                            if (sb == null) sb = new StringBuilder();
+                            if (sb == null)
+                            {
+                                sb = new StringBuilder();
+                            }
+
                             sb.AppendLine(value);
                         }
 
@@ -258,7 +282,10 @@ namespace Kin.Stellar.Sdk
                 }
             }
 
-            if (sb == null || _shutdownToken) return;
+            if (sb == null || _shutdownToken)
+            {
+                return;
+            }
 
             OnMessageEvent(new ServerSentEventArgs
             {
@@ -284,9 +311,12 @@ namespace Kin.Stellar.Sdk
         private void OnErrorEvent(ServerSentErrorEventArgs e)
         {
             Trace.TraceInformation("Raising OnErrorEvent ({0})", e.Exception.Message);
-            var handler = Error;
+            EventHandler<ServerSentErrorEventArgs> handler = Error;
+
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         /// <summary>
@@ -296,9 +326,12 @@ namespace Kin.Stellar.Sdk
         private void OnMessageEvent(ServerSentEventArgs e)
         {
             Trace.TraceInformation("Raising OnMessageEvent ({0})", _eventType);
-            var handler = Message;
+            EventHandler<ServerSentEventArgs> handler = Message;
+
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         /// <summary>
@@ -308,9 +341,12 @@ namespace Kin.Stellar.Sdk
         private void OnStateChangeEvent(StateChangeEventArgs e)
         {
             Trace.TraceInformation("Raising OnStateChangeEvent ({0})", e.NewState);
-            var handler = StateChange;
+            EventHandler<StateChangeEventArgs> handler = StateChange;
+
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         /// <summary>
@@ -318,22 +354,31 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         private void RetryAfterDelay(bool backoff = true)
         {
-            if (_retryInterval <= 0 || _shutdownToken) return;
+            if (_retryInterval <= 0 || _shutdownToken)
+            {
+                return;
+            }
 
             // Attempt reconnection after retry interval
             Trace.TraceInformation("RetryAfterDelay ({0}ms)", _retryInterval);
+
             _retryTimer = new Timer(
                 async delegate
                 {
                     if (!_shutdownToken)
+                    {
                         await ConnectAsync();
+                    }
                 },
                 null,
                 Math.Max(DefaultRetryInterval, _retryInterval),
                 System.Threading.Timeout.Infinite); // Single shot timer
 
             // Increase backoff timer up to a minute each retry
-            if (backoff) _retryInterval = (int) Math.Min(_retryInterval * 1.5, 60000);
+            if (backoff)
+            {
+                _retryInterval = (int) Math.Min(_retryInterval * 1.5, 60000);
+            }
         }
 
         #endregion Protected Methods
@@ -345,17 +390,27 @@ namespace Kin.Stellar.Sdk
         /// </summary>
         private void CloseConnection()
         {
-            if (ReadyState != EventSourceState.Connecting && ReadyState != EventSourceState.Open) return;
+            if (ReadyState != EventSourceState.Connecting && ReadyState != EventSourceState.Open)
+            {
+                return;
+            }
+
             Trace.TraceInformation("CloseConnection");
 
             if (_httpWebRequest != null)
+            {
                 _httpWebRequest.Abort();
+            }
 
             if (_httpWebResponse != null)
+            {
                 _httpWebResponse.Close();
+            }
 
             if (_retryTimer != null)
+            {
                 _retryTimer.Dispose();
+            }
 
             _eventStream = null;
             LastEventId = null;
@@ -377,14 +432,18 @@ namespace Kin.Stellar.Sdk
 
             try
             {
-                var handle = _httpWebRequest.BeginGetResponse(EndGetResponse, null);
-                var tcs = new TaskCompletionSource<bool>();
+                IAsyncResult handle = _httpWebRequest.BeginGetResponse(EndGetResponse, null);
+                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
                 ThreadPool.RegisterWaitForSingleObject(
                     handle.AsyncWaitHandle,
                     (state, timedOut) =>
                     {
-                        if (!timedOut || _httpWebRequest == null || _shutdownToken) return;
+                        if (!timedOut || _httpWebRequest == null || _shutdownToken)
+                        {
+                            return;
+                        }
+
                         Trace.TraceInformation("ConnectAsync (Timed Out)");
                         OnErrorEvent(new ServerSentErrorEventArgs {Exception = new TimeoutException()});
                         CloseConnection();
@@ -417,13 +476,20 @@ namespace Kin.Stellar.Sdk
         /// <exception cref="System.NullReferenceException">GetResponseStream() returned null</exception>
         private void EndGetResponse(IAsyncResult result)
         {
-            if (_shutdownToken) return;
+            if (_shutdownToken)
+            {
+                return;
+            }
 
             try
             {
                 _httpWebResponse = (HttpWebResponse) _httpWebRequest.EndGetResponse(result);
                 _httpStream = _httpWebResponse.GetResponseStream();
-                if (_shutdownToken) return;
+
+                if (_shutdownToken)
+                {
+                    return;
+                }
             }
             catch (WebException ex)
             {
@@ -432,11 +498,15 @@ namespace Kin.Stellar.Sdk
                 RetryAfterDelay();
 
                 if (_httpWebResponse == null)
+                {
                     return;
+                }
             }
 
-            var contentType = new ContentType(_httpWebResponse.ContentType);
-            Trace.TraceInformation("EndGetResponse (StatusCode={0}, MediaType={1})", _httpWebResponse.StatusCode, contentType.MediaType);
+            ContentType contentType = new ContentType(_httpWebResponse.ContentType);
+
+            Trace.TraceInformation("EndGetResponse (StatusCode={0}, MediaType={1})", _httpWebResponse.StatusCode,
+                contentType.MediaType);
 
             if (_httpWebResponse.StatusCode != HttpStatusCode.OK || contentType.MediaType != "text/event-stream")
             {
@@ -457,8 +527,16 @@ namespace Kin.Stellar.Sdk
             LastEventId = null;
             _eventType = null;
 
-            if (_shutdownToken) return;
-            if (_httpStream == null) throw new NullReferenceException("GetResponseStream");
+            if (_shutdownToken)
+            {
+                return;
+            }
+
+            if (_httpStream == null)
+            {
+                throw new NullReferenceException("GetResponseStream");
+            }
+
             _httpStream.BeginRead(_buffer, 0, _buffer.Length, EndReadFromStream, null);
         }
 
@@ -468,13 +546,20 @@ namespace Kin.Stellar.Sdk
         /// <param name="result">The IAsyncResult.</param>
         private void EndReadFromStream(IAsyncResult result)
         {
-            if (_shutdownToken) return;
+            if (_shutdownToken)
+            {
+                return;
+            }
 
             try
             {
-                var bytesRead = _httpStream.EndRead(result);
+                int bytesRead = _httpStream.EndRead(result);
                 Trace.TraceInformation("EndReadFromStream (Bytes={0})", bytesRead);
-                if (_shutdownToken) return;
+
+                if (_shutdownToken)
+                {
+                    return;
+                }
 
                 if (bytesRead == 0)
                 {
@@ -483,7 +568,8 @@ namespace Kin.Stellar.Sdk
                     return;
                 }
 
-                for (var i = 0; i < bytesRead; i++)
+                for (int i = 0; i < bytesRead; i++)
+                {
                     if (i > 0 && _buffer[i] == '\n' && _buffer[i - 1] == '\n')
                     {
                         DispatchEvent(_eventStream.ToString().Split('\n'));
@@ -493,8 +579,9 @@ namespace Kin.Stellar.Sdk
                     {
                         _eventStream.Append((char) _buffer[i]);
                     }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //OnErrorEvent(new ServerSentErrorEventArgs { Exception = ex });
                 CloseConnection();
@@ -504,7 +591,9 @@ namespace Kin.Stellar.Sdk
 
             // Recursively call until we run out of data
             if (!_shutdownToken && ReadyState == EventSourceState.Open)
+            {
                 _httpStream.BeginRead(_buffer, 0, _buffer.Length, EndReadFromStream, null);
+            }
         }
 
         #endregion Private Methods
@@ -519,7 +608,7 @@ namespace Kin.Stellar.Sdk
             #region Public Properties
 
             /// <summary>
-            /// Internal Exception
+            ///     Internal Exception
             /// </summary>
             public Exception Exception { get; internal set; }
 
@@ -549,7 +638,7 @@ namespace Kin.Stellar.Sdk
             #region Public Properties
 
             /// <summary>
-            /// New State changed to
+            ///     New State changed to
             /// </summary>
             public EventSourceState NewState { get; internal set; }
 

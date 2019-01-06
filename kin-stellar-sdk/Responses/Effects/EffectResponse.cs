@@ -1,19 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace Kin.Stellar.Sdk.responses.effects
 {
     public abstract class EffectResponse : Response, IPagingToken
     {
-        [JsonProperty(PropertyName = "id")] public string Id { get; protected set; }
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; protected set; }
 
         [JsonProperty(PropertyName = "account")]
         public KeyPair Account { get; protected set; }
 
-        [JsonProperty(PropertyName = "type")] public string Type { get; protected set; }
-
-        [JsonProperty(PropertyName = "paging_token")]
-        public string PagingToken { get; protected set; }
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; protected set; }
 
         [JsonProperty(PropertyName = "_links")]
         public EffectsResponseLinks Links { get; protected set; }
@@ -21,8 +20,11 @@ namespace Kin.Stellar.Sdk.responses.effects
         [JsonProperty(PropertyName = "created_at")]
         public DateTime CreatedAt { get; protected set; }
 
+        [JsonProperty(PropertyName = "paging_token")]
+        public string PagingToken { get; protected set; }
+
         /// <summary>
-        /// Represents effect links.
+        ///     Represents effect links.
         /// </summary>
         public class EffectsResponseLinks
         {

@@ -6,7 +6,5 @@
     ///     <seealso cref="requests.EffectsRequestBuilder" />
     ///     <seealso cref="Server" />
     /// </summary>
-    public class AccountRemovedEffectResponse : EffectResponse
-    {
-    }
+    public class AccountRemovedEffectResponse : EffectResponse { }
 }

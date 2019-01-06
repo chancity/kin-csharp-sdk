@@ -2,7 +2,5 @@
 
 namespace Kin.Stellar.Sdk.federation
 {
-    public class ServerErrorException : Exception
-    {
-    }
+    public class ServerErrorException : Exception { }
 }

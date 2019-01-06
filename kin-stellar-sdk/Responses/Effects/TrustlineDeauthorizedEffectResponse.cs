@@ -10,8 +10,6 @@
     {
         /// <inheritdoc />
         public TrustlineDeauthorizedEffectResponse(KeyPair trustor, string assetType, string assetCode)
-            : base(trustor, assetType, assetCode)
-        {
-        }
+            : base(trustor, assetType, assetCode) { }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
 using Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10;
-using Ed25519Operations = Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.Ed25519Operations;
-using FieldOperations = Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.FieldOperations;
-using ScalarOperations = Kin.Stellar.Sdk.chaos.nacl.Internal.Ed25519Ref10.ScalarOperations;
 
 namespace Kin.Stellar.Sdk.chaos.nacl
 {
@@ -17,17 +14,32 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         public static bool Verify(byte[] signature, byte[] message, byte[] publicKey)
         {
             if (signature == null)
+            {
                 throw new ArgumentNullException(nameof(signature));
+            }
+
             if (message == null)
+            {
                 throw new ArgumentNullException(nameof(message));
+            }
+
             if (publicKey == null)
+            {
                 throw new ArgumentNullException(nameof(publicKey));
+            }
+
             if (signature.Length != SignatureSizeInBytes)
+            {
                 throw new ArgumentException($"Signature size must be {SignatureSizeInBytes}",
                     nameof(signature));
+            }
+
             if (publicKey.Length != PublicKeySizeInBytes)
+            {
                 throw new ArgumentException($"Public key size must be {PublicKeySizeInBytes}",
                     nameof(signature));
+            }
+
             return Ed25519Operations.CryptoSignVerify(signature, 0, message, 0, message.Length, publicKey, 0);
         }
 
@@ -35,22 +47,38 @@ namespace Kin.Stellar.Sdk.chaos.nacl
             ArraySegment<byte> expandedPrivateKey)
         {
             if (signature.Array == null)
+            {
                 throw new ArgumentNullException(nameof(signature));
+            }
+
             if (signature.Count != SignatureSizeInBytes)
+            {
                 throw new ArgumentException("signature.Count");
+            }
+
             if (expandedPrivateKey.Array == null)
+            {
                 throw new ArgumentNullException(nameof(signature));
+            }
+
             if (expandedPrivateKey.Count != ExpandedPrivateKeySizeInBytes)
+            {
                 throw new ArgumentException("expandedPrivateKey.Count");
+            }
+
             if (message.Array == null)
+            {
                 throw new ArgumentNullException(nameof(signature));
+            }
+
             Ed25519Operations.crypto_sign2(signature.Array, signature.Offset, message.Array, message.Offset,
                 message.Count, expandedPrivateKey.Array, expandedPrivateKey.Offset);
         }
 
         public static byte[] Sign(byte[] message, byte[] expandedPrivateKey)
         {
-            var signature = new byte[SignatureSizeInBytes];
+            byte[] signature = new byte[SignatureSizeInBytes];
+
             Sign(new ArraySegment<byte>(signature), new ArraySegment<byte>(message),
                 new ArraySegment<byte>(expandedPrivateKey));
             return signature;
@@ -58,14 +86,14 @@ namespace Kin.Stellar.Sdk.chaos.nacl
 
         public static byte[] PublicKeyFromSeed(byte[] privateKeySeed)
         {
-            KeyPairFromSeed(out var publicKey, out var privateKey, privateKeySeed);
+            KeyPairFromSeed(out byte[] publicKey, out byte[] privateKey, privateKeySeed);
             CryptoBytes.Wipe(privateKey);
             return publicKey;
         }
 
         public static byte[] ExpandedPrivateKeyFromSeed(byte[] privateKeySeed)
         {
-            KeyPairFromSeed(out var publicKey, out var privateKey, privateKeySeed);
+            KeyPairFromSeed(out byte[] publicKey, out byte[] privateKey, privateKeySeed);
             CryptoBytes.Wipe(publicKey);
             return privateKey;
         }
@@ -73,11 +101,17 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         public static void KeyPairFromSeed(out byte[] publicKey, out byte[] expandedPrivateKey, byte[] privateKeySeed)
         {
             if (privateKeySeed == null)
+            {
                 throw new ArgumentNullException(nameof(privateKeySeed));
+            }
+
             if (privateKeySeed.Length != PrivateKeySeedSizeInBytes)
+            {
                 throw new ArgumentException("privateKeySeed");
-            var pk = new byte[PublicKeySizeInBytes];
-            var sk = new byte[ExpandedPrivateKeySizeInBytes];
+            }
+
+            byte[] pk = new byte[PublicKeySizeInBytes];
+            byte[] sk = new byte[ExpandedPrivateKeySizeInBytes];
             Ed25519Operations.CryptoSignKeypair(pk, 0, sk, 0, privateKeySeed, 0);
             publicKey = pk;
             expandedPrivateKey = sk;
@@ -87,17 +121,35 @@ namespace Kin.Stellar.Sdk.chaos.nacl
             ArraySegment<byte> privateKeySeed)
         {
             if (publicKey.Array == null)
+            {
                 throw new ArgumentNullException(nameof(publicKey));
+            }
+
             if (expandedPrivateKey.Array == null)
+            {
                 throw new ArgumentNullException(nameof(publicKey));
+            }
+
             if (privateKeySeed.Array == null)
+            {
                 throw new ArgumentNullException(nameof(publicKey));
+            }
+
             if (publicKey.Count != PublicKeySizeInBytes)
+            {
                 throw new ArgumentException("publicKey.Count");
+            }
+
             if (expandedPrivateKey.Count != ExpandedPrivateKeySizeInBytes)
+            {
                 throw new ArgumentException("expandedPrivateKey.Count");
+            }
+
             if (privateKeySeed.Count != PrivateKeySeedSizeInBytes)
+            {
                 throw new ArgumentException("privateKeySeed.Count");
+            }
+
             Ed25519Operations.CryptoSignKeypair(
                 publicKey.Array, publicKey.Offset,
                 expandedPrivateKey.Array, expandedPrivateKey.Offset,
@@ -107,7 +159,8 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         [Obsolete("Needs more testing")]
         public static byte[] KeyExchange(byte[] publicKey, byte[] privateKey)
         {
-            var sharedKey = new byte[SharedKeySizeInBytes];
+            byte[] sharedKey = new byte[SharedKeySizeInBytes];
+
             KeyExchange(new ArraySegment<byte>(sharedKey), new ArraySegment<byte>(publicKey),
                 new ArraySegment<byte>(privateKey));
             return sharedKey;
@@ -118,24 +171,41 @@ namespace Kin.Stellar.Sdk.chaos.nacl
             ArraySegment<byte> privateKey)
         {
             if (sharedKey.Array == null)
+            {
                 throw new ArgumentNullException(nameof(sharedKey));
-            if (publicKey.Array == null)
-                throw new ArgumentNullException(nameof(sharedKey));
-            if (privateKey.Array == null)
-                throw new ArgumentNullException("privateKey");
-            if (sharedKey.Count != 32)
-                throw new ArgumentException("sharedKey.Count != 32");
-            if (publicKey.Count != 32)
-                throw new ArgumentException("publicKey.Count != 32");
-            if (privateKey.Count != 64)
-                throw new ArgumentException("privateKey.Count != 64");
+            }
 
-            FieldOperations.fe_frombytes(out var edwardsY, publicKey.Array, publicKey.Offset);
-            FieldOperations.fe_1(out var edwardsZ);
-            MontgomeryCurve25519.EdwardsToMontgomeryX(out var montgomeryX, ref edwardsY, ref edwardsZ);
-            var h = Sha512.Hash(privateKey.Array, privateKey.Offset, 32);
+            if (publicKey.Array == null)
+            {
+                throw new ArgumentNullException(nameof(sharedKey));
+            }
+
+            if (privateKey.Array == null)
+            {
+                throw new ArgumentNullException("privateKey");
+            }
+
+            if (sharedKey.Count != 32)
+            {
+                throw new ArgumentException("sharedKey.Count != 32");
+            }
+
+            if (publicKey.Count != 32)
+            {
+                throw new ArgumentException("publicKey.Count != 32");
+            }
+
+            if (privateKey.Count != 64)
+            {
+                throw new ArgumentException("privateKey.Count != 64");
+            }
+
+            FieldOperations.fe_frombytes(out FieldElement edwardsY, publicKey.Array, publicKey.Offset);
+            FieldOperations.fe_1(out FieldElement edwardsZ);
+            MontgomeryCurve25519.EdwardsToMontgomeryX(out FieldElement montgomeryX, ref edwardsY, ref edwardsZ);
+            byte[] h = Sha512.Hash(privateKey.Array, privateKey.Offset, 32);
             ScalarOperations.ScClamp(h, 0);
-            MontgomeryOperations.ScalarMult(out var sharedMontgomeryX, h, 0, ref montgomeryX);
+            MontgomeryOperations.ScalarMult(out FieldElement sharedMontgomeryX, h, 0, ref montgomeryX);
             CryptoBytes.Wipe(h);
             FieldOperations.fe_tobytes(sharedKey.Array, sharedKey.Offset, ref sharedMontgomeryX);
             MontgomeryCurve25519.KeyExchangeOutputHashNaCl(sharedKey.Array, sharedKey.Offset);

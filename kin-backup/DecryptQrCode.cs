@@ -11,12 +11,17 @@ using ZXing.Windows.Compatibility;
 
 namespace Kin.Backup
 {
-    internal partial class QrCode 
+    internal partial class QrCode
     {
         public static KeyPair ToKeyPair(Bitmap qrCodeImage, string passPhrase, bool disposeImage = true)
         {
-            var encryptedKeyStore = BitmapToKeyStore(qrCodeImage);
-            if (disposeImage) qrCodeImage.Dispose();
+            EncryptedKeyStore encryptedKeyStore = BitmapToKeyStore(qrCodeImage);
+
+            if (disposeImage)
+            {
+                qrCodeImage.Dispose();
+            }
+
             return DecryptKeyStoreSeed(encryptedKeyStore, passPhrase);
         }
 

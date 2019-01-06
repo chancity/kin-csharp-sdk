@@ -1,19 +1,14 @@
-﻿using Kin.Stellar.Sdk.responses;
-using Kin.Stellar.Sdk.responses.page;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using Kin.Stellar.Sdk.responses;
 
 namespace Kin.Stellar.Sdk.requests
 {
-    public class TradesAggregationRequestBuilder : RequestBuilderExecutePageable<TradesAggregationRequestBuilder, TradeAggregationResponse>
+    public class TradesAggregationRequestBuilder : RequestBuilderExecutePageable<TradesAggregationRequestBuilder,
+        TradeAggregationResponse>
     {
         public TradesAggregationRequestBuilder(Uri serverUri, HttpClient httpClient)
-            : base(serverUri, "trade_aggregations", httpClient)
-        {
-        }
+            : base(serverUri, "trade_aggregations", httpClient) { }
 
         public TradesAggregationRequestBuilder StartTime(long startTime)
         {
@@ -36,6 +31,7 @@ namespace Kin.Stellar.Sdk.requests
         public TradesAggregationRequestBuilder BaseAsset(Asset asset)
         {
             UriBuilder.SetQueryParam("base_asset_type", asset.GetType());
+
             if (asset is AssetTypeCreditAlphaNum)
             {
                 AssetTypeCreditAlphaNum creditAlphaNumAsset = (AssetTypeCreditAlphaNum) asset;
@@ -49,6 +45,7 @@ namespace Kin.Stellar.Sdk.requests
         public TradesAggregationRequestBuilder CounterAsset(Asset asset)
         {
             UriBuilder.SetQueryParam("counter_asset_type", asset.GetType());
+
             if (asset is AssetTypeCreditAlphaNum)
             {
                 AssetTypeCreditAlphaNum creditAlphaNumAsset = (AssetTypeCreditAlphaNum) asset;

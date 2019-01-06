@@ -26,28 +26,43 @@ namespace Kin.Stellar.Sdk.chaos.nacl
         public void Update(byte[] data, int offset, int count)
         {
             if (data == null)
+            {
                 throw new ArgumentNullException(nameof(data));
+            }
+
             if (offset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             if (count < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
             if (data.Length - offset < count)
+            {
                 throw new ArgumentException("Requires offset + count <= data.Length");
+            }
 
             Array16<ulong> block;
-            var bytesInBuffer = (int) _totalBytes & (BlockSize - 1);
+            int bytesInBuffer = (int) _totalBytes & (BlockSize - 1);
             _totalBytes += (uint) count;
 
             if (_totalBytes >= ulong.MaxValue / 8)
+            {
                 throw new InvalidOperationException("Too much data");
+            }
+
             // Fill existing buffer
             if (bytesInBuffer != 0)
             {
-                var toCopy = Math.Min(BlockSize - bytesInBuffer, count);
+                int toCopy = Math.Min(BlockSize - bytesInBuffer, count);
                 Buffer.BlockCopy(data, offset, _buffer, bytesInBuffer, toCopy);
                 offset += toCopy;
                 count -= toCopy;
                 bytesInBuffer += toCopy;
+
                 if (bytesInBuffer == BlockSize)
                 {
                     ByteIntegerConverter.Array16LoadBigEndian64(out block, _buffer, 0);
@@ -67,20 +82,29 @@ namespace Kin.Stellar.Sdk.chaos.nacl
             }
 
             // Copy remainder into buffer
-            if (count > 0) Buffer.BlockCopy(data, offset, _buffer, bytesInBuffer, count);
+            if (count > 0)
+            {
+                Buffer.BlockCopy(data, offset, _buffer, bytesInBuffer, count);
+            }
         }
 
         public void Finish(ArraySegment<byte> output)
         {
             if (output.Array == null)
+            {
                 throw new ArgumentNullException(nameof(output));
+            }
+
             if (output.Count != 64)
+            {
                 throw new ArgumentException("output.Count must be 64");
+            }
 
             Update(Padding, 0, Padding.Length);
-            ByteIntegerConverter.Array16LoadBigEndian64(out var block, _buffer, 0);
+            ByteIntegerConverter.Array16LoadBigEndian64(out Array16<ulong> block, _buffer, 0);
             CryptoBytes.InternalWipe(_buffer, 0, _buffer.Length);
-            var bytesInBuffer = (int) _totalBytes & (BlockSize - 1);
+            int bytesInBuffer = (int) _totalBytes & (BlockSize - 1);
+
             if (bytesInBuffer > BlockSize - 16)
             {
                 Sha512Internal.Core(out _state, ref _state, ref block);
@@ -103,7 +127,7 @@ namespace Kin.Stellar.Sdk.chaos.nacl
 
         public byte[] Finish()
         {
-            var result = new byte[64];
+            byte[] result = new byte[64];
             Finish(new ArraySegment<byte>(result));
             return result;
         }
@@ -115,7 +139,7 @@ namespace Kin.Stellar.Sdk.chaos.nacl
 
         public static byte[] Hash(byte[] data, int offset, int count)
         {
-            var hasher = new Sha512();
+            Sha512 hasher = new Sha512();
             hasher.Update(data, offset, count);
             return hasher.Finish();
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Kin.Stellar.Sdk.responses.operations;
 
 namespace Kin.Stellar.Sdk.requests
 {
@@ -23,18 +22,7 @@ namespace Kin.Stellar.Sdk.requests
 
         public static HttpClient HttpClient { get; set; }
 
-        public async Task<TZ> Execute<TZ>(Uri uri) where TZ : class
-        {
-            var responseHandler = new ResponseHandler<TZ>();
-
-            var response = await HttpClient.GetAsync(uri);
-            return await responseHandler.HandleResponse(response);
-        }
-
-        public string Uri
-        {
-            get => BuildUri().ToString();
-        }
+        public string Uri => BuildUri().ToString();
 
         public RequestBuilder(Uri serverUri, string defaultSegment, HttpClient httpClient)
         {
@@ -42,24 +30,38 @@ namespace Kin.Stellar.Sdk.requests
             _segments = new List<string>();
 
             if (!string.IsNullOrEmpty(defaultSegment))
+            {
                 SetSegments(defaultSegment);
+            }
 
             _segmentsAdded = false; //Allow overwriting segments
             HttpClient = httpClient;
         }
 
+        public async Task<TZ> Execute<TZ>(Uri uri) where TZ : class
+        {
+            ResponseHandler<TZ> responseHandler = new ResponseHandler<TZ>();
+
+            HttpResponseMessage response = await HttpClient.GetAsync(uri);
+            return await responseHandler.HandleResponse(response);
+        }
+
         protected RequestBuilder<T> SetSegments(params string[] segments)
         {
             if (_segmentsAdded)
+            {
                 throw new Exception("URL segments have been already added.");
+            }
 
             _segmentsAdded = true;
 
             //Remove default segments
             _segments.Clear();
 
-            foreach (var segment in segments)
+            foreach (string segment in segments)
+            {
                 _segments.Add(segment);
+            }
 
             return this;
         }
@@ -120,21 +122,16 @@ namespace Kin.Stellar.Sdk.requests
         {
             if (_segments.Count > 0)
             {
-                var path = "";
+                string path = "";
 
-                foreach (var segment in _segments)
+                foreach (string segment in _segments)
+                {
                     path += "/" + segment;
+                }
 
                 UriBuilder.Path = path;
 
-                try
-                {
-                    return UriBuilder.Uri;
-                }
-                catch (UriFormatException)
-                {
-                    throw;
-                }
+                return UriBuilder.Uri;
             }
 
             throw new NotSupportedException("No segments defined.");

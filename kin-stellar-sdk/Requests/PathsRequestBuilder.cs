@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Kin.Stellar.Sdk.responses;
-using Kin.Stellar.Sdk.responses.page;
 
 namespace Kin.Stellar.Sdk.requests
 {
     /// <summary>
-    /// Builds requests connected to paths.
+    ///     Builds requests connected to paths.
     /// </summary>
     public class PathsRequestBuilder : RequestBuilderExecutePageable<PathsRequestBuilder, PathResponse>
     {
         public PathsRequestBuilder(Uri serverUri, HttpClient httpClient)
-            : base(serverUri, "paths", httpClient)
-        {
-        }
+            : base(serverUri, "paths", httpClient) { }
 
         public PathsRequestBuilder DestinationAccount(KeyPair account)
         {
