@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Kin.Marketplace.Models;
 using Kin.Shared.Models.Device;
@@ -13,13 +14,13 @@ namespace Kin.Marketplace
         private readonly IMarketPlaceClient _apiClient;
 
         public MarketPlaceClient(string baseEndPoint, Information info,
-            Func<Task<string>> authorizationHeaderValueGetter)
+            Func<Task<string>> authorizationHeaderValueGetter, HttpMessageHandler innerHandler = null)
         {
             MarketPlaceHttpHeaders marketPlaceHttpHeaders = new MarketPlaceHttpHeaders(info);
 
             RefitSettings refitSetting = new RefitSettings
             {
-                HttpMessageHandlerFactory = () => new MarketPlaceHeadersHandler(marketPlaceHttpHeaders),
+                HttpMessageHandlerFactory = () => new MarketPlaceHeadersHandler(marketPlaceHttpHeaders, innerHandler),
                 JsonSerializerSettings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore},
                 AuthorizationHeaderValueGetter = authorizationHeaderValueGetter
             };

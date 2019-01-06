@@ -16,12 +16,11 @@ namespace Kin.Marketplace
         private readonly MarketPlaceHttpHeaders _marketPlaceHttpHeaders;
         private readonly JsonSchema4 _schema;
 
-        public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders)
+        public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders, HttpMessageHandler innerHandler = null)
         {
             _schema = JsonSchema4.FromTypeAsync<MarketPlaceError>().Result;
-
             _marketPlaceHttpHeaders = marketPlaceHttpHeaders;
-            InnerHandler = new HttpClientHandler();
+            InnerHandler = innerHandler ?? new HttpClientHandler();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
