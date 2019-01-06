@@ -33,7 +33,7 @@ namespace Kin.Marketplace.Models
         public DateTime CompletionDate { get; private set; }
 
         [JsonProperty("result")]
-        public Result Result { get; private set; }
+        public OrderResult OrderResult { get; private set; }
 
         [JsonProperty("call_to_action")]
         public string CallToAction { get; private set; }

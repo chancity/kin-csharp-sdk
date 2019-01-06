@@ -3,7 +3,7 @@
 // ReSharper disable once CheckNamespace
 namespace Kin.Marketplace.Models
 {
-    public class Result
+    public class OrderResult
     {
         [JsonProperty("type")]
         public string Type { get; private set; }

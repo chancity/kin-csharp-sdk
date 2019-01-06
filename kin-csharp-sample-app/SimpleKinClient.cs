@@ -122,9 +122,9 @@ namespace kin_csharp_sample_app
 
                 Order finishedOrder = await WaitForOrderCompletion(UserId, submitOrder.Id).ConfigureAwait(false);
 
-                if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+                if (!string.IsNullOrEmpty(finishedOrder?.OrderResult?.Jwt))
                 {
-                    SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+                    SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
                 }
             }
         }
@@ -147,9 +147,9 @@ namespace kin_csharp_sample_app
 
             Order finishedOrder = await WaitForOrderCompletion(UserId, submitP2POffer.Id).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            if (!string.IsNullOrEmpty(finishedOrder?.OrderResult?.Jwt))
             {
-                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
             }
 
             var coldWallet = KeyPair.FromSecretSeed("SEEED");
@@ -177,9 +177,9 @@ namespace kin_csharp_sample_app
 
             Order finishedOrder = await WaitForOrderCompletion(UserId, submitSpendOffer.Id).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            if (!string.IsNullOrEmpty(finishedOrder?.OrderResult?.Jwt))
             {
-                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
             }
         }
 
@@ -198,9 +198,9 @@ namespace kin_csharp_sample_app
 
             Order finishedOrder = await WaitForOrderCompletion(UserId, submitEarnOffer.Id).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(finishedOrder?.Result?.Jwt))
+            if (!string.IsNullOrEmpty(finishedOrder?.OrderResult?.Jwt))
             {
-                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.Result?.Jwt);
+                SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
             }
         }
 

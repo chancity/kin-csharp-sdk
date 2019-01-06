@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.BlockChain", "kin-block
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Stellar.Sdk", "kin-stellar-sdk\Kin.Stellar.Sdk.csproj", "{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kin.Backup", "kin-backup\Kin.Backup.csproj", "{03F1373D-A8A0-42CE-9607-071D9667E433}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E6E9BF4-96D2-4ACA-9E1F-F8E143371605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03F1373D-A8A0-42CE-9607-071D9667E433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03F1373D-A8A0-42CE-9607-071D9667E433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03F1373D-A8A0-42CE-9607-071D9667E433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03F1373D-A8A0-42CE-9607-071D9667E433}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
