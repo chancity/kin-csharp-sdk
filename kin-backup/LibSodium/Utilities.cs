@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Kin.Backup.LibSodium.Interop;
 
 namespace Kin.Backup.LibSodium
 {

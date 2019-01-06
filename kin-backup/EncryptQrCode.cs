@@ -30,7 +30,6 @@ namespace Kin.Backup
 
         private static EncryptedKeyStore ToKeyStore(KeyPair keyPair, string passPhrase)
         {
-            SodiumCore.Init();
             byte[] passPhraseBytes = Encoding.UTF8.GetBytes(passPhrase);
             byte[] encryptionSalt = PasswordHash.ArgonGenerateSalt();
             byte[] keyHash = Shared.KeyHash(passPhraseBytes, encryptionSalt);

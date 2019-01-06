@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using Kin.Backup.LibSodium.Exceptions;
-using Kin.Backup.LibSodium.Interop;
 using Sodium;
 
 namespace Kin.Backup.LibSodium
@@ -62,7 +61,9 @@ namespace Kin.Backup.LibSodium
           string.Format("nonce must be {0} bytes in length.", NONCE_BYTES));
 
       var buffer = new byte[MAC_BYTES + message.Length];
-      var ret = SodiumLibrary.crypto_secretbox_easy(buffer, message, message.Length, nonce, key);
+
+      SodiumCore.Init();
+     var ret = SodiumLibrary.crypto_secretbox_easy(buffer, message, message.Length, nonce, key);
 
       if (ret != 0)
         throw new CryptographicException("Failed to create SecretBox");
@@ -129,7 +130,7 @@ namespace Kin.Backup.LibSodium
       }
 
       var buffer = new byte[cipherText.Length - MAC_BYTES];
-
+      SodiumCore.Init();
       var ret = SodiumLibrary.crypto_secretbox_open_easy(buffer, cipherText, cipherText.Length, nonce, key);
 
       if (ret != 0)

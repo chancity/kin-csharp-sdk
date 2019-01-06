@@ -2,7 +2,6 @@ using System;
 using System.Text;
 using Kin.Backup.LibSodium;
 using Kin.Backup.LibSodium.Exceptions;
-using Kin.Backup.LibSodium.Interop;
 
 namespace Sodium
 {

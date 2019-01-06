@@ -31,8 +31,6 @@ namespace Kin.Backup
 
         private static KeyPair DecryptKeyStoreSeed(EncryptedKeyStore keyStore, string passPhrase)
         {
-            SodiumCore.Init();
-
             byte[] passPhraseBytes = Encoding.UTF8.GetBytes(passPhrase);
             byte[] saltBytes = keyStore.EncryptionSalt.HexToBinary();
             byte[] keyHash = Shared.KeyHash(passPhraseBytes, saltBytes);
