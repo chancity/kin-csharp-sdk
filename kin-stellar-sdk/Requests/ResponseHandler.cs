@@ -31,11 +31,11 @@ namespace Kin.Stellar.Sdk.requests
 
             T responseObj = JsonSingleton.GetInstance<T>(content);
 
-            if (responseObj is Response)
-            {
-                Response responseInstance = responseObj as Response;
-                responseInstance.SetHeaders(response.Headers);
-            }
+          // if (responseObj is Response)
+          // {
+          //     Response responseInstance = responseObj as Response;
+          //     responseInstance.SetHeaders(response.Headers);
+          // }
 
             return responseObj;
         }
