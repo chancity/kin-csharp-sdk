@@ -65,11 +65,11 @@ namespace kin_csharp_sample_app
 
             UserId = Guid.NewGuid().ToString();
             _keyPair = KeyPair.Random();
-            Console.WriteLine(_keyPair.SecretSeed);
 
 
             _marketPlaceJwtProvider = new JwtProvider("kin", kinsKeys);
-            _blockChainHandler = new BlockChainHandler(config, "rced");
+            _blockChainHandler = new BlockChainHandler(config, "test");
+
         }
 
         public async Task FirstTest()
@@ -131,14 +131,14 @@ namespace kin_csharp_sample_app
 
         public async Task DoP2POffer(string toUserId = null)
         {
-            string p2POffer = JwtProviderBuilder.P2P
+            var p2POffer = JwtProviderBuilder.P2P
                 .AddOffer("p2p-" + toUserId, 1)
                 .AddSender(UserId, "p2p", "to myself")
-                .AddRecipient(toUserId ?? UserId, "p2p", "to him?")
-                .Jwt;
-
+                .AddRecipient(toUserId ?? UserId, "p2p", "to him?");
+                
+            Console.WriteLine(p2POffer.ToString());
             OpenOrder createExternalP2POffer =
-                await _marketPlaceClient.CreateExternalOffer(p2POffer).ConfigureAwait(false);
+                await _marketPlaceClient.CreateExternalOffer(p2POffer.Jwt).ConfigureAwait(false);
 
             Order submitP2POffer =
                 await _marketPlaceClient.SubmitOrder(createExternalP2POffer.Id).ConfigureAwait(false);

@@ -8,12 +8,12 @@ namespace Kin.Backup.Extensions
     {
         public static KeyPair ToKeyPair(this Bitmap qrCodeImage, string passPhrase, bool disposeImage = true)
         {
-            return DecryptQrCode.ToKeyPair(qrCodeImage, passPhrase, disposeImage);
+            return QrCode.ToKeyPair(qrCodeImage, passPhrase, disposeImage);
         }
 
         public static Task<KeyPair> ToKeyPairAsync(this Bitmap qrCodeImage, string passPhrase, bool disposeImage = true)
         {
-            return Task.FromResult(DecryptQrCode.ToKeyPair(qrCodeImage, passPhrase, disposeImage));
+            return Task.FromResult(QrCode.ToKeyPair(qrCodeImage, passPhrase, disposeImage));
         }
     }
 }

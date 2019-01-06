@@ -49,14 +49,14 @@ namespace Kin.Jwt
             };
         }
 
-        public string GenerateJwtToken(string subject, params KinJwtPayload[] payloads)
+        public string GenerateJwtToken(string subject, Dictionary<string,object> payloads)
         {
             if (string.IsNullOrEmpty(subject))
             {
                 throw new ArgumentNullException($"{nameof(subject)}");
             }
 
-            if (payloads.Length == 0)
+            if (payloads.Count == 0)
             {
                 throw new ArgumentException($"{nameof(payloads)} needs to contain at least one object");
             }
@@ -82,7 +82,7 @@ namespace Kin.Jwt
         }
 
         private JwtPayload CreateJwtPayload(string subject,
-            params KinJwtPayload[] kinJwtPayloads)
+            Dictionary<string, object> kinJwtPayloads)
         {
             DateTime currentTime = DateTime.UtcNow;
 
@@ -99,9 +99,9 @@ namespace Kin.Jwt
                 currentTime.AddHours(6),
                 currentTime);
 
-            foreach (KinJwtPayload kinJwtPayload in kinJwtPayloads)
+            foreach (var kinJwtPayload in kinJwtPayloads)
             {
-                payload.Add(kinJwtPayload.Name, kinJwtPayload.Data);
+                payload.Add(kinJwtPayload.Key, kinJwtPayload.Value);
             }
 
             return payload;

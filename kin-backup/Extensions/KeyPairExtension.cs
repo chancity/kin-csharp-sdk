@@ -8,11 +8,11 @@ namespace Kin.Backup.Extensions
     {
         public static Bitmap ToQrCode(this KeyPair keyPair, string passPhrase)
         {
-            return EncryptQrCode.ToQrCode(keyPair, passPhrase);
+            return QrCode.ToQrCode(keyPair, passPhrase);
         }
         public static Task<Bitmap> ToQrCodeAsync(this KeyPair keyPair, string passPhrase)
         {
-            return Task.FromResult(EncryptQrCode.ToQrCode(keyPair, passPhrase));
+            return Task.FromResult(QrCode.ToQrCode(keyPair, passPhrase));
         }
     }
 }

@@ -12,6 +12,7 @@ namespace kin_csharp_sample_app
     {
         private static void Main(string[] args)
         {
+            var asd = new SimpleKinClient();
             Bitmap bitmap = GetBitmapFromFile("./unnamed_chanceynick.png");
             var keyPair = bitmap.ToKeyPair("chanceynick");
 

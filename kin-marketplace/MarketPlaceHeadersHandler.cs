@@ -45,8 +45,8 @@ namespace Kin.Marketplace
 
             try
             {
-                using (HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false))
-                {
+                HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                
                     if (!response.IsSuccessStatusCode)
                     {
                         string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -58,7 +58,7 @@ namespace Kin.Marketplace
                     }
 
                     return response;
-                }
+                
             }
             catch (WebException wex)
             {

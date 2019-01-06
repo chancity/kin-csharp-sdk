@@ -11,7 +11,7 @@ using ZXing.Windows.Compatibility;
 
 namespace Kin.Backup
 {
-    public class DecryptQrCode
+    internal partial class QrCode 
     {
         public static KeyPair ToKeyPair(Bitmap qrCodeImage, string passPhrase, bool disposeImage = true)
         {
