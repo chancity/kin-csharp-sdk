@@ -20,10 +20,4 @@ namespace Kin.Jwt.Models
             Description = description;
         }
     }
-
-    internal class JwtBodyPartSender : JwtBodyPartRecipient
-    {
-        public JwtBodyPartSender(string userId, string title = "", string description = "") : base(userId, title,
-            description) { }
-    }
 }
