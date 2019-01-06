@@ -49,7 +49,7 @@ namespace kin_csharp_sample_app
 
         public SimpleKinClient()
         {
-            _deviceInfo = new Information("KinCsharpClient", "Samsung9+", "Samsung", "Android");
+            _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows");
 
             _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo,
                 AuthorizationHeaderValueGetter);
@@ -84,7 +84,7 @@ namespace kin_csharp_sample_app
             await _blockChainHandler.TryUntilActivated(_keyPair).ConfigureAwait(false);
 
             //Completing the tutorial!
-            //await DoFirstOffer().ConfigureAwait(false);
+            await DoFirstOffer().ConfigureAwait(false);
 
             //Sending that p2p good stuff
             //await DoP2POffer().ConfigureAwait(false);
@@ -154,11 +154,6 @@ namespace kin_csharp_sample_app
             {
                 SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
             }
-
-            KeyPair coldWallet = KeyPair.FromSecretSeed("SEEED");
-
-            SubmitTransactionResponse txResponse =
-                await _blockChainHandler.SendPayment(coldWallet, "hot wallet public address", 1337);
         }
 
         private async Task DoExternalSpendOffer()

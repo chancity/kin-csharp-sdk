@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Kin.Backup.Extensions;
 using Kin.Jwt;
 using Kin.Marketplace;
+using Kin.Shared.Models.Device;
 using Kin.Stellar.Sdk;
 
 namespace kin_csharp_sample_app
@@ -14,6 +15,7 @@ namespace kin_csharp_sample_app
     {
         private static void Main(string[] args)
         {
+            var _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows");
             JwtProviderBuilder jwtProviderBuilder = new JwtProviderBuilder();
 
             string payload = jwtProviderBuilder.Earn

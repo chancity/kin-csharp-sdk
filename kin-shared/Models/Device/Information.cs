@@ -12,17 +12,14 @@ namespace Kin.Shared.Models.Device
 
 
         public Information(string xDeviceId, string xDeviceModel,
-            string xDeviceManufacturer, string xOs)
+            string xDeviceManufacturer, string xOs, string XSdkVersion)
         {
-            Assembly assembly = Assembly.GetEntryAssembly();
-            AssemblyName assemblyName = assembly.GetName();
-            string assemblyVersion = assembly.ImageRuntimeVersion;
 
             XDeviceId = xDeviceId;
             XDeviceModel = xDeviceModel;
             XDeviceManufacturer = xDeviceManufacturer;
             XOs = xOs;
-            XSdkVersion = $"{assemblyName}-{assemblyVersion}";
+            XSdkVersion = XSdkVersion;
         }
     }
 }
