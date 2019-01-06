@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 using Kin.Backup.LibSodium;
 using Kin.Backup.Models;
-using Kin.Shared.Models;
 using Kin.Stellar.Sdk;
 using Newtonsoft.Json;
 using ZXing;
