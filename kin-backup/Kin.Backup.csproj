@@ -15,7 +15,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
     <ProjectReference Include="..\kin-stellar-sdk\Kin.Stellar.Sdk.csproj" />
   </ItemGroup>
 </Project>
