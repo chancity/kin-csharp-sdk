@@ -35,6 +35,9 @@ namespace Kin.Jwt.JwtPayloadBuilders
 
         private string ToJwt()
         {
+            if (_provider == null)
+                throw new ArgumentNullException($"{nameof(_provider)} is null, use property Payload instead");
+
             if (_expectedPayloadsCount == 0 || _payloads.Count == _expectedPayloadsCount)
             {
                 return _provider.GenerateJwtToken(_subject, _payloads);

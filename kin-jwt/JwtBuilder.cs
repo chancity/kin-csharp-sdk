@@ -17,7 +17,7 @@ namespace Kin.Jwt
 
         public EarnBuilder Earn => new EarnBuilder(_provider);
 
-        public JwtProviderBuilder(JwtProvider provider)
+        public JwtProviderBuilder(JwtProvider provider = null)
         {
             _provider = provider;
         }
