@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Kin.BlockChain.Exceptions;
 using Kin.Shared.Models.MarketPlace;
@@ -16,16 +17,16 @@ namespace Kin.BlockChain
         private readonly string TRUST_NO_LIMIT_VALUE;
         private string MAIN_NETWORK_ISSUER;
 
-        public BlockChainHandler(Config config, string appId)
+        public BlockChainHandler(Config config, string appId, HttpMessageHandler httpMessageHandler)
         {
             _kinAsset = Asset.CreateNonNativeAsset(config.BlockChain.AssetCode,
                 KeyPair.FromAccountId(config.BlockChain.AssetIssuer));
             MAIN_NETWORK_ISSUER = config.BlockChain.AssetIssuer;
             TRUST_NO_LIMIT_VALUE = "922337203685.4775807";
-            _server = new Server(config.BlockChain.HorizonUrl + "/");
+            _server = new Server(config.BlockChain.HorizonUrl + "/", new HttpClient(httpMessageHandler ?? new HttpClientHandler()));
             Network.UsePublicNetwork();
             Network.Use(new Network(config.BlockChain.NetworkPassphrase));
-            _appId = appId;
+            _appId = appId; 
         }
 
         public async Task<bool> TryUntilActivated(KeyPair account)
