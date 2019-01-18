@@ -142,33 +142,6 @@ namespace Kin.BlockChain
 
             return null;
         }
-        public async Task<Transaction> PreTransactionSigned(KeyPair sourceKeyPair,
-            KeyPair destinationKeyPair, double amount, string marketPlaceOrderId = null)
-        {
-            AccountResponse sourceAccount = await GetAccount(sourceKeyPair);
-            PaymentOperation.Builder paymentOperationBuilder =
-                new PaymentOperation.Builder(destinationKeyPair, _kinAsset,
-                        amount.ToString(CultureInfo.InvariantCulture))
-                    .SetSourceAccount(sourceKeyPair);
-
-            PaymentOperation paymentOperation = paymentOperationBuilder.Build();
-
-            Transaction.Builder paymentTransaction =
-                new Transaction.Builder(new Account(sourceKeyPair, sourceAccount.SequenceNumber+1)).AddOperation(
-                    paymentOperation);
-
-            string toAppend = string.IsNullOrEmpty(marketPlaceOrderId) ? "p2p" : marketPlaceOrderId;
-
-            paymentTransaction.AddMemo(new MemoText($"1-{_appId}-{toAppend}"));
-
-            Transaction transaction = paymentTransaction.Build();
-            transaction.Sign(sourceKeyPair);
-            return transaction;
-        }
-        public async Task<SubmitTransactionResponse> SendTransaction(Transaction transaction)
-        {
-            return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
-        }
         private async Task<SubmitTransactionResponse> SendPaymentOperation(KeyPair sourceKeyPair,
             KeyPair destinationKeyPair, AccountResponse sourceAccount, double amount, string marketPlaceOrderId = null)
         {
