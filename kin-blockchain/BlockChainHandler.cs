@@ -5,6 +5,9 @@ using Kin.BlockChain.Exceptions;
 using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
+using Kin.Stellar.Sdk.xdr;
+using Asset = Kin.Stellar.Sdk.Asset;
+using Transaction = Kin.Stellar.Sdk.Transaction;
 
 namespace Kin.BlockChain
 {
@@ -17,7 +20,7 @@ namespace Kin.BlockChain
         private readonly string TRUST_NO_LIMIT_VALUE;
         private string MAIN_NETWORK_ISSUER;
 
-        public BlockChainHandler(Config config, string appId, HttpMessageHandler httpMessageHandler)
+        public BlockChainHandler(Config config, string appId, HttpMessageHandler httpMessageHandler = null)
         {
             _kinAsset = Asset.CreateNonNativeAsset(config.BlockChain.AssetCode,
                 KeyPair.FromAccountId(config.BlockChain.AssetIssuer));
@@ -32,7 +35,7 @@ namespace Kin.BlockChain
         public async Task<bool> TryUntilActivated(KeyPair account)
         {
             bool activated = false;
-            int tries = 10;
+            int tries = 500;
 
             do
             {
@@ -48,7 +51,7 @@ namespace Kin.BlockChain
                 }
                 catch
                 {
-                    await Task.Delay(3000);
+                    await Task.Delay(1000).ConfigureAwait(false);
 
                     if (tries <= 0)
                     {
@@ -59,7 +62,6 @@ namespace Kin.BlockChain
 
             return activated;
         }
-
         public async Task<bool> Activate(KeyPair account)
         {
             AccountResponse accountResponse = await GetAccount(account).ConfigureAwait(false);
@@ -73,7 +75,6 @@ namespace Kin.BlockChain
 
             return true;
         }
-
         private async Task<SubmitTransactionResponse> SendAllowKinTrustOperation(KeyPair account,
             AccountResponse accountResponse)
         {
@@ -85,6 +86,38 @@ namespace Kin.BlockChain
             Transaction.Builder allowKinTrustTransaction =
                 new Transaction.Builder(new Account(account, accountResponse.SequenceNumber)).AddOperation(
                     changeTrustOperation);
+
+
+            Transaction transaction = allowKinTrustTransaction.Build();
+            transaction.Sign(account);
+            return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
+        }
+        public async Task<SubmitTransactionResponse> SendBurnTransaction(KeyPair account)
+        {
+            AccountResponse accountResponse = await GetAccount(account).ConfigureAwait(false);
+
+            if (HasKinAsset(accountResponse))
+            {
+                SubmitTransactionResponse response =
+                    await SendBurnTransaction(account, accountResponse).ConfigureAwait(false);
+                return response;
+            }
+
+            return null;
+        }
+        private async Task<SubmitTransactionResponse> SendBurnTransaction(KeyPair account,
+            AccountResponse accountResponse)
+        {
+            ChangeTrustOperation.Builder changeTrustOperationBuilder = new ChangeTrustOperation.Builder(
+                (AssetTypeCreditAlphaNum)_kinAsset, accountResponse.Balances[0].BalanceString).SetSourceAccount(account);
+            SetOptionsOperation.Builder setOperationBuilder = new SetOptionsOperation.Builder(new SetOptionsOp(){MasterWeight = new Uint32(0)});
+
+            ChangeTrustOperation changeTrustOperation = changeTrustOperationBuilder.Build();
+            SetOptionsOperation setOptionsOperation = setOperationBuilder.Build();
+
+            Transaction.Builder allowKinTrustTransaction =
+                new Transaction.Builder(new Account(account, accountResponse.SequenceNumber)).AddOperation(
+                    changeTrustOperation).AddOperation(setOptionsOperation);
 
 
             Transaction transaction = allowKinTrustTransaction.Build();
@@ -109,7 +142,33 @@ namespace Kin.BlockChain
 
             return null;
         }
+        public async Task<Transaction> PreTransactionSigned(KeyPair sourceKeyPair,
+            KeyPair destinationKeyPair, double amount, string marketPlaceOrderId = null)
+        {
+            AccountResponse sourceAccount = await GetAccount(sourceKeyPair);
+            PaymentOperation.Builder paymentOperationBuilder =
+                new PaymentOperation.Builder(destinationKeyPair, _kinAsset,
+                        amount.ToString(CultureInfo.InvariantCulture))
+                    .SetSourceAccount(sourceKeyPair);
 
+            PaymentOperation paymentOperation = paymentOperationBuilder.Build();
+
+            Transaction.Builder paymentTransaction =
+                new Transaction.Builder(new Account(sourceKeyPair, sourceAccount.SequenceNumber+1)).AddOperation(
+                    paymentOperation);
+
+            string toAppend = string.IsNullOrEmpty(marketPlaceOrderId) ? "p2p" : marketPlaceOrderId;
+
+            paymentTransaction.AddMemo(new MemoText($"1-{_appId}-{toAppend}"));
+
+            Transaction transaction = paymentTransaction.Build();
+            transaction.Sign(sourceKeyPair);
+            return transaction;
+        }
+        public async Task<SubmitTransactionResponse> SendTransaction(Transaction transaction)
+        {
+            return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
+        }
         private async Task<SubmitTransactionResponse> SendPaymentOperation(KeyPair sourceKeyPair,
             KeyPair destinationKeyPair, AccountResponse sourceAccount, double amount, string marketPlaceOrderId = null)
         {

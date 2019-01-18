@@ -15,20 +15,21 @@ namespace kin_csharp_sample_app
     {
         private static void Main(string[] args)
         {
-            var _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows");
-            JwtProviderBuilder jwtProviderBuilder = new JwtProviderBuilder();
-
-            string payload = jwtProviderBuilder.Earn
-                .AddOffer(Guid.NewGuid().ToString("N"), 20)
-                .AddRecipient(Guid.NewGuid().ToString("N"), "title", "description")
-                .Payload;
-
-
-            Bitmap bitmap = GetBitmapFromFile("./unnamed_chanceynick.png");
-            KeyPair keyPair = bitmap.ToKeyPair("chanceynick");
-
-            Bitmap qrCode = keyPair.ToQrCode("chanceynick");
-            qrCode.Save("./test_chanceynick.png", ImageFormat.Png);
+            Teser();
+           // var _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows", "zomg");
+           // JwtProviderBuilder jwtProviderBuilder = new JwtProviderBuilder();
+           //
+           // string payload = jwtProviderBuilder.Earn
+           //     .AddOffer(Guid.NewGuid().ToString("N"), 20)
+           //     .AddRecipient(Guid.NewGuid().ToString("N"), "title", "description")
+           //     .Payload;
+           //
+           //
+           // Bitmap bitmap = GetBitmapFromFile("./unnamed_chanceynick.png");
+           // KeyPair keyPair = bitmap.ToKeyPair("chanceynick");
+           //
+           // Bitmap qrCode = keyPair.ToQrCode("chanceynick");
+           // qrCode.Save("./test_chanceynick.png", ImageFormat.Png);
 
             Console.ReadLine();
         }
