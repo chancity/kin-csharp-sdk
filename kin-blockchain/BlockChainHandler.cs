@@ -35,7 +35,7 @@ namespace Kin.BlockChain
         public async Task<bool> TryUntilActivated(KeyPair account)
         {
             bool activated = false;
-            int tries = 500;
+            int tries = 10;
 
             do
             {
@@ -51,7 +51,7 @@ namespace Kin.BlockChain
                 }
                 catch
                 {
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(2000).ConfigureAwait(false);
 
                     if (tries <= 0)
                     {
@@ -124,7 +124,6 @@ namespace Kin.BlockChain
             transaction.Sign(account);
             return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
         }
-
         public async Task<SubmitTransactionResponse> SendPayment(KeyPair sourceKeyPair, string destinationAddress,
             double amount, string marketPlaceOrderId = null)
         {
@@ -164,7 +163,6 @@ namespace Kin.BlockChain
             transaction.Sign(sourceKeyPair);
             return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
         }
-
         private static bool HasKinAsset(AccountResponse account, bool checkBalance = false, double amount = 0)
         {
             foreach (Balance accountBalance in account.Balances)
@@ -185,19 +183,16 @@ namespace Kin.BlockChain
 
             return false;
         }
-
         public async Task<double> GetKinBalance(string accountId)
         {
             AccountResponse accountResponse = await GetAccount(KeyPair.FromAccountId(accountId)).ConfigureAwait(false);
             return GetKinBalance(accountResponse);
         }
-
         public async Task<double> GetKinBalance(KeyPair keyPair)
         {
             AccountResponse accountResponse = await GetAccount(keyPair).ConfigureAwait(false);
             return GetKinBalance(accountResponse);
         }
-
         private static double GetKinBalance(AccountResponse account)
         {
             foreach (Balance accountBalance in account.Balances)
@@ -210,7 +205,6 @@ namespace Kin.BlockChain
 
             throw new NoKinAssetException($"{account.KeyPair.Address} doesn't have kin asset");
         }
-
         private async Task<AccountResponse> GetAccount(KeyPair account)
         {
             AccountResponse accountResponse = await _server.Accounts.Account(account).ConfigureAwait(false);
