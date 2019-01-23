@@ -13,6 +13,7 @@ namespace Kin.Tooling.Models.Impl
     {
         private const string XRequestId = "X-REQUEST-ID";
         public static event NewMetricEventDelegate NewMetricEvent;
+        public static bool BenchMarkEnabled = true;
         public MetricHttpHandler(HttpMessageHandler innerHandler = null)
         {
             InnerHandler = innerHandler ?? new HttpClientHandler();
@@ -20,6 +21,9 @@ namespace Kin.Tooling.Models.Impl
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken cancellationToken)
         {
+            if(!BenchMarkEnabled)
+                return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
             string requestId = "";
             if (!request.Headers.Contains(XRequestId))
             {
