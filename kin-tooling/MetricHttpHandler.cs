@@ -13,7 +13,7 @@ namespace Kin.Tooling.Models.Impl
     {
         private const string XRequestId = "X-REQUEST-ID";
         public static event NewMetricEventDelegate NewMetricEvent;
-        public static bool BenchMarkEnabled = true;
+        public static bool BenchMarkEnabled = false;
         public MetricHttpHandler(HttpMessageHandler innerHandler = null)
         {
             InnerHandler = innerHandler ?? new HttpClientHandler();
