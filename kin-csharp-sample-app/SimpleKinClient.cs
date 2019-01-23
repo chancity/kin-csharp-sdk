@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Kin.BlockChain;
 using Kin.Jwt;
@@ -51,7 +52,7 @@ namespace kin_csharp_sample_app
         {
             MyAppJwtProvider = new JwtProvider("test", SecurityKeys);
             JwtProviderBuilder = new JwtProviderBuilder(MyAppJwtProvider);
-
+            MetricHttpHandler.BenchMarkEnabled = true;
             MetricHttpHandler.NewMetricEvent += metric =>
             {
                 Console.WriteLine(JsonConvert.SerializeObject(metric, Formatting.Indented));
@@ -101,7 +102,7 @@ namespace kin_csharp_sample_app
             await _blockChainHandler.TryUntilActivated(_keyPair).ConfigureAwait(false);
 
             //Completing the tutorial!
-            await DoFirstOffer().ConfigureAwait(false);
+            var order = await DoFirstOffer().ConfigureAwait(false);
 
             //Sending that p2p good stuff
             //await DoP2POffer().ConfigureAwait(false);
@@ -117,8 +118,8 @@ namespace kin_csharp_sample_app
             // Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
 
 
-            SubmitTransactionResponse respo =
-                await _blockChainHandler.SendBurnTransaction(_keyPair).ConfigureAwait(false);
+           //SubmitTransactionResponse respo =
+           //    await _blockChainHandler.SendBurnTransaction(_keyPair).ConfigureAwait(false);
 
            // Task[] migra = new Task[3];
            // migra[0] = SendMigration(_keyPair);
@@ -127,9 +128,7 @@ namespace kin_csharp_sample_app
            //
            // await Task.WhenAll(migra).ConfigureAwait(false);
             double balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
-
-
-            Console.WriteLine(balance);
+            var txResponse = await _blockChainHandler.SendPayment(_keyPair, order.BlockChainData.SenderAddress, balance).ConfigureAwait(false);
         }
 
         public async Task<string> SendMigration(KeyPair keyPair)
@@ -184,7 +183,7 @@ namespace kin_csharp_sample_app
         }
 
 
-        private async Task DoFirstOffer()
+        private async Task<Order> DoFirstOffer()
         {
             OfferList offers = await _marketPlaceClient.GetOffers().ConfigureAwait(false);
 
@@ -204,7 +203,11 @@ namespace kin_csharp_sample_app
                 {
                     SecurityToken token = _marketPlaceJwtProvider.ValidateJwtToken(finishedOrder?.OrderResult?.Jwt);
                 }
+
+                return finishedOrder;
             }
+
+            throw new Exception("no offers dawg");
         }
 
         public async Task DoP2POffer(string toUserId = null)

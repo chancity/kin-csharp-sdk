@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Kin.Shared.Models.MarketPlace;
+using Newtonsoft.Json;
 
 namespace Kin.Tooling.Models.Impl
 {
@@ -24,22 +25,13 @@ namespace Kin.Tooling.Models.Impl
             if(!BenchMarkEnabled)
                 return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            string requestId = "";
-            if (!request.Headers.Contains(XRequestId))
-            {
-                requestId = Guid.NewGuid().ToString();
-                request.Headers.Add(XRequestId, requestId);
-            }
-            else
-            {
-                requestId = request.Headers.GetValues(XRequestId).FirstOrDefault();
-            }
            
             var utcStartTime = CurrentUtcTimeMs();
             long utcEndTime;
             string message = "";
             int statusCode = 0;
             string path = request.RequestUri.AbsolutePath;
+            string host = request.RequestUri.Host;
 
             try
             {
@@ -72,7 +64,7 @@ namespace Kin.Tooling.Models.Impl
                 utcEndTime = CurrentUtcTimeMs();
                 var metricTiming = new MetricTiming(utcStartTime, utcEndTime);
                 var metricError = ErrorHandler(message, statusCode);
-                var metric = new Metric(requestId, path, metricTiming, metricError);
+                var metric = new Metric(host, path, metricTiming, metricError);
                 OnNewMetricEvent(metric);
             }
         }
@@ -105,7 +97,6 @@ namespace Kin.Tooling.Models.Impl
 
         private static Task OnNewMetricEvent(IMetric newmetric)
         {
-
             NewMetricEvent?.Invoke(newmetric);
             return Task.CompletedTask;
         }
