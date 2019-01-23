@@ -12,14 +12,14 @@ namespace Kin.Shared.Models.Device
 
 
         public Information(string xDeviceId, string xDeviceModel,
-            string xDeviceManufacturer, string xOs, string XSdkVersion)
+            string xDeviceManufacturer, string xOs, string xSdkVersion)
         {
 
             XDeviceId = xDeviceId;
             XDeviceModel = xDeviceModel;
             XDeviceManufacturer = xDeviceManufacturer;
             XOs = xOs;
-            XSdkVersion = XSdkVersion;
+            XSdkVersion = xSdkVersion;
         }
     }
 }

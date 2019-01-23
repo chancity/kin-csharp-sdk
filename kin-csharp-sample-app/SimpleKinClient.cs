@@ -16,7 +16,9 @@ using Kin.Shared.Models.Device;
 using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
+using Kin.Tooling.Models.Impl;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace kin_csharp_sample_app
 {
@@ -49,13 +51,20 @@ namespace kin_csharp_sample_app
         {
             MyAppJwtProvider = new JwtProvider("test", SecurityKeys);
             JwtProviderBuilder = new JwtProviderBuilder(MyAppJwtProvider);
+
+            MetricHttpHandler.NewMetricEvent += metric =>
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(metric, Formatting.Indented));
+                return Task.CompletedTask;
+            };
         }
 
         public SimpleKinClient()
         {
-            //var httpHandler = new HttpClientHandler();
-            // httpHandler.Proxy = new WebProxy("http://127.0.0.1:9000");
-            _httpClient = new HttpClient();
+
+            var httpHandler = new HttpClientHandler();
+            httpHandler.Proxy = new WebProxy("http://127.0.0.1:9000");
+            _httpClient = new HttpClient(httpHandler);
 
             _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows", "zomg");
 
@@ -111,12 +120,12 @@ namespace kin_csharp_sample_app
             SubmitTransactionResponse respo =
                 await _blockChainHandler.SendBurnTransaction(_keyPair).ConfigureAwait(false);
 
-            Task[] migra = new Task[3];
-            migra[0] = SendMigration(_keyPair);
-            migra[1] = SendMigration(_keyPair);
-            migra[2] = SendMigration(_keyPair);
-
-            await Task.WhenAll(migra).ConfigureAwait(false);
+           // Task[] migra = new Task[3];
+           // migra[0] = SendMigration(_keyPair);
+           // migra[1] = SendMigration(_keyPair);
+           // migra[2] = SendMigration(_keyPair);
+           //
+           // await Task.WhenAll(migra).ConfigureAwait(false);
             double balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
 
 
@@ -132,7 +141,7 @@ namespace kin_csharp_sample_app
             try
             {
                 using (HttpResponseMessage response = await _httpClient
-                    .PostAsync(endpoint, new StringContent(null, Encoding.UTF8, "application/json"))
+                    .PostAsync(endpoint, new StringContent("", Encoding.UTF8, "application/json"))
                     .ConfigureAwait(false))
 
                 {

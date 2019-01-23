@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Kin.Marketplace.Models;
 using Kin.Shared.Models.Device;
 using Kin.Shared.Models.MarketPlace;
+using Kin.Tooling.Models.Impl;
 using Newtonsoft.Json;
 using Refit;
 
@@ -20,7 +21,7 @@ namespace Kin.Marketplace
 
             RefitSettings refitSetting = new RefitSettings
             {
-                HttpMessageHandlerFactory = () => new MarketPlaceHeadersHandler(marketPlaceHttpHeaders, innerHandler),
+                HttpMessageHandlerFactory = () => new MetricHttpHandler(new MarketPlaceHeadersHandler(marketPlaceHttpHeaders, innerHandler)),
                 JsonSerializerSettings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore},
                 AuthorizationHeaderValueGetter = authorizationHeaderValueGetter
             };

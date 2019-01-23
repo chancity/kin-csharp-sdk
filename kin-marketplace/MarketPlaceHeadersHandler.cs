@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Kin.Marketplace.Models;
+using Kin.Shared.Models.MarketPlace;
 using Newtonsoft.Json;
 using NJsonSchema;
 using NJsonSchema.Validation;
@@ -18,6 +19,7 @@ namespace Kin.Marketplace
 
         public MarketPlaceHeadersHandler(MarketPlaceHttpHeaders marketPlaceHttpHeaders, HttpMessageHandler innerHandler = null)
         {
+
             _schema = JsonSchema4.FromTypeAsync<MarketPlaceError>().Result;
             _marketPlaceHttpHeaders = marketPlaceHttpHeaders;
             InnerHandler = innerHandler ?? new HttpClientHandler();

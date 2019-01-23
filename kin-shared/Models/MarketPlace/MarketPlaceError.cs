@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 // ReSharper disable once CheckNamespace
-namespace Kin.Marketplace.Models
+namespace Kin.Shared.Models.MarketPlace
 {
     public class MarketPlaceError
     {

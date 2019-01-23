@@ -7,6 +7,7 @@ using Kin.Backup.Extensions;
 using Kin.Jwt;
 using Kin.Marketplace;
 using Kin.Shared.Models.Device;
+using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 
 namespace kin_csharp_sample_app
@@ -36,33 +37,25 @@ namespace kin_csharp_sample_app
 
         private static void Teser()
         {
-            try
-            {
-                Test().Wait();
-            }
-            catch (Exception e)
-            {
-                while (e.InnerException != null) e = e.InnerException;
-
-                if (e is MarketPlaceException mex)
-                {
-                    Console.WriteLine(mex.MarketPlaceError);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            Test().Wait();
         }
 
         public static async Task Test()
         {
             for (;;)
             {
-                SimpleKinClient firstKinClient = new SimpleKinClient();
-                //SimpleKinClient secondKinClient = new SimpleKinClient();
+                try
+                {
+                    SimpleKinClient firstKinClient = new SimpleKinClient();
+                    //SimpleKinClient secondKinClient = new SimpleKinClient();
 
-                await firstKinClient.FirstTest();
+                    await firstKinClient.FirstTest();
+                }
+                catch
+                {
+                    //ignore
+                }
+
             }
         }
 

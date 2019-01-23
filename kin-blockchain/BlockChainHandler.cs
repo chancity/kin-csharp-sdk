@@ -6,6 +6,7 @@ using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
 using Kin.Stellar.Sdk.xdr;
+using Kin.Tooling.Models.Impl;
 using Asset = Kin.Stellar.Sdk.Asset;
 using Transaction = Kin.Stellar.Sdk.Transaction;
 
@@ -26,7 +27,7 @@ namespace Kin.BlockChain
                 KeyPair.FromAccountId(config.BlockChain.AssetIssuer));
             MAIN_NETWORK_ISSUER = config.BlockChain.AssetIssuer;
             TRUST_NO_LIMIT_VALUE = "922337203685.4775807";
-            _server = new Server(config.BlockChain.HorizonUrl + "/", new HttpClient(httpMessageHandler ?? new HttpClientHandler()));
+            _server = new Server(config.BlockChain.HorizonUrl + "/", new HttpClient(new MetricHttpHandler(httpMessageHandler ?? new HttpClientHandler())));
             Network.UsePublicNetwork();
             Network.Use(new Network(config.BlockChain.NetworkPassphrase));
             _appId = appId; 
@@ -68,8 +69,7 @@ namespace Kin.BlockChain
 
             if (!HasKinAsset(accountResponse))
             {
-                SubmitTransactionResponse response =
-                    await SendAllowKinTrustOperation(account, accountResponse).ConfigureAwait(false);
+                SubmitTransactionResponse response = await SendAllowKinTrustOperation(account, accountResponse).ConfigureAwait(false);
                 return response != null;
             }
 

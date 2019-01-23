@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Net.Http;
-using Kin.Marketplace.Models;
 
-namespace Kin.Marketplace
+namespace Kin.Shared.Models.MarketPlace
 {
     public class MarketPlaceException : Exception
     {

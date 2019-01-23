@@ -6,4 +6,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\kin-shared\Kin.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
