@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>kin_migration</RootNamespace>
+    <AssemblyName>Kin.Migration</AssemblyName>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\kin-stellar-sdk\Kin.Stellar.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

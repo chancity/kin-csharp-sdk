@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +19,7 @@ using Kin.Shared.Models.Device;
 using Kin.Shared.Models.MarketPlace;
 using Kin.Stellar.Sdk;
 using Kin.Stellar.Sdk.responses;
+using Kin.Tooling.Models;
 using Kin.Tooling.Models.Impl;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -44,7 +47,6 @@ namespace kin_csharp_sample_app
         private readonly MarketPlaceClient _marketPlaceClient;
         private readonly JwtProvider _marketPlaceJwtProvider;
         private AuthToken _authToken;
-        private readonly HttpClient _httpClient;
 
         public string UserId { get; }
 
@@ -59,13 +61,8 @@ namespace kin_csharp_sample_app
                 return Task.CompletedTask;
             };
         }
-
         public SimpleKinClient()
         {
-
-            var httpHandler = new HttpClientHandler();
-            httpHandler.Proxy = new WebProxy("http://127.0.0.1:9000");
-            _httpClient = new HttpClient(httpHandler);
 
             _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows", "zomg");
 
@@ -92,8 +89,6 @@ namespace kin_csharp_sample_app
 
         public async Task FirstTest()
         {
-            //   var orders1 = await _marketPlaceClient.GetOrderHistory();
-            //   Console.WriteLine(JsonConvert.SerializeObject(orders1, Formatting.Indented));
             //Creating a market place user
             _authToken = await _marketPlaceClient.Users(GetSignInData()).ConfigureAwait(false);
             _authToken = await _marketPlaceClient.UsersMeActivate().ConfigureAwait(false);
@@ -104,84 +99,14 @@ namespace kin_csharp_sample_app
             //Completing the tutorial!
             var order = await DoFirstOffer().ConfigureAwait(false);
 
-            //Sending that p2p good stuff
-            //await DoP2POffer().ConfigureAwait(false);
 
-            //External speeeeeend offer"
-            // await DoExternalSpendOffer().ConfigureAwait(false);
-
-            //External earn offerrrr"
-            // await DoExternalEarnOffer().ConfigureAwait(false);
-
-
-            //OrderList orders = await _marketPlaceClient.GetOrderHistory().ConfigureAwait(false);
-            // Console.WriteLine(UserId + "first order:\n" + JsonConvert.SerializeObject(orders.Orders.First(), Formatting.Indented));
-
-
-           //SubmitTransactionResponse respo =
-           //    await _blockChainHandler.SendBurnTransaction(_keyPair).ConfigureAwait(false);
-
-           // Task[] migra = new Task[3];
-           // migra[0] = SendMigration(_keyPair);
-           // migra[1] = SendMigration(_keyPair);
-           // migra[2] = SendMigration(_keyPair);
-           //
-           // await Task.WhenAll(migra).ConfigureAwait(false);
             double balance = await _blockChainHandler.GetKinBalance(_keyPair).ConfigureAwait(false);
             var txResponse = await _blockChainHandler.SendPayment(_keyPair, order.BlockChainData.SenderAddress, balance).ConfigureAwait(false);
         }
-
-        public async Task<string> SendMigration(KeyPair keyPair)
+        private long CurrentUtcTimeMs()
         {
-            string endpoint =
-                $"https://migration-devplatform-playground.developers.kinecosystem.com/migrate?address={keyPair.AccountId}";
-            string ret = null;
-
-            try
-            {
-                using (HttpResponseMessage response = await _httpClient
-                    .PostAsync(endpoint, new StringContent("", Encoding.UTF8, "application/json"))
-                    .ConfigureAwait(false))
-
-                {
-                    ret = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-            catch (WebException wex)
-            {
-                if (wex?.Response == null)
-                {
-                    wex?.Response?.Dispose();
-                    throw new ArgumentException($"{wex.Message} and no data returned...");
-                }
-
-
-                using (Stream stream = wex?.Response?.GetResponseStream())
-                {
-                    if (stream == null)
-                    {
-                        wex?.Response?.Dispose();
-                        throw new ArgumentException($"{wex.Message} and no data returned...");
-                    }
-
-                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-                    ret = reader.ReadToEnd();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            if (string.IsNullOrEmpty(ret))
-            {
-                throw new ArgumentException("No data returned...");
-            }
-
-            Console.WriteLine(ret);
-            return ret;
+            return (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
-
 
         private async Task<Order> DoFirstOffer()
         {

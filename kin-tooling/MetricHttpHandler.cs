@@ -85,7 +85,9 @@ namespace Kin.Tooling.Models.Impl
         }
         private long CurrentUtcTimeMs()
         {
-            return (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds();
+
+            ; //(long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
         private IMetricError ErrorHandler(string message, int statusCode)
         {

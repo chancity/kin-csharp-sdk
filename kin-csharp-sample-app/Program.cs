@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
-using Kin.Backup.Extensions;
-using Kin.Jwt;
-using Kin.Marketplace;
-using Kin.Shared.Models.Device;
-using Kin.Shared.Models.MarketPlace;
-using Kin.Stellar.Sdk;
 
 namespace kin_csharp_sample_app
 {

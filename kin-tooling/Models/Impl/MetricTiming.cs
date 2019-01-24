@@ -2,7 +2,7 @@
 
 namespace Kin.Tooling.Models.Impl
 {
-    internal class MetricTiming : IMetricTiming
+    public class MetricTiming : IMetricTiming
     {
         public long UtcStartTime { get; private set; }
         public long UtcEndTime { get; private set; }
@@ -16,9 +16,9 @@ namespace Kin.Tooling.Models.Impl
             if (utcEndTime == 0)
                 throw new ArgumentOutOfRangeException($"{nameof(utcEndTime)} can't be {utcEndTime}");
 
-            UtcStartTime = utcStartTime;
-            UtcEndTime = utcEndTime;
             CompletionTimeMs = utcEndTime - utcStartTime;
+            UtcStartTime = utcStartTime / 1000;
+            UtcEndTime = utcEndTime / 1000;
         }
     }
 }
