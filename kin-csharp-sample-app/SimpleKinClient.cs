@@ -64,7 +64,7 @@ namespace kin_csharp_sample_app
         public SimpleKinClient()
         {
 
-            _deviceInfo = new Information("KinCsharpClient", "BlazorWebApp", "Chrome", "Windows", "zomg");
+            _deviceInfo = new Information("Kinny", "RYZENBBY", "Chrome", "Windows", "1.0.0");
 
             _marketPlaceClient = new MarketPlaceClient("https://api.developers.kinecosystem.com/v1", _deviceInfo,
                 AuthorizationHeaderValueGetter);

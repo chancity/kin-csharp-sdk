@@ -36,7 +36,7 @@ namespace Kin.BlockChain
         public async Task<bool> TryUntilActivated(KeyPair account)
         {
             bool activated = false;
-            int tries = 10;
+            int tries = 20;
 
             do
             {
@@ -52,7 +52,7 @@ namespace Kin.BlockChain
                 }
                 catch
                 {
-                    await Task.Delay(2000).ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
 
                     if (tries <= 0)
                     {
