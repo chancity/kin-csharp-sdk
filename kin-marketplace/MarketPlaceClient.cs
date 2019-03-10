@@ -14,8 +14,7 @@ namespace Kin.Marketplace
     {
         private readonly IMarketPlaceClient _apiClient;
 
-        public MarketPlaceClient(string baseEndPoint, Information info,
-            Func<Task<string>> authorizationHeaderValueGetter, HttpMessageHandler innerHandler = null)
+        public MarketPlaceClient(string baseEndPoint, Information info, Func<Task<string>> authorizationHeaderValueGetter, HttpMessageHandler innerHandler = null)
         {
             MarketPlaceHttpHeaders marketPlaceHttpHeaders = new MarketPlaceHttpHeaders(info);
 
@@ -73,7 +72,10 @@ namespace Kin.Marketplace
         {
             return await _apiClient.GetOrder(orderId).ConfigureAwait(false);
         }
-
+        public async Task<string> WhiteListTransaction(string orderId, WhiteList body)
+        {
+            return await _apiClient.WhiteListTransaction(orderId, body).ConfigureAwait(false);
+        }
         public async Task<Order> SubmitOrder(string orderId, string content = null)
         {
             return await _apiClient.SubmitOrder(orderId, new {content}).ConfigureAwait(false);

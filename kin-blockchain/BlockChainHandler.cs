@@ -16,133 +16,26 @@ namespace Kin.BlockChain
     {
         private readonly string _appId;
         private readonly Asset _kinAsset;
-
         private readonly Server _server;
-        private readonly string TRUST_NO_LIMIT_VALUE;
-        private string MAIN_NETWORK_ISSUER;
 
-        public BlockChainHandler(Config config, string appId, HttpMessageHandler httpMessageHandler = null)
+        public BlockChainHandler(string horizonUrl, string networkId, string appId, HttpMessageHandler httpMessageHandler = null)
         {
-            _kinAsset = Asset.CreateNonNativeAsset(config.BlockChain.AssetCode,
-                KeyPair.FromAccountId(config.BlockChain.AssetIssuer));
-            MAIN_NETWORK_ISSUER = config.BlockChain.AssetIssuer;
-            TRUST_NO_LIMIT_VALUE = "922337203685.4775807";
-            _server = new Server(config.BlockChain.HorizonUrl + "/", new HttpClient(new MetricHttpHandler(httpMessageHandler ?? new HttpClientHandler())));
+            _kinAsset = new AssetTypeNative();
+
+            _server = new Server(horizonUrl + "/", new HttpClient(new MetricHttpHandler(httpMessageHandler ?? new HttpClientHandler())));
             Network.UsePublicNetwork();
-            Network.Use(new Network(config.BlockChain.NetworkPassphrase));
+            Network.Use(new Network(networkId));
             _appId = appId; 
         }
-
-        public async Task<bool> TryUntilActivated(KeyPair account)
-        {
-            bool activated = false;
-            int tries = 20;
-
-            do
-            {
-                try
-                {
-                    tries--;
-                    activated = await Activate(account).ConfigureAwait(false);
-
-                    if (activated)
-                    {
-                        break;
-                    }
-                }
-                catch
-                {
-                    await Task.Delay(1000).ConfigureAwait(false);
-
-                    if (tries <= 0)
-                    {
-                        throw;
-                    }
-                }
-            } while (tries > 0);
-
-            return activated;
-        }
-        public async Task<bool> Activate(KeyPair account)
-        {
-            AccountResponse accountResponse = await GetAccount(account).ConfigureAwait(false);
-
-            if (!HasKinAsset(accountResponse))
-            {
-                SubmitTransactionResponse response = await SendAllowKinTrustOperation(account, accountResponse).ConfigureAwait(false);
-                return response != null;
-            }
-
-            return true;
-        }
-        private async Task<SubmitTransactionResponse> SendAllowKinTrustOperation(KeyPair account,
-            AccountResponse accountResponse)
-        {
-            ChangeTrustOperation.Builder changeTrustOperationBuilder = new ChangeTrustOperation.Builder(
-                (AssetTypeCreditAlphaNum) _kinAsset,
-                TRUST_NO_LIMIT_VALUE).SetSourceAccount(account);
-            ChangeTrustOperation changeTrustOperation = changeTrustOperationBuilder.Build();
-
-            Transaction.Builder allowKinTrustTransaction =
-                new Transaction.Builder(new Account(account, accountResponse.SequenceNumber)).AddOperation(
-                    changeTrustOperation);
-
-
-            Transaction transaction = allowKinTrustTransaction.Build();
-            transaction.Sign(account);
-            return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
-        }
-        public async Task<SubmitTransactionResponse> SendBurnTransaction(KeyPair account)
-        {
-            AccountResponse accountResponse = await GetAccount(account).ConfigureAwait(false);
-
-            if (HasKinAsset(accountResponse))
-            {
-                SubmitTransactionResponse response =
-                    await SendBurnTransaction(account, accountResponse).ConfigureAwait(false);
-                return response;
-            }
-
-            return null;
-        }
-        private async Task<SubmitTransactionResponse> SendBurnTransaction(KeyPair account,
-            AccountResponse accountResponse)
-        {
-            ChangeTrustOperation.Builder changeTrustOperationBuilder = new ChangeTrustOperation.Builder(
-                (AssetTypeCreditAlphaNum)_kinAsset, accountResponse.Balances[0].BalanceString).SetSourceAccount(account);
-            SetOptionsOperation.Builder setOperationBuilder = new SetOptionsOperation.Builder(new SetOptionsOp(){MasterWeight = new Uint32(0)});
-
-            ChangeTrustOperation changeTrustOperation = changeTrustOperationBuilder.Build();
-            SetOptionsOperation setOptionsOperation = setOperationBuilder.Build();
-
-            Transaction.Builder allowKinTrustTransaction =
-                new Transaction.Builder(new Account(account, accountResponse.SequenceNumber)).AddOperation(
-                    changeTrustOperation).AddOperation(setOptionsOperation);
-
-
-            Transaction transaction = allowKinTrustTransaction.Build();
-            transaction.Sign(account);
-            return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
-        }
-        public async Task<SubmitTransactionResponse> SendPayment(KeyPair sourceKeyPair, string destinationAddress,
-            double amount, string marketPlaceOrderId = null)
+        public async Task<Transaction> GetTransaction(KeyPair sourceKeyPair, string destinationAddress, double amount, string marketPlaceOrderId = null)
         {
             KeyPair destinationKeyPair = KeyPair.FromAccountId(destinationAddress);
             AccountResponse sourceAccount = await GetAccount(sourceKeyPair);
             AccountResponse destinationAccount = await GetAccount(destinationKeyPair);
-
-            if (HasKinAsset(sourceAccount, true, amount) && HasKinAsset(destinationAccount))
-            {
-                SubmitTransactionResponse response =
-                    await SendPaymentOperation(sourceKeyPair, destinationKeyPair, sourceAccount, amount,
-                        marketPlaceOrderId).ConfigureAwait(false);
-                return response;
-            }
-
-            return null;
+            Transaction response = await GetTransaction(sourceKeyPair, destinationKeyPair, sourceAccount, amount / 100, marketPlaceOrderId).ConfigureAwait(false);
+            return response;
         }
-        private async Task<SubmitTransactionResponse> SendPaymentOperation(KeyPair sourceKeyPair,
-            KeyPair destinationKeyPair, AccountResponse sourceAccount, double amount, string marketPlaceOrderId = null)
+        private Task<Transaction> GetTransaction(KeyPair sourceKeyPair, KeyPair destinationKeyPair, AccountResponse sourceAccount, double amount, string marketPlaceOrderId = null)
         {
             PaymentOperation.Builder paymentOperationBuilder =
                 new PaymentOperation.Builder(destinationKeyPair, _kinAsset,
@@ -161,32 +54,12 @@ namespace Kin.BlockChain
 
             Transaction transaction = paymentTransaction.Build();
             transaction.Sign(sourceKeyPair);
+            return Task.FromResult(transaction);
+        }
+
+        private async Task<SubmitTransactionResponse> SendPaymentOperation(Transaction transaction)
+        {
             return await _server.SubmitTransaction(transaction).ConfigureAwait(false);
-        }
-        private static bool HasKinAsset(AccountResponse account, bool checkBalance = false, double amount = 0)
-        {
-            foreach (Balance accountBalance in account.Balances)
-            {
-                if (accountBalance.AssetCode != null && accountBalance.AssetCode.Equals("KIN"))
-                {
-                    if (checkBalance)
-                    {
-                        if (double.Parse(accountBalance.BalanceString) < amount)
-                        {
-                            throw new NotEnoughKinException();
-                        }
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        public async Task<double> GetKinBalance(string accountId)
-        {
-            AccountResponse accountResponse = await GetAccount(KeyPair.FromAccountId(accountId)).ConfigureAwait(false);
-            return GetKinBalance(accountResponse);
         }
         public async Task<double> GetKinBalance(KeyPair keyPair)
         {
@@ -197,13 +70,13 @@ namespace Kin.BlockChain
         {
             foreach (Balance accountBalance in account.Balances)
             {
-                if (accountBalance.AssetCode != null && accountBalance.AssetCode.Equals("KIN"))
+                if (accountBalance.AssetType.Equals("native"))
                 {
                     return double.Parse(accountBalance.BalanceString);
                 }
             }
 
-            throw new NoKinAssetException($"{account.KeyPair.Address} doesn't have kin asset");
+            throw new NoKinAssetException($"{account.KeyPair.Address} doesn't have the native asset");
         }
         private async Task<AccountResponse> GetAccount(KeyPair account)
         {

@@ -5,7 +5,7 @@ using Refit;
 
 namespace Kin.Marketplace
 {
-    [Headers("User-Agent: KinCSharpClient", "Api-Version: 1")]
+    [Headers("User-Agent: KinCSharpClient", "Api-Version: 2")]
     public interface IMarketPlaceClient
     {
         [Get("/config")]
@@ -29,6 +29,10 @@ namespace Kin.Marketplace
         [Get("/orders/{order_id}")]
         [Headers("Authorization: Bearer")]
         Task<Order> GetOrder([AliasAs("order_id")] string orderId);
+
+        [Post("/orders/{order_id}/whitelist")]
+        [Headers("Authorization: Bearer")]
+        Task<string> WhiteListTransaction([AliasAs("order_id")] string orderId, [Body] object body);
 
         [Patch("/orders/{order_id}")]
         [Headers("Authorization: Bearer")]
